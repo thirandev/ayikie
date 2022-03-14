@@ -1,3 +1,4 @@
+import 'package:ayikie_main/src/ui/screens/onboarding_screen/onboarding_screen.dart';
 import 'package:ayikie_users/ayikie_users.dart';
 import 'package:flutter/material.dart';
 import 'package:ayikie_service/ayikie_service.dart';
@@ -17,7 +18,7 @@ class _MyAppState extends State<MyApp> {
         appBarTheme: AppBarTheme(brightness: Brightness.light),
         fontFamily: 'CircularStd',
       ),
-      home: SplashScreen(),
+      home: OnbordingScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -46,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    onPressed: (){
+                    onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) {
@@ -66,7 +67,9 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 SizedBox(
                   width: 200,
                   height: 50.0,
@@ -74,7 +77,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    onPressed: (){
+                    onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) {
@@ -102,4 +105,3 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
-
