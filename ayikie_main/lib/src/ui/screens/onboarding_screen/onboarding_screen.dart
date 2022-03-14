@@ -1,9 +1,8 @@
 import 'package:ayikie_main/src/app_colors.dart';
-import 'package:ayikie_main/src/ui/screens/login_screen/login_screen.dart';
+import 'package:ayikie_main/src/ui/screens/auth/login_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-
 
 class OnbordingScreen extends StatefulWidget {
   @override

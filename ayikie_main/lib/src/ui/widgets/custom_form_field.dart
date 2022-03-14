@@ -8,6 +8,7 @@ class CustomFormField extends StatelessWidget {
   final TextInputType? inputType;
   final Function? suffixCallback;
   final Function? pickFromContact;
+  final bool isObsucure;
   final bool isEnabled;
   final bool prefixEnable;
   final bool pickFromContactEnable;
@@ -40,6 +41,7 @@ class CustomFormField extends StatelessWidget {
     this.prefixEnable = false,
     this.suffixEnable = false,
     this.pickFromContactEnable = false,
+    this.isObsucure = false,
     this.hintText,
     this.suffixUrl,
     this.inputType,
@@ -89,6 +91,7 @@ class CustomFormField extends StatelessWidget {
         children: [
           Expanded(
             child: TextFormField(
+              obscureText: isObsucure,
               onChanged: (value) {
                 if (onChange != null) {
                   onChange!(value);
