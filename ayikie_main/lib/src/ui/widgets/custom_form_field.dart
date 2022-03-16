@@ -61,7 +61,7 @@ class CustomFormField extends StatelessWidget {
     this.margin,
     this.padding,
     this.suffixMargin = 0,
-    this.height = 42.5,
+    this.height = 50,
     this.textInputFormatter,
     this.onChange,
     this.textCapitalization,
@@ -162,7 +162,7 @@ class CustomFormField extends StatelessWidget {
               keyboardType: inputType ?? TextInputType.text,
               textCapitalization: textCapitalization ?? TextCapitalization.none,
               style: const TextStyle(
-                fontSize: 13.0,
+                fontSize: 14.0,
                 fontWeight: FontWeight.w500,
                 color: AppColors.black,
               ),

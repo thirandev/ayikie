@@ -35,13 +35,13 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
                 Container(
                   alignment: Alignment.center,
                   height: MediaQuery.of(context).size.height / 3,
-                  child: SvgPicture.asset('asserts/images/two_factor_logo.svg'),
+                  child: AspectRatio(aspectRatio: 1.5,child: SvgPicture.asset('asserts/images/two_factor_logo.svg')),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20, top: 20),
                   child: Container(
                       child: Text(
-                    'Check your  Phone',
+                    'Check your Phone',
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
                     textAlign: TextAlign.center,
                   )),

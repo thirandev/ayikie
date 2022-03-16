@@ -25,12 +25,12 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: AppColors.white,
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             child: Column(
               children: [
                 Container(
                   alignment: Alignment.center,
-                  height: MediaQuery.of(context).size.height / 4,
+                  height: MediaQuery.of(context).size.height / 5,
                   child: Image.asset('asserts/images/ayikie_logo.png'),
                 ),
                 Padding(
@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.only(top: 10, bottom: 20),
                   child: Container(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.only(bottom: 30),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
@@ -72,7 +72,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ? AppColors.selectedTextColor
                                     : Colors.transparent,
                                 border: Border.all(
-                                    width: 1.2, color: AppColors.black),
+                                  width: 1.2,
+                                  color: Colors.black38,
+                                ),
                               ),
                               height: 150,
                               width: 120,
@@ -84,7 +86,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Text(
                                 'User',
                                 style: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.w700),
+                                    color: _value == 1?Colors.black38:Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500),
                               ),
                             ),
                           ],
@@ -102,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ? AppColors.selectedTextColor
                                       : Colors.transparent,
                                   border: Border.all(
-                                      width: 1.2, color: AppColors.black)),
+                                      width: 1.2, color: Colors.black38)),
                               height: 150,
                               width: 120,
                               child: SvgPicture.asset(
@@ -113,7 +117,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Text(
                                 'Professional',
                                 style: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.w700),
+                                    color: _value == 0?Colors.black38:Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500),
                               ),
                             ),
                           ],
@@ -123,35 +129,37 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
+                  padding: const EdgeInsets.only(bottom: 10),
                   child: Container(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Phone No',
+                      'Phone Number',
                       style:
                           TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
                 CustomFormField(
+                  height: 50,
                   controller: _phoneNoController,
-                  hintText: 'phone no',
+                  hintText: 'Your Phone number',
                   inputType: TextInputType.number,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 20, top: 20),
+                  padding: const EdgeInsets.only(bottom: 10, top: 20),
                   child: Container(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       'Password',
                       style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                      TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
                 CustomFormField(
+                  height: 50,
                   controller: _passwordController,
-                  hintText: 'password',
+                  hintText: 'Your Password',
                   inputType: TextInputType.text,
                   isObsucure: true,
                 ),
@@ -278,37 +286,32 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 100,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      child: Text(
+                        'Login as a ',
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.centerRight,
+                      child: InkWell(
+                        onTap: () {
+                          print('login as a guest');
+                        },
                         child: Text(
-                          'Login as a ',
+                          'Guest',
                           style: TextStyle(
-                            fontSize: 14,
-                          ),
+                              fontSize: 14,
+                              color: AppColors.primaryButtonColor),
                         ),
                       ),
-                      Container(
-                        alignment: Alignment.centerRight,
-                        child: InkWell(
-                          onTap: () {
-                            print('login as a guest');
-                          },
-                          child: Text(
-                            'Guest',
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: AppColors.primaryButtonColor),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),
