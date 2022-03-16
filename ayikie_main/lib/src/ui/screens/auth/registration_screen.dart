@@ -1,18 +1,22 @@
 import 'package:ayikie_main/src/app_colors.dart';
+import 'package:ayikie_main/src/ui/screens/auth/login_screen.dart';
+import 'package:ayikie_main/src/ui/screens/auth/send_otp_screen.dart';
 import 'package:ayikie_main/src/ui/widgets/custom_form_field.dart';
 import 'package:ayikie_main/src/ui/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class RegistrationScreen extends StatefulWidget {
+  const RegistrationScreen({Key? key}) : super(key: key);
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _RegistrationScreenState createState() => _RegistrationScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegistrationScreenState extends State<RegistrationScreen> {
   int _value = 0;
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _confirmPasswordController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _phoneNoController = TextEditingController();
 
@@ -22,72 +26,44 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: AppColors.white,
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, top: 20),
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
             child: Column(
               children: [
                 Container(
                   alignment: Alignment.center,
                   height: MediaQuery.of(context).size.height / 4,
-                  child: Image.asset('asserts/images/ayikie_logo.png'),
+                  child:
+                      SvgPicture.asset('asserts/images/registration_logo.svg'),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: Container(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Log In',
+                      'Registration',
                       style:
                           TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
                     ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.only(bottom: 20),
                   child: Container(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Select Your role',
+                      'Full Name',
                       style:
                           TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap: () => setState(() => _value = 0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                              color: _value == 0
-                                  ? AppColors.primaryButtonColor
-                                  : Colors.transparent,
-                              border: Border.all(color: AppColors.black)),
-                          height: 150,
-                          width: 120,
-                          child: SvgPicture.asset('asserts/images/user.svg'),
-                        ),
-                      ),
-                      SizedBox(width: 4),
-                      GestureDetector(
-                        onTap: () => setState(() => _value = 1),
-                        child: Container(
-                          height: 100,
-                          width: 100,
-                          color: _value == 1 ? Colors.grey : Colors.transparent,
-                          child: SvgPicture.asset(
-                              'asserts/images/professional.svg'),
-                        ),
-                      ),
-                    ],
-                  ),
+                CustomFormField(
+                  controller: _nameController,
+                  hintText: 'full name',
+                  inputType: TextInputType.number,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.only(top: 20, bottom: 20),
                   child: Container(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -99,11 +75,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 CustomFormField(
                   controller: _phoneNoController,
-                  hintText: 'Enter your phone no here',
+                  hintText: 'phone no',
                   inputType: TextInputType.number,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10, top: 10),
+                  padding: const EdgeInsets.only(bottom: 20, top: 20),
                   child: Container(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -114,18 +90,48 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 CustomFormField(
-                  controller: _phoneNoController,
-                  hintText: 'Enter your password here',
-                  inputType: TextInputType.number,
+                  controller: _passwordController,
+                  hintText: 'password',
+                  inputType: TextInputType.text,
+                  isObsucure: true,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10, top: 10),
+                  padding: const EdgeInsets.only(bottom: 20, top: 20),
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Confirm Password',
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+                CustomFormField(
+                  controller: _confirmPasswordController,
+                  hintText: 'confirm password',
+                  inputType: TextInputType.text,
+                  isObsucure: true,
+                ),
+                SizedBox(height: 40),
+                PrimaryButton(
+                    text: 'Register',
+                    clickCallback: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SendOtpScreen(),
+                        ),
+                      );
+                    }),
+                SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 100, top: 20),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
                         child: Text(
-                          'Forget Password?  ',
+                          'Don\'t have an account?  ',
                           style: TextStyle(
                             fontSize: 14,
                           ),
@@ -134,9 +140,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       Container(
                         alignment: Alignment.centerRight,
                         child: InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => LoginScreen(),
+                              ),
+                            );
+                          },
                           child: Text(
-                            'Reset',
+                            'Sign Up',
                             style: TextStyle(
                                 fontSize: 14,
                                 color: AppColors.primaryButtonColor),
@@ -146,7 +159,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
-                PrimaryButton(text: 'Log In', clickCallback: () {})
               ],
             ),
           ),
