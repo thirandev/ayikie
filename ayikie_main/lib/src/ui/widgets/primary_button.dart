@@ -34,7 +34,7 @@ class PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: buttonHeight ?? 42.5,
+      height: buttonHeight ?? 48,
       width: buttonWidth ?? double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
@@ -45,7 +45,7 @@ class PrimaryButton extends StatelessWidget {
           shadowColor: AppColors.primaryButtonColor.withOpacity(0.4),
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: radius ?? BorderRadius.circular(12),
+            borderRadius: radius ?? BorderRadius.circular(48),
             side: BorderSide(
               width: borderWidth ?? 0,
               color: borderColor ?? AppColors.transparent,
@@ -54,7 +54,7 @@ class PrimaryButton extends StatelessWidget {
         ),
         child: Ink(
           decoration: BoxDecoration(
-              borderRadius: radius ?? BorderRadius.circular(12),
+              borderRadius: radius ?? BorderRadius.circular(48),
               gradient: gradient ?? null),
           child: Center(
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -64,7 +64,7 @@ class PrimaryButton extends StatelessWidget {
                   text,
                   style: TextStyle(
                     color: textColor ?? AppColors.primaryButtonTextColor,
-                    fontSize: fontSize ?? 16.0,
+                    fontSize: fontSize ?? 12.0,
                     fontWeight: fontWeight ?? FontWeight.w500,
                   ),
                 ),

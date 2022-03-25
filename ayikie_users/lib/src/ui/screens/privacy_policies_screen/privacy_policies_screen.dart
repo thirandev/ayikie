@@ -1,7 +1,7 @@
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
-import 'package:ayikie_users/src/ui/screens/splash_screen.dart';
+
 import 'package:flutter/material.dart';
 
 class PrivacyPoliciesScreen extends StatefulWidget {
@@ -94,12 +94,7 @@ class _NotificationScreenState extends State<PrivacyPoliciesScreen> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     RaisedButton(onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return SplashScreen();
-                        }),
-                      );
+                      
                     })
                   ],
                 ),

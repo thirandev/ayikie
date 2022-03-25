@@ -26,28 +26,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         backgroundColor: AppColors.white,
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 50),
             child: Column(
               children: [
                 Container(
                   alignment: Alignment.center,
-                  height: MediaQuery.of(context).size.height / 4,
+                  height: 150,
                   child:
-                      AspectRatio(aspectRatio: 1.4,child: SvgPicture.asset('asserts/images/registration_logo.svg')),
+                      SvgPicture.asset('asserts/images/registration_logo.svg'),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 25),
+                  padding: const EdgeInsets.only(bottom: 10),
                   child: Container(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       'Registration',
                       style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
+                          TextStyle(fontSize: 26, fontWeight: FontWeight.w900),
                     ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.only(bottom: 20),
                   child: Container(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -63,11 +63,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   inputType: TextInputType.number,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 20, bottom: 10),
+                  padding: const EdgeInsets.only(top: 20, bottom: 20),
                   child: Container(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Phone Number',
+                      'Phone No',
                       style:
                           TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                     ),
@@ -79,7 +79,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   inputType: TextInputType.number,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10, top: 20),
+                  padding: const EdgeInsets.only(bottom: 20, top: 20),
                   child: Container(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -96,7 +96,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   isObsucure: true,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10, top: 20),
+                  padding: const EdgeInsets.only(bottom: 20, top: 20),
                   child: Container(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -115,47 +115,42 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 SizedBox(height: 40),
                 PrimaryButton(
                     text: 'Register',
+                    fontSize: 12,
                     clickCallback: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => SendOtpScreen(),
-                        ),
-                      );
+                      Navigator.pushNamed(context, '/SendOtpScreen');
                     }),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      child: Text(
-                        'Don\'t have an account?  ',
-                        style: TextStyle(
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      alignment: Alignment.centerRight,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => LoginScreen(),
-                            ),
-                          );
-                        },
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 40, ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
                         child: Text(
-                          'Sign Up',
+                          'Don\'t have an account?  ',
                           style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.primaryButtonColor),
+                            fontSize: 12,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      Container(
+                        alignment: Alignment.centerRight,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/LoginScreen');
+                          },
+                          child: Text(
+                            'Sign Up',
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: AppColors.primaryButtonColor),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                SizedBox(height: 40)
               ],
             ),
           ),

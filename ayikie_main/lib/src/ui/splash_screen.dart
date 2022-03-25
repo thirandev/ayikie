@@ -8,6 +8,20 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _goToHome();
+  }
+
+  void _goToHome() {
+    Future.delayed(
+        const Duration(seconds: 3),
+        () => Navigator.pushNamedAndRemoveUntil(
+            context, '/OnbordingScreen', (route) => false));
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

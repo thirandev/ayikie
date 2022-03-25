@@ -42,49 +42,37 @@ class _OnbordingScreenState extends State<OnbordingScreen> {
               },
               itemBuilder: (_, i) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        margin: EdgeInsets.only(bottom: 40, top: 20),
-                        child: AspectRatio(
-                          aspectRatio: 1.5,
-                          child: SvgPicture.asset(
-                            contents[i].image,
-                            fit: BoxFit.fitHeight,
-                            height: 100,
-                            width: 100,
-                          ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 50, right: 50),
+                        child: SvgPicture.asset(
+                          contents[i].image,
+                          height: MediaQuery.of(context).size.height / 2 - 40,
+                          
                         ),
                       ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height / 7,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              contents[i].title,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              contents[i].discription,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: AppColors.gray,
-                              ),
-                            ),
-                          ],
+                      Text(
+                        contents[i].title,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
+                      SizedBox(height: 20),
+                      Text(
+                        contents[i].discription,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.gray,
+                        ),
+                      ),
+                      Spacer(),
                       Container(
-                        margin: EdgeInsets.only(top: 30),
+                        margin: EdgeInsets.only(top: 50),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(
@@ -93,62 +81,55 @@ class _OnbordingScreenState extends State<OnbordingScreen> {
                           ),
                         ),
                       ),
+                      
                       Container(
-                        height: 50,
-                        margin: EdgeInsets.only(top: 20, left: 40, right: 40),
-                        width: double.infinity,
+                        height: 48,
+                        
+                        margin: EdgeInsets.only(top: 20, left: 40, right: 40,bottom:(currentIndex == contents.length - 1)? 60:0),
+                        width: 157,
                         child: FlatButton(
                           child: Text(
                             currentIndex == contents.length - 1
                                 ? "Get Started"
                                 : "Next",
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(fontSize: 12,fontWeight: FontWeight.w900),
                           ),
                           onPressed: () {
                             if (currentIndex == contents.length - 1) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => LoginScreen(),
-                                ),
-                              );
+                              Navigator.pushNamed(
+            context, '/LoginScreen', );
                             }
                             _controller.nextPage(
-                              duration: Duration(milliseconds: 150),
+                              duration: Duration(milliseconds: 1),
                               curve: Curves.bounceIn,
                             );
                           },
                           color: AppColors.primaryButtonColor,
                           textColor: AppColors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(48),
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: 30,
-                        child: currentIndex == contents.length - 1
-                            ? Container()
-                            : Container(
-                                margin: EdgeInsets.only(top: 10),
-                                child: InkWell(
-                                  child: Text(
-                                    'skip',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: AppColors.primaryButtonColor),
-                                  ),
-                                  onTap: () {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => LoginScreen(),
-                                      ),
-                                    );
-                                  },
+                      currentIndex == contents.length - 1
+                          ? Container()
+                          : Container(
+                             margin: EdgeInsets.only(bottom: 10),
+                              child: RaisedButton(
+                                elevation: 0,
+                                color: AppColors.white,
+                                child: Text(
+                                  'skip',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.primaryButtonColor),
                                 ),
+                                onPressed: () {
+                                   Navigator.pushNamed(
+            context, '/LoginScreen', );
+                                },
                               ),
-                      )
+                            ),
                     ],
                   ),
                 );
@@ -162,7 +143,7 @@ class _OnbordingScreenState extends State<OnbordingScreen> {
 
   Container buildDot(int index, BuildContext context) {
     return Container(
-      height: 8,
+      height: 10,
       width: currentIndex == index ? 25 : 10,
       margin: EdgeInsets.only(right: 5),
       decoration: BoxDecoration(
@@ -184,16 +165,16 @@ class UnbordingContent {
 
 List<UnbordingContent> contents = [
   UnbordingContent(
-      title: 'Find Best Professionals\n Around You',
+      title: 'Find Best Professionals Around You',
       image: 'asserts/images/onboarding_one.svg',
       discription:
-          "Check out our best professionals with the skills you need for your job"),
+          "Cheack out our best professionals with the skills you need for your job"),
   UnbordingContent(
-      title: 'Purchase Your \nItems Online',
+      title: 'Purchase your Items Online',
       image: 'asserts/images/onboarding_two.svg',
-      discription: "Select wide range of products as you wish in one place "),
+      discription: "Select wide range of products   as you wish in one place "),
   UnbordingContent(
-      title: 'Enjoy With Hustle \nFree Payments',
+      title: 'Enjoy with Hustle Free Payments',
       image: 'asserts/images/onboarding_three.svg',
       discription:
           "Pay as per your convenience, we accept all credit and debit cards"),
