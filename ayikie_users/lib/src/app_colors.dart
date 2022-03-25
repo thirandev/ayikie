@@ -6,8 +6,15 @@ class AppColors {
   static const black = Color(0xFF000000);
   static const white = Color(0xFFFFFFFF);
   static const gray = Color(0xFF707070);
-  //enter the colors before this
+  static const primaryButtonColor = Color(0xFF00AFEF);
+  static const textFieldMain = Color(0xFF3A3A3A);
+  static const textFieldBackground = Color(0xFFF0F0F0);
+  static const transparent = Color(0x00000000);
+  static const primaryButtonTextColor = Color(0xFFFFFFFF);
+  static const selectedTextColor = Color(0xFFD3B9E3);
 
+  //enter the colors before this
+/*
   static const mainColor = Color(0xFFE8982E);
 
   static const primaryButtonColor = Color(0xFFE8982E);
@@ -37,5 +44,5 @@ class AppColors {
   static const tracking = Color(0xff8EC63F);
   static const dark = Color(0xFF3A3A3A);
   static const toolbarIcon = Color(0xFF515C6F);
-  static const lightGray = Color(0xFFEEEEEE);
+  static const lightGray = Color(0xFFEEEEEE);  */
 }
