@@ -55,7 +55,7 @@ class _NotificationScreenState extends State<VerificationCenter> {
                         width: 26,
                         height: 26,
                         child: new Icon(
-                          Icons.notifications_active_outlined,
+                          Icons.notifications_none,
                           color: AppColors.black,
                         ),
                       ),
@@ -93,11 +93,107 @@ class _NotificationScreenState extends State<VerificationCenter> {
                 padding: EdgeInsets.only(left: 16, right: 16, top: 10),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
-                  children: [],
+                  children: [
+                    ItemRowWidget(
+                      name: 'Email Verification',
+                      imageUrl: 'asserts/icons/support.png',
+                      onPress: () {},
+                    ),
+                    Divider(
+                      thickness: 1,
+                    ),
+                    ItemRowWidget(
+                      name: 'Facebook Verification',
+                      imageUrl: 'asserts/icons/facebook.png',
+                      onPress: () {},
+                    ),
+                    Divider(
+                      thickness: 1,
+                    ),
+                    ItemRowWidget(
+                      name: 'LinkedIn Verification',
+                      imageUrl: 'asserts/icons/linkedin.png',
+                      onPress: () {},
+                    ),
+                    Divider(
+                      thickness: 1,
+                    ),
+                    ItemRowWidget(
+                      name: 'Credit Card Verification',
+                      imageUrl: 'asserts/icons/credit_card.png',
+                      onPress: () {},
+                    ),
+                    Divider(
+                      thickness: 1,
+                    ),
+                    ItemRowWidget(
+                      name: 'Address Verification',
+                      imageUrl: 'asserts/icons/address.png',
+                      onPress: () {},
+                    ),
+                    Divider(
+                      thickness: 1,
+                    ),
+                    ItemRowWidget(
+                      name: 'ID Verification',
+                      imageUrl: 'asserts/icons/id.png',
+                      onPress: () {},
+                    ),
+                    Divider(
+                      thickness: 1,
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class ItemRowWidget extends StatelessWidget {
+  final String name;
+  final String imageUrl;
+  final Function onPress;
+  const ItemRowWidget({
+    Key? key,
+    required this.name,
+    required this.imageUrl,
+    required this.onPress,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        onPress();
+      },
+      highlightColor: Colors.transparent,
+      child: Container(
+        margin: EdgeInsets.only(top: 10,bottom: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(left: 20),
+              width: 24,
+              height: 24,
+              child: Image.asset(
+                imageUrl,
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 20),
+              child: Text(
+                name,
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+              ),
+            ),
+            new Spacer(),
+            Icon(Icons.navigate_next),
+          ],
         ),
       ),
     );

@@ -26,12 +26,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         backgroundColor: AppColors.white,
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 50),
             child: Column(
               children: [
                 Container(
                   alignment: Alignment.center,
-                  height: MediaQuery.of(context).size.height / 4,
+                  height: 150,
                   child:
                       SvgPicture.asset('asserts/images/registration_logo.svg'),
                 ),
@@ -42,7 +42,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     child: Text(
                       'Registration',
                       style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
+                          TextStyle(fontSize: 26, fontWeight: FontWeight.w900),
                     ),
                   ),
                 ),
@@ -115,17 +115,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 SizedBox(height: 40),
                 PrimaryButton(
                     text: 'Register',
+                    fontSize: 12,
                     clickCallback: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => SendOtpScreen(),
-                        ),
-                      );
+                      Navigator.pushNamed(context, '/SendOtpScreen');
                     }),
-                SizedBox(height: 20),
+                SizedBox(height: 10),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 100, top: 20),
+                  padding: const EdgeInsets.only(bottom: 40, ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -133,7 +129,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         child: Text(
                           'Don\'t have an account?  ',
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                           ),
                         ),
                       ),
@@ -141,17 +137,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         alignment: Alignment.centerRight,
                         child: InkWell(
                           onTap: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => LoginScreen(),
-                              ),
-                            );
+                            Navigator.pushNamed(context, '/LoginScreen');
                           },
                           child: Text(
                             'Sign Up',
                             style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 12,
                                 color: AppColors.primaryButtonColor),
                           ),
                         ),
@@ -159,6 +150,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ],
                   ),
                 ),
+                SizedBox(height: 40)
               ],
             ),
           ),

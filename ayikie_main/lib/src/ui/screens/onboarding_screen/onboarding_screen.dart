@@ -46,17 +46,18 @@ class _OnbordingScreenState extends State<OnbordingScreen> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left: 30, right: 30),
+                        padding: const EdgeInsets.only(left: 50, right: 50),
                         child: SvgPicture.asset(
                           contents[i].image,
-                          height: MediaQuery.of(context).size.height / 2,
+                          height: MediaQuery.of(context).size.height / 2 - 40,
+                          
                         ),
                       ),
                       Text(
                         contents[i].title,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 25,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -65,10 +66,11 @@ class _OnbordingScreenState extends State<OnbordingScreen> {
                         contents[i].discription,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 14,
                           color: AppColors.gray,
                         ),
                       ),
+                      Spacer(),
                       Container(
                         margin: EdgeInsets.only(top: 50),
                         child: Row(
@@ -79,58 +81,52 @@ class _OnbordingScreenState extends State<OnbordingScreen> {
                           ),
                         ),
                       ),
+                      
                       Container(
-                        height: 50,
-                        margin: EdgeInsets.only(top: 20, left: 40, right: 40),
-                        width: double.infinity,
+                        height: 48,
+                        
+                        margin: EdgeInsets.only(top: 20, left: 40, right: 40,bottom:(currentIndex == contents.length - 1)? 60:0),
+                        width: 157,
                         child: FlatButton(
                           child: Text(
                             currentIndex == contents.length - 1
                                 ? "Get Started"
                                 : "Next",
-                            style: TextStyle(fontSize: 20),
+                            style: TextStyle(fontSize: 12,fontWeight: FontWeight.w900),
                           ),
                           onPressed: () {
                             if (currentIndex == contents.length - 1) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => LoginScreen(),
-                                ),
-                              );
+                              Navigator.pushNamed(
+            context, '/LoginScreen', );
                             }
                             _controller.nextPage(
-                              duration: Duration(milliseconds: 150),
+                              duration: Duration(milliseconds: 1),
                               curve: Curves.bounceIn,
                             );
                           },
                           color: AppColors.primaryButtonColor,
                           textColor: AppColors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(48),
                           ),
                         ),
                       ),
                       currentIndex == contents.length - 1
                           ? Container()
                           : Container(
-                              margin: EdgeInsets.only(top: 10),
+                             margin: EdgeInsets.only(bottom: 10),
                               child: RaisedButton(
                                 elevation: 0,
                                 color: AppColors.white,
                                 child: Text(
                                   'skip',
                                   style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 12,
                                       color: AppColors.primaryButtonColor),
                                 ),
                                 onPressed: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => LoginScreen(),
-                                    ),
-                                  );
+                                   Navigator.pushNamed(
+            context, '/LoginScreen', );
                                 },
                               ),
                             ),

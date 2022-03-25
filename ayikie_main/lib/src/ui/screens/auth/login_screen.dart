@@ -25,14 +25,15 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: AppColors.white,
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 50),
             child: Column(
               children: [
                 Container(
                   alignment: Alignment.center,
-                  height: MediaQuery.of(context).size.height / 4,
+                  height:120,
                   child: Image.asset('asserts/images/ayikie_logo.png'),
                 ),
+                
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: Container(
@@ -40,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       'Log In',
                       style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
+                          TextStyle(fontSize: 26, fontWeight: FontWeight.w900),
                     ),
                   ),
                 ),
@@ -129,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       'Phone No',
                       style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
@@ -145,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       'Password',
                       style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
@@ -172,12 +173,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         alignment: Alignment.centerRight,
                         child: InkWell(
                           onTap: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => ForgetPasswordScreen(),
-                              ),
-                            );
+                            Navigator.pushNamed(
+            context, '/ForgetPasswordScreen');
                           },
                           child: Text(
                             'Reset',
@@ -190,15 +187,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
+                
                 PrimaryButton(
-                    text: 'Log In',
+                    text: 'Log In',fontSize: 12,
+                    
                     clickCallback: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => SendOtpScreen(),
-                        ),
-                      );
+                      Navigator.pushNamed(
+            context, '/SendOtpScreen');
                     }),
                 SizedBox(height: 20),
                 Row(children: <Widget>[
@@ -260,12 +255,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         alignment: Alignment.centerRight,
                         child: InkWell(
                           onTap: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => RegistrationScreen(),
-                              ),
-                            );
+                            Navigator.pushNamed(
+            context, '/RegistrationScreen', );
                           },
                           child: Text(
                             'Sign Up',
@@ -280,7 +271,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
-                    bottom: 100,
+                    bottom: 40,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

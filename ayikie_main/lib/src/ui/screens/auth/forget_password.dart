@@ -35,38 +35,39 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         backgroundColor: AppColors.white,
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 40),
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 50),
             child: Column(
               children: [
                 Container(
                   alignment: Alignment.center,
-                  height: MediaQuery.of(context).size.height / 3,
+                  height: 150,
                   child: SvgPicture.asset('asserts/images/forget_password.svg'),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20, top: 20),
                   child: Container(
+                    alignment: Alignment.center,
                       child: _isPhoneNoWidget
                           ? Text(
                               'Forget My Password',
                               style: TextStyle(
-                                  fontSize: 25, fontWeight: FontWeight.w900),
-                              textAlign: TextAlign.center,
+                                  fontSize: 26, fontWeight: FontWeight.w900),
+                              textAlign: TextAlign.start,
                             )
                           : _isOtpWidget
                               ? Text(
                                   'Check Your Phone',
                                   style: TextStyle(
-                                      fontSize: 25,
+                                      fontSize: 26,
                                       fontWeight: FontWeight.w900),
-                                  textAlign: TextAlign.center,
+                                  textAlign: TextAlign.start,
                                 )
                               : Text(
                                   'Create New Password',
                                   style: TextStyle(
-                                      fontSize: 25,
+                                      fontSize: 26,
                                       fontWeight: FontWeight.w900),
-                                  textAlign: TextAlign.center,
+                                  textAlign: TextAlign.start,
                                 )),
                 ),
                 Padding(
@@ -108,7 +109,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                               child: Text(
                                 'Phone No',
                                 style: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.w700),
+                                    fontSize: 16, fontWeight: FontWeight.w700),
                               ),
                             ),
                           ),
@@ -139,6 +140,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                                 children: [
                                   Container(
                                     child: PinCodeTextField(
+                                      mainAxisAlignment: MainAxisAlignment.start,
                                       appContext: context,
                                       length: 6,
                                       cursorHeight: 15,
@@ -152,6 +154,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                                         shape: PinCodeFieldShape.box,
                                         borderWidth: 0,
                                         borderRadius: BorderRadius.circular(8),
+                                        fieldOuterPadding: EdgeInsets.only(right: 8),
                                         fieldHeight: 40,
                                         fieldWidth: 40,
                                         selectedColor: AppColors.transparent,
@@ -219,7 +222,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                               ),
                               CustomFormField(
                                 controller: _confirmPasswordController,
-                                hintText: 'phone no',
+                                hintText: 'comfirm',
                                 inputType: TextInputType.number,
                                 isObsucure: true,
                               ),
@@ -227,14 +230,20 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                           ),
                 SizedBox(height: 40),
                 _isPhoneNoWidget
-                    ? PrimaryButton(
-                        text: 'Send',
-                        clickCallback: () {
-                          setState(() {
-                            _isOtpWidget = true;
-                            _isPhoneNoWidget = false;
-                          });
-                        })
+                    ? Column(
+                      children: [
+                        PrimaryButton(
+                          
+                            text: 'Send',
+                            clickCallback: () {
+                              setState(() {
+                                _isOtpWidget = true;
+                                _isPhoneNoWidget = false;
+                              });
+                            }),
+                            SizedBox(height: 40)
+                      ],
+                    )
                     : _isOtpWidget
                         ? Column(
                             children: [
@@ -261,7 +270,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                                         child: Text(
                                           'Resend',
                                           style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 12,
                                               color:
                                                   AppColors.primaryButtonColor),
                                         ),
@@ -270,18 +279,21 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                                   ],
                                 ),
                               ),
+                              SizedBox(height: 40),
                             ],
                           )
-                        : PrimaryButton(
-                            text: 'Confirm',
-                            clickCallback: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => LoginScreen(),
-                                ),
-                              );
-                            }),
+                        : Column(
+                          children: [
+                            PrimaryButton(
+                                text: 'Confirm',
+                                clickCallback: () {
+                                  Navigator.pushNamedAndRemoveUntil(
+            context, '/LoginScreen', (route) => false);
+                                 
+                                }),
+                                SizedBox(height: 40),
+                          ],
+                        ),
               ],
             ),
           ),

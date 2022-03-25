@@ -1,12 +1,12 @@
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:flutter/material.dart';
 
-class UserScreen extends StatefulWidget {
+class UserHomeScreen extends StatefulWidget {
   @override
-  _UserScreenState createState() => _UserScreenState();
+  _UserHomeScreenState createState() => _UserHomeScreenState();
 }
 
-class _UserScreenState extends State<UserScreen> {
+class _UserHomeScreenState extends State<UserHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

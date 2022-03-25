@@ -1,5 +1,4 @@
 import 'package:ayikie_main/src/app_colors.dart';
-import 'package:ayikie_main/src/ui/widgets/custom_form_field.dart';
 import 'package:ayikie_main/src/ui/widgets/primary_button.dart';
 import 'package:ayikie_users/ayikie_users.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +33,7 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
               children: [
                 Container(
                   alignment: Alignment.center,
-                  height: MediaQuery.of(context).size.height / 3,
+                  height: 200,
                   child: SvgPicture.asset('asserts/images/two_factor_logo.svg'),
                 ),
                 Padding(
@@ -42,7 +41,7 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
                   child: Container(
                       child: Text(
                     'Check your  Phone',
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900),
                     textAlign: TextAlign.center,
                   )),
                 ),
@@ -78,6 +77,7 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
                         Container(
                           child: PinCodeTextField(
                             appContext: context,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             length: 6,
                             cursorHeight: 15,
                             cursorWidth: 1.5,
@@ -87,18 +87,20 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
                             obscureText: false,
                             animationType: AnimationType.fade,
                             pinTheme: PinTheme(
-                              shape: PinCodeFieldShape.box,
-                              borderWidth: 0,
-                              borderRadius: BorderRadius.circular(8),
-                              fieldHeight: 40,
-                              fieldWidth: 40,
-                              selectedColor: AppColors.transparent,
-                              activeColor: AppColors.transparent,
-                              inactiveColor: AppColors.transparent,
-                              selectedFillColor: AppColors.textFieldBackground,
-                              activeFillColor: AppColors.textFieldBackground,
-                              inactiveFillColor: AppColors.textFieldBackground,
-                            ),
+                                shape: PinCodeFieldShape.box,
+                                borderWidth: 0.5,
+                                borderRadius: BorderRadius.circular(8),
+                                fieldHeight: 40,
+                                fieldWidth: 40,
+                                selectedColor: AppColors.transparent,
+                                activeColor: AppColors.transparent,
+                                inactiveColor: AppColors.transparent,
+                                selectedFillColor:
+                                    AppColors.textFieldBackground,
+                                activeFillColor: AppColors.textFieldBackground,
+                                inactiveFillColor:
+                                    AppColors.textFieldBackground,
+                                fieldOuterPadding: EdgeInsets.only(right: 8)),
                             cursorColor: Colors.black,
                             animationDuration:
                                 const Duration(milliseconds: 300),
@@ -125,12 +127,9 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
                     PrimaryButton(
                         text: 'Verify',
                         clickCallback: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => UserScreen(),
-                            ),
-                          );
+                          Navigator.pushNamedAndRemoveUntil(
+            context, '/UserScreen', (route) => false);
+                          
                         }),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 100, top: 20),
@@ -146,7 +145,7 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
                               child: Text(
                                 'Resend',
                                 style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 12,
                                     color: AppColors.primaryButtonColor),
                               ),
                             ),
@@ -154,6 +153,7 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
                         ],
                       ),
                     ),
+                    SizedBox(height: 40),
                   ],
                 )
               ],
