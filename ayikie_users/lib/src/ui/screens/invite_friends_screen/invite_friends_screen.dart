@@ -118,7 +118,7 @@ class _NotificationScreenState extends State<InviteFriendsScreen> {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 20,),
-                      Spacer(),
+                      // Spacer(),
                       PrimaryButton(
                       text: 'Invite Now',
                       fontSize: 12,
