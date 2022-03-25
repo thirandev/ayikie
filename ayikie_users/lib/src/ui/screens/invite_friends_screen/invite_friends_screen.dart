@@ -92,7 +92,7 @@ class _NotificationScreenState extends State<InviteFriendsScreen> {
           child: SafeArea(
             child: SingleChildScrollView(
               child: SizedBox(
-                height: MediaQuery.of(context).size.height -,
+                height: MediaQuery.of(context).size.height ,
                 child: Container(
                   padding: EdgeInsets.only(left: 16, right: 16, top: 20),
                   child: Column(
