@@ -48,6 +48,7 @@ class _OnbordingScreenState extends State<OnbordingScreen> {
                       Padding(
                         padding: const EdgeInsets.only(left: 50, right: 50),
                         child: SvgPicture.asset(
+                          
                           contents[i].image,
                           height: MediaQuery.of(context).size.height / 2 - 40,
                           
