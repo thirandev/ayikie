@@ -85,12 +85,16 @@ class ApiResponse {
         } else if (response!.body.trim() == "{}") {
           return dynamic;
         } else {
-          var jsonData = json.decode(response!.body);
-          if (jsonData.runtimeType.toString() == "List<dynamic>" ||
-              jsonData.runtimeType.toString() == "_GrowableList<dynamic>") {
-            return jsonData;
-          } else {
-            return jsonData.cast<String, dynamic>();
+         try {
+            var jsonData = json.decode(response!.body) as Map<String, dynamic>;
+            if (jsonData.runtimeType.toString() == "List<dynamic>" ||
+                jsonData.runtimeType.toString() == "_GrowableList<dynamic>") {
+              return jsonData;
+            } else {
+              return jsonData.cast<String, dynamic>();
+            }
+          }on FormatException catch (e) {
+            return response!.body;
           }
         }
       } else {
@@ -98,14 +102,12 @@ class ApiResponse {
         _setErrorMessage("Null response body");
       }
     } catch (e) {
-      // print(e);
       _setApiStatus(ApiStatus.EXCEPTION);
       _setErrorMessage("JSON Parse Error: " + e.toString());
     }
   }
 
   void _setErrorMessage(String message) {
-    // print(message);
     statusMessage = message;
   }
 

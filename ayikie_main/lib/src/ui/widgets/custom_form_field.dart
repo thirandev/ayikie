@@ -97,9 +97,6 @@ class CustomFormField extends StatelessWidget {
                   onChange!(value);
                 }
               },
-              inputFormatters: (regX != null)
-                  ? [WhitelistingTextInputFormatter(RegExp(regX!))]
-                  : (textInputFormatter) ?? [],
               maxLength: maxLength ?? null,
               readOnly: isEnabled,
               controller: controller,

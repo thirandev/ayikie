@@ -17,15 +17,14 @@ class Settings {
     return token;
   }
 
-  static setRefreshToken(String token) async {
+  static setUserRole(String role) async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
-    sharedPrefs.setString("refresh_token", token);
+    sharedPrefs.setString("role", role);
   }
 
-  static Future<String?> getRefreshToken() async {
+  static Future<String?> getUserRole() async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
-    String? token = sharedPrefs.getString("refresh_token");
-    return token;
+    String? role = sharedPrefs.getString("role");
+    return role;
   }
-
 }

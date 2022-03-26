@@ -1,5 +1,5 @@
 import 'package:ayikie_main/src/ui/screens/onboarding_screen/onboarding_screen.dart';
-import 'package:ayikie_main/src/ui/splash_screen.dart';
+import 'src/ui/screens/splash_screen.dart';
 import 'package:ayikie_users/ayikie_users.dart';
 import 'package:flutter/material.dart';
 import 'package:ayikie_service/ayikie_service.dart';
@@ -31,9 +31,7 @@ class _MyAppState extends State<MyApp> {
         "/LoginScreen": (BuildContext c) => LoginScreen(),
         "/ForgetPasswordScreen": (BuildContext c) => ForgetPasswordScreen(),
         "/SendOtpScreen": (BuildContext c) => SendOtpScreen(),
-        "/RegistrationScreen": (BuildContext c) => RegistrationScreen(),
         "/UserScreen": (BuildContext c) => UserHomeScreen(),
-        
       },
     );
   }

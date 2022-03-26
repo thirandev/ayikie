@@ -19,13 +19,13 @@ class ApiCalls {
   }
 
   static Future<ApiResponse> login({
-    required String username,
+    required String phone,
     required String password,
     required String deviceName
   }) async{
     try{
       var payload = new Map<String, dynamic>();
-      payload['phone'] = username;
+      payload['phone'] = phone;
       payload['password'] = password;
       payload['device_name'] = deviceName;
       return ApiCaller.jsonRequest(
@@ -117,7 +117,6 @@ class ApiCalls {
       return response;
     }
   }
-
 
 
 }
