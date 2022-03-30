@@ -1,12 +1,16 @@
+import 'package:ayikie_main/src/api/api_calls.dart';
 import 'package:ayikie_main/src/app_colors.dart';
 import 'package:ayikie_main/src/ui/widgets/primary_button.dart';
+import 'package:ayikie_main/src/utils/alerts.dart';
+import 'package:ayikie_main/src/utils/validations.dart';
 import 'package:ayikie_users/ayikie_users.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class SendOtpScreen extends StatefulWidget {
-  const SendOtpScreen({Key? key}) : super(key: key);
+  final int? userRole;
+  const SendOtpScreen({Key? key, this.userRole}) : super(key: key);
 
   @override
   _SendOtpScreenState createState() => _SendOtpScreenState();
@@ -15,6 +19,16 @@ class SendOtpScreen extends StatefulWidget {
 class _SendOtpScreenState extends State<SendOtpScreen> {
   String _otp = "";
   TextEditingController _otpController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    sendOtpRequest();
+  }
+
+  void sendOtpRequest() async {
+    await ApiCalls.otpRequest();
+  }
 
   onChangePin(String value) {
     setState(() {
@@ -127,9 +141,7 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
                     PrimaryButton(
                         text: 'Verify',
                         clickCallback: () {
-                          Navigator.pushNamedAndRemoveUntil(
-            context, '/UserScreen', (route) => false);
-                          
+                          verifyOtp();
                         }),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 100, top: 20),
@@ -140,7 +152,7 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
                             alignment: Alignment.centerRight,
                             child: InkWell(
                               onTap: () {
-                                print('resend');
+                                sendOtpRequest();
                               },
                               child: Text(
                                 'Resend',
@@ -160,5 +172,30 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
             ),
           ),
         ));
+
+
   }
+
+  void verifyOtp(){
+
+    if (!Validations.validateOtp(_otp)) {
+      Alerts.showMessage(context, "Please enter a valid OTP");
+      return;
+    }
+
+    ApiCalls.otpVerification(otp: _otp)
+        .then((response) async {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        print("Here"+response.jsonBody);
+        //await Settings.setAccessToken(response.jsonBody);
+        //Navigator.pushNamed(context, '/SendOtpScreen');
+      } else {
+        Alerts.showMessageForResponse(context, response);
+      }
+    });
+  }
+
 }
