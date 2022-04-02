@@ -90,45 +90,47 @@ class _NotificationScreenState extends State<InviteFriendsScreen> {
             FocusScope.of(context).requestFocus(FocusNode());
           },
           child: SafeArea(
-            child: SingleChildScrollView(
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height ,
-                child: Container(
-                  padding: EdgeInsets.only(left: 16, right: 16, top: 20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      SvgPicture.asset(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height ,
+              child: Container(
+                padding: EdgeInsets.only(left: 16, right: 16, top: 40),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    AspectRatio(
+                      aspectRatio: 1.75,
+                      child: SvgPicture.asset(
+                        
                         'asserts/images/share_link.svg',
                         height: 250,
                       ),
-                      SizedBox(height: 40,),
-                      Text(
-                        'Share with Friends',
-                        style:
-                            TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
-                        textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 40,),
+                    Text(
+                      'Share with Friends',
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 20,),
+                    Text(
+                      'Cos your friends deserve to live life better',
+                      style: TextStyle(
+                        fontSize: 14,
                       ),
-                      SizedBox(height: 20,),
-                      Text(
-                        'Cos your friends deserve to live life better',
-                        style: TextStyle(
-                          fontSize: 14,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 20,),
-                      // Spacer(),
-                      PrimaryButton(
-                      text: 'Invite Now',
-                      fontSize: 12,
-                      clickCallback: () {
-                        Navigator.pushNamed(context, '/SendOtpScreen');
-                      }),
-                      
-                      SizedBox(height: 40,),
-                    ],
-                  ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 20,),
+                     Spacer(),
+                    PrimaryButton(
+                    text: 'Invite Now',
+                    fontSize: 12,
+                    clickCallback: () {
+                      Navigator.pushNamed(context, '/SendOtpScreen');
+                    }),
+                    
+                    SizedBox(height: 40,),
+                  ],
                 ),
               ),
             ),
