@@ -17,7 +17,9 @@ dependencies:
   flutter_svg: ^1.0.3
   expansion_widget: ^0.0.2
   smooth_page_indicator: ^1.0.0+2
-  
+  auto_size_text: ^3.0.0
+  flutter_rating_bar: ^4.0.0
+  timeline_tile: ^2.0.0
 
 dev_dependencies:
   flutter_test:

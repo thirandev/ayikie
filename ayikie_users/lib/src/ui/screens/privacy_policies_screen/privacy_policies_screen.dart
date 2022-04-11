@@ -81,28 +81,35 @@ class _NotificationScreenState extends State<PrivacyPoliciesScreen> {
         ],
       ),
       endDrawer: DrawerScreen(),
-      body: Builder(
-        builder: (context) => GestureDetector(
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
-          child: SafeArea(
+      body:  SafeArea(
             child: SingleChildScrollView(
               child: Container(
                 padding: EdgeInsets.only(left: 16, right: 16, top: 10),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    RaisedButton(onPressed: () {
-                      
-                    })
+                    Text(
+                      'Privacy Policy Document',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 20),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Contrary to popular bel ief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Contrary to popular bel ief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Contrary to popular bel ief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45',
+                      textAlign: TextAlign.justify,
+                    ),
                   ],
                 ),
               ),
             ),
           ),
-        ),
-      ),
+      
     );
   }
 }

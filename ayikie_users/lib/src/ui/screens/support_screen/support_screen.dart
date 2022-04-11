@@ -1,6 +1,7 @@
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
+import 'package:ayikie_users/src/ui/widget/custom_form_field.dart';
 import 'package:flutter/material.dart';
 
 class SupportScreen extends StatefulWidget {
@@ -11,6 +12,9 @@ class SupportScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<SupportScreen> {
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,20 +84,77 @@ class _NotificationScreenState extends State<SupportScreen> {
         ],
       ),
       endDrawer: DrawerScreen(),
-      body: Builder(
-        builder: (context) => GestureDetector(
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
-          child: SafeArea(
-            child: SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.only(left: 16, right: 16, top: 10),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.only(left: 16, right: 16, top: 10),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Full Name',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    ),
+                  ),
                 ),
-              ),
+                CustomFormField(
+                  controller: _nameController,
+                  hintText: 'full Name',
+                  inputType: TextInputType.number,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20, top: 20),
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Email',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+                CustomFormField(
+                  controller: _emailController,
+                  hintText: 'email',
+                  inputType: TextInputType.text,
+                  isObsucure: true,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20, top: 20),
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Message',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+                // SizedBox(
+                //   height: 40.0,
+                //   child: TextFormField(
+                //     keyboardType: TextInputType.emailAddress,
+                //     autofocus: false,
+                //     expands:
+                //         true, // Setting this attribute to true does the trick
+                //     initialValue: 'sathyabaman@gmail.com',
+                //     style: TextStyle(
+                //         fontWeight: FontWeight.normal, color: Colors.white),
+                //     decoration: InputDecoration(
+                //       hintText: 'Email',
+                //       contentPadding:
+                //           EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                //       border: OutlineInputBorder(
+                //           borderRadius: BorderRadius.circular(32.0)),
+                //     ),
+                //   ),
+                // )
+              ],
             ),
           ),
         ),

@@ -319,34 +319,36 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void onLogInPress() {
-    String phone = _phoneNoController.text.trim();
-    String password = _passwordController.text.trim();
-    String deviceName = Platform.isAndroid ? "android" : "ios";
+    // String phone = _phoneNoController.text.trim();
+    // String password = _passwordController.text.trim();
+    // String deviceName = Platform.isAndroid ? "android" : "ios";
 
-    if (!Validations.validateMobileNumber(phone)) {
-      Alerts.showMessage(context, "Invalid mobile number");
-      return;
-    }
+    // if (!Validations.validateMobileNumber(phone)) {
+    //   Alerts.showMessage(context, "Invalid mobile number");
+    //   return;
+    // }
 
-    if (!Validations.validateString(password)) {
-      Alerts.showMessage(context, "Invalid password number");
-      return;
-    }
+    // if (!Validations.validateString(password)) {
+    //   Alerts.showMessage(context, "Invalid password number");
+    //   return;
+    // }
 
-    ApiCalls.login(phone: phone, password: password, deviceName: deviceName)
-        .then((response) async {
-      if (!mounted) {
-        return;
-      }
+    // ApiCalls.login(phone: phone, password: password, deviceName: deviceName)
+    //     .then((response) async {
+    //   if (!mounted) {
+    //     return;
+    //   }
 
-      if (response.isSuccess) {
-        print("Here"+response.jsonBody);
-       await Settings.setAccessToken(response.jsonBody);
-        Navigator.pushNamedAndRemoveUntil(
+    //   if (response.isSuccess) {
+    //     print("Here"+response.jsonBody);
+    //    await Settings.setAccessToken(response.jsonBody);
+    //     Navigator.pushNamedAndRemoveUntil(
+    //         context, '/UserScreen', (route) => false);
+    //   } else {
+    //     Alerts.showMessageForResponse(context, response);
+    //   }
+    // });
+    Navigator.pushNamedAndRemoveUntil(
             context, '/UserScreen', (route) => false);
-      } else {
-        Alerts.showMessageForResponse(context, response);
-      }
-    });
   }
 }
