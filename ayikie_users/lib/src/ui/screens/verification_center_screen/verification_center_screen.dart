@@ -82,12 +82,7 @@ class _NotificationScreenState extends State<VerificationCenter> {
         ],
       ),
       endDrawer: DrawerScreen(),
-      body: Builder(
-        builder: (context) => GestureDetector(
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
-          child: SafeArea(
+      body:  SafeArea(
             child: SingleChildScrollView(
               child: Container(
                 padding: EdgeInsets.only(left: 16, right: 16, top: 10),
@@ -147,8 +142,7 @@ class _NotificationScreenState extends State<VerificationCenter> {
               ),
             ),
           ),
-        ),
-      ),
+        
     );
   }
 }
