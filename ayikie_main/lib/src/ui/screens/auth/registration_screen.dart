@@ -36,175 +36,175 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: AppColors.white,
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 50),
-            child: Column(
-              children: [
-                Container(
-                  alignment: Alignment.center,
-                  height: 150,
-                  child:
-                      SvgPicture.asset('asserts/images/registration_logo.svg'),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Registration',
-                      style:
-                          TextStyle(fontSize: 26, fontWeight: FontWeight.w900),
-                    ),
+    return SafeArea(
+      child: Scaffold(
+          backgroundColor: AppColors.white,
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 50),
+              child: Column(
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    height: 150,
+                    child: SvgPicture.asset(
+                        'asserts/images/registration_logo.svg'),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Full Name',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ),
-                CustomFormField(
-                  controller: _nameController,
-                  hintText: 'full name',
-                  inputType: TextInputType.text,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20, bottom: 20),
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Phone No',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ),
-                CustomFormField(
-                  controller: _phoneNoController,
-                  hintText: 'phone no',
-                  inputType: TextInputType.number,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20, top: 20),
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Password',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ),
-                CustomFormField(
-                  controller: _passwordController,
-                  hintText: 'password',
-                  inputType: TextInputType.text,
-                  isObsucure: true,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20, top: 20),
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Confirm Password',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ),
-                CustomFormField(
-                  controller: _confirmPasswordController,
-                  hintText: 'confirm password',
-                  inputType: TextInputType.text,
-                  isObsucure: true,
-                ),
-                SizedBox(height: 20),
-                Row(
-                  children: [
-                    Radio<bool>(
-                      value: true,
-                      groupValue: _isUser,
-                      onChanged: (value) {
-                        setState(() {
-                          _isUser = value!;
-                        });
-                      },
-                    ),
-                    Text(
-                      "User",
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                    ),
-                    SizedBox(width: 20),
-                    Radio<bool>(
-                      value: false,
-                      groupValue: _isUser,
-                      onChanged: (value) {
-                        setState(() {
-                          _isUser = value!;
-                        });
-                      },
-                    ),
-                    Text(
-                      "Professionals",
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 40),
-                PrimaryButton(
-                    text: 'Register',
-                    fontSize: 12,
-                    clickCallback: () {
-                      onRegisterPress();
-                    }),
-                SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 40,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        child: Text(
-                          'Don\'t have an account?  ',
-                          style: TextStyle(
-                            fontSize: 12,
-                          ),
-                        ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Registration',
+                        style: TextStyle(
+                            fontSize: 26, fontWeight: FontWeight.w900),
                       ),
-                      Container(
-                        alignment: Alignment.centerRight,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/LoginScreen');
-                          },
-                          child: Text(
-                            'Sign Up',
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: AppColors.primaryButtonColor),
-                          ),
-                        ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Full Name',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ),
+                  CustomFormField(
+                    controller: _nameController,
+                    hintText: 'full name',
+                    inputType: TextInputType.text,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20, bottom: 20),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Phone No',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ),
+                  CustomFormField(
+                    controller: _phoneNoController,
+                    hintText: 'phone no',
+                    inputType: TextInputType.number,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20, top: 20),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Password',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ),
+                  CustomFormField(
+                    controller: _passwordController,
+                    hintText: 'password',
+                    inputType: TextInputType.text,
+                    isObsucure: true,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20, top: 20),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Confirm Password',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ),
+                  CustomFormField(
+                    controller: _confirmPasswordController,
+                    hintText: 'confirm password',
+                    inputType: TextInputType.text,
+                    isObsucure: true,
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Radio<bool>(
+                        value: true,
+                        groupValue: _isUser,
+                        onChanged: (value) {
+                          setState(() {
+                            _isUser = value!;
+                          });
+                        },
+                      ),
+                      Text(
+                        "User",
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(width: 20),
+                      Radio<bool>(
+                        value: false,
+                        groupValue: _isUser,
+                        onChanged: (value) {
+                          setState(() {
+                            _isUser = value!;
+                          });
+                        },
+                      ),
+                      Text(
+                        "Professionals",
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
-                ),
-                SizedBox(height: 40)
-              ],
+                  SizedBox(height: 40),
+                  PrimaryButton(
+                      text: 'Register',
+                      fontSize: 12,
+                      clickCallback: onRegisterPress),
+                  SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: 40,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          child: Text(
+                            'Don\'t have an account?  ',
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.centerRight,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pushNamed(context, '/LoginScreen');
+                            },
+                            child: Text(
+                              'Sign Up',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.primaryButtonColor),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 40)
+                ],
+              ),
             ),
-          ),
-        ));
+          )),
+    );
   }
 
   void onRegisterPress() {
@@ -213,7 +213,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     String password = _passwordController.text.trim();
     String confirmPassword = _confirmPasswordController.text.trim();
     String deviceName = Platform.isAndroid ? "android" : "ios";
-    int role = _isUser ? 1:2;
+    int role = _isUser ? 1 : 2;
 
     if (!Validations.validateString(username)) {
       Alerts.showMessage(context, "Enter your name");

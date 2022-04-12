@@ -1,7 +1,10 @@
+import 'package:ayikie_main/src/api/api_calls.dart';
 import 'package:ayikie_main/src/app_colors.dart';
 import 'package:ayikie_main/src/ui/screens/auth/login_screen.dart';
 import 'package:ayikie_main/src/ui/widgets/custom_form_field.dart';
 import 'package:ayikie_main/src/ui/widgets/primary_button.dart';
+import 'package:ayikie_main/src/utils/alerts.dart';
+import 'package:ayikie_main/src/utils/validations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -46,10 +49,10 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20, top: 20),
                   child: Container(
-                    alignment: Alignment.center,
+                      alignment: Alignment.center,
                       child: _isPhoneNoWidget
                           ? Text(
-                              'Forget My Password',
+                              'Forgot My Password',
                               style: TextStyle(
                                   fontSize: 26, fontWeight: FontWeight.w900),
                               textAlign: TextAlign.start,
@@ -140,7 +143,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                                 children: [
                                   Container(
                                     child: PinCodeTextField(
-                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       appContext: context,
                                       length: 6,
                                       cursorHeight: 15,
@@ -154,7 +158,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                                         shape: PinCodeFieldShape.box,
                                         borderWidth: 0,
                                         borderRadius: BorderRadius.circular(8),
-                                        fieldOuterPadding: EdgeInsets.only(right: 8),
+                                        fieldOuterPadding:
+                                            EdgeInsets.only(right: 8),
                                         fieldHeight: 40,
                                         fieldWidth: 40,
                                         selectedColor: AppColors.transparent,
@@ -231,30 +236,20 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                 SizedBox(height: 40),
                 _isPhoneNoWidget
                     ? Column(
-                      children: [
-                        PrimaryButton(
-                          
+                        children: [
+                          PrimaryButton(
                             text: 'Send',
-                            clickCallback: () {
-                              setState(() {
-                                _isOtpWidget = true;
-                                _isPhoneNoWidget = false;
-                              });
-                            }),
-                            SizedBox(height: 40)
-                      ],
-                    )
+                            clickCallback: _phoneNoVerification,
+                          ),
+                          SizedBox(height: 40)
+                        ],
+                      )
                     : _isOtpWidget
                         ? Column(
                             children: [
                               PrimaryButton(
                                   text: 'Verify',
-                                  clickCallback: () {
-                                    setState(() {
-                                      _isPasswordWidget = true;
-                                      _isOtpWidget = false;
-                                    });
-                                  }),
+                                  clickCallback: _otpVerification),
                               Padding(
                                 padding:
                                     const EdgeInsets.only(bottom: 20, top: 20),
@@ -264,9 +259,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                                     Container(
                                       alignment: Alignment.centerRight,
                                       child: InkWell(
-                                        onTap: () {
-                                          print('resend');
-                                        },
+                                        onTap: _phoneNoVerification,
                                         child: Text(
                                           'Resend',
                                           style: TextStyle(
@@ -283,20 +276,91 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                             ],
                           )
                         : Column(
-                          children: [
-                            PrimaryButton(
+                            children: [
+                              PrimaryButton(
                                 text: 'Confirm',
-                                clickCallback: () {
-                                  Navigator.pushNamedAndRemoveUntil(
-            context, '/LoginScreen', (route) => false);
-                                 
-                                }),
-                                SizedBox(height: 40),
-                          ],
-                        ),
+                                clickCallback: _passwordVerification,
+                              ),
+                              SizedBox(height: 40),
+                            ],
+                          ),
               ],
             ),
           ),
         ));
+  }
+
+  void _phoneNoVerification() {
+    String phone = _phoneNoController.text.trim();
+
+    if (!Validations.validateMobileNumber(phone)) {
+      Alerts.showMessage(context, "Invalid mobile number");
+      return;
+    }
+
+    ApiCalls.forgotPassphoneNoVerify(phone: phone).then((response) async {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        print("Here" + response.jsonBody.toString());
+        setState(() {
+          _isOtpWidget = true;
+          _isPhoneNoWidget = false;
+        });
+      } else {
+        Alerts.showMessageForResponse(context, response);
+      }
+    });
+  }
+
+  void _otpVerification() {
+    ApiCalls.forgotPassOtpVerify(
+            phone: _phoneNoController.text.trim(), code: _otp)
+        .then((response) async {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        setState(() {
+          _isPasswordWidget = true;
+          _isOtpWidget = false;
+        });
+      } else {
+        Alerts.showMessageForResponse(context, response);
+      }
+    });
+  }
+
+  void _passwordVerification() {
+    String password = _newPasswordController.text.trim();
+    String confirmPassword = _confirmPasswordController.text.trim();
+
+    if (!Validations.validateString(password)) {
+      Alerts.showMessage(context, "Invalid password number");
+      return;
+    }
+
+    if (password != confirmPassword) {
+      Alerts.showMessage(context, "Passwords doesn't match");
+      return;
+    }
+
+    ApiCalls.forgotPassword(
+            password: password,
+            passwordConfirmation: confirmPassword,
+            phone: _phoneNoController.text.trim(),
+            code: _otp)
+        .then((response) async {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/LoginScreen', (route) => false);
+      } else {
+        Alerts.showMessageForResponse(context, response);
+      }
+    });
   }
 }

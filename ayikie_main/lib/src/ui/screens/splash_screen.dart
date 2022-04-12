@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void refreshToken() async {
     final response = await ApiCalls.refreshToken();
     if (response.isSuccess) {
-      await Settings.setAccessToken(response.jsonBody);
+      await Settings.setAccessToken(response.jsonBody['token']);
       Navigator.pushNamedAndRemoveUntil(
           context, '/UserScreen', (route) => false);
     } else {
