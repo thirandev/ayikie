@@ -3,7 +3,10 @@ import 'dart:convert';
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/models/banner.dart';
+import 'package:ayikie_users/src/ui/screens/categories_screen/categories_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
+import 'package:ayikie_users/src/ui/screens/popular_screen/popular_screen.dart';
+import 'package:ayikie_users/src/ui/screens/recommanded_for_you/recommanded_screen.dart';
 import 'package:ayikie_users/src/ui/widget/progress_view.dart';
 import 'package:ayikie_users/src/utils/alerts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -21,7 +24,7 @@ class UserHomeScreen extends StatefulWidget {
 class _UserHomeScreenState extends State<UserHomeScreen> {
   bool _isLoading = true;
 
-  List<Banners> bannerList  = [];
+  List<Banners> bannerList = [];
 
   @override
   void initState() {
@@ -37,8 +40,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       }
       if (response.isSuccess) {
         print(response.jsonBody[0]);
-        var imageList =response.jsonBody;
-        for(var img in imageList) {
+        var imageList = response.jsonBody;
+        for (var img in imageList) {
           Banners banner = Banners.fromJson(img);
           bannerList.add(banner);
         }
@@ -142,17 +145,19 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     child: CachedNetworkImage(
                                       imageBuilder: (context, imageProvider) =>
                                           Container(
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.rectangle,
-                                              image: DecorationImage(
-                                                  image: imageProvider,
-                                                  fit: BoxFit.cover,
-                                                  alignment:
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.rectangle,
+                                          image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                              alignment:
                                                   AlignmentDirectional.center),
-                                            ),
-                                          ),
-                                      imageUrl: bannerList[index].getBannerUrl(),
-                                      errorWidget: (context, url, error) => Image.asset(
+                                        ),
+                                      ),
+                                      imageUrl:
+                                          bannerList[index].getBannerUrl(),
+                                      errorWidget: (context, url, error) =>
+                                          Image.asset(
                                         'asserts/images/ayikie_logo.png',
                                         fit: BoxFit.fitHeight,
                                       ),
@@ -166,7 +171,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             margin: const EdgeInsets.only(top: 8),
                             child: SmoothPageIndicator(
                               controller: controller,
-                              count:  bannerList.length,
+                              count: bannerList.length,
                               effect: const WormEffect(
                                 dotWidth: 5,
                                 dotHeight: 5,
@@ -186,11 +191,21 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     fontSize: 26, fontWeight: FontWeight.w900),
                               ),
                               Spacer(),
-                              Text(
-                                'See all',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.primaryButtonColor),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) {
+                                      return CategoriesScreen();
+                                    }),
+                                  );
+                                },
+                                child: Text(
+                                  'See all',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.primaryButtonColor),
+                                ),
                               ),
                             ],
                           ),
@@ -247,11 +262,21 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     fontSize: 26, fontWeight: FontWeight.w900),
                               ),
                               Spacer(),
-                              Text(
-                                'See all',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.primaryButtonColor),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) {
+                                      return RecommandedScreen();
+                                    }),
+                                  );
+                                },
+                                child: Text(
+                                  'See all',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.primaryButtonColor),
+                                ),
                               ),
                             ],
                           ),
@@ -335,11 +360,21 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     fontSize: 26, fontWeight: FontWeight.w900),
                               ),
                               Spacer(),
-                              Text(
-                                'See all',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.primaryButtonColor),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) {
+                                      return PopularScreen();
+                                    }),
+                                  );
+                                },
+                                child: Text(
+                                  'See all',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.primaryButtonColor),
+                                ),
                               ),
                             ],
                           ),
