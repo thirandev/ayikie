@@ -18,10 +18,10 @@ class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
-  _NotificationScreenState createState() => _NotificationScreenState();
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _NotificationScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen> {
   TextEditingController _fullNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _addressController = TextEditingController();

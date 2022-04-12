@@ -10,10 +10,10 @@ class MyOrderScreen extends StatefulWidget {
   const MyOrderScreen({Key? key}) : super(key: key);
 
   @override
-  _NotificationScreenState createState() => _NotificationScreenState();
+  _MyOrderScreenState createState() => _MyOrderScreenState();
 }
 
-class _NotificationScreenState extends State<MyOrderScreen> {
+class _MyOrderScreenState extends State<MyOrderScreen> {
   bool _isLoading = true;
 
   @override

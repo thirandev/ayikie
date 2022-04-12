@@ -14,10 +14,10 @@ class SupportScreen extends StatefulWidget {
   const SupportScreen({Key? key}) : super(key: key);
 
   @override
-  _NotificationScreenState createState() => _NotificationScreenState();
+  _SupportScreenState createState() => _SupportScreenState();
 }
 
-class _NotificationScreenState extends State<SupportScreen> {
+class _SupportScreenState extends State<SupportScreen> {
   TextEditingController _fullNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _messageController = TextEditingController();

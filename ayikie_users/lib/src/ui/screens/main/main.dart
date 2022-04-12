@@ -6,7 +6,6 @@ import 'package:ayikie_users/src/ui/screens/notification_screen/notification_scr
 import 'package:ayikie_users/src/ui/screens/profile/profile.dart';
 import 'package:ayikie_users/src/ui/widget/custom_app_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 import '../home/ayikie_users.dart';
 
