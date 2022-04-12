@@ -1,10 +1,11 @@
-import 'dart:convert';
 
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
+import 'package:ayikie_users/src/models/Item.dart';
 import 'package:ayikie_users/src/models/banner.dart';
+import 'package:ayikie_users/src/models/images.dart';
+import 'package:ayikie_users/src/models/service.dart';
 import 'package:ayikie_users/src/ui/screens/categories_screen/categories_screen.dart';
-import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_users/src/ui/screens/popular_screen/popular_screen.dart';
 import 'package:ayikie_users/src/ui/screens/recommanded_for_you/recommanded_screen.dart';
 import 'package:ayikie_users/src/ui/widget/progress_view.dart';
@@ -12,9 +13,7 @@ import 'package:ayikie_users/src/utils/alerts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import '../drawer_screen/drawer_screen.dart';
 
 class UserHomeScreen extends StatefulWidget {
   @override
@@ -24,13 +23,15 @@ class UserHomeScreen extends StatefulWidget {
 class _UserHomeScreenState extends State<UserHomeScreen> {
   bool _isLoading = true;
 
-  List<Banners> bannerList = [];
+  List<Images> banners = [];
+  List<Item> categories = [];
+  List<Service> recommandedServices = [];
+  List<Service> popularServices = [];
 
   @override
   void initState() {
     super.initState();
     _getBanners();
-    _getCategories();
   }
 
   void _getBanners() async {
@@ -39,19 +40,16 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
         return;
       }
       if (response.isSuccess) {
-        print(response.jsonBody[0]);
         var imageList = response.jsonBody;
         for (var img in imageList) {
-          Banners banner = Banners.fromJson(img);
-          bannerList.add(banner);
+          Images banner = Banners.fromJson(img);
+          banners.add(banner);
         }
       } else {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
             title: "Oops!");
       }
-      setState(() {
-        _isLoading = false;
-      });
+      _getCategories();
     });
   }
 
@@ -62,6 +60,51 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       }
       if (response.isSuccess) {
         print(response.jsonBody);
+        var data = response.jsonBody;
+        for (var item in data) {
+          Item category = Item.fromJson(item);
+          categories.add(category);
+        }
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      _getRecommandations();
+    });
+  }
+
+  void _getRecommandations() async {
+    await ApiCalls.getRecommendedServices().then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        print(response.jsonBody);
+        var data = response.jsonBody;
+        for (var item in data) {
+          Service recommand = Service.fromJson(item);
+          recommandedServices.add(recommand);
+        }
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      _getPopularItems();
+    });
+  }
+
+  void _getPopularItems() async {
+    await ApiCalls.getPopularServices().then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        print(response.jsonBody);
+        var data = response.jsonBody;
+        for (var item in data) {
+          Service popular = Service.fromJson(item);
+          popularServices.add(popular);
+        }
       } else {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
             title: "Oops!");
@@ -138,7 +181,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                               height: 175,
                               child: PageView.builder(
                                 controller: controller,
-                                itemCount: bannerList.length,
+                                itemCount: banners.length,
                                 itemBuilder: (context, index) {
                                   return ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
@@ -154,8 +197,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                                   AlignmentDirectional.center),
                                         ),
                                       ),
-                                      imageUrl:
-                                          bannerList[index].getBannerUrl(),
+                                      imageUrl: banners[index].getBannerUrl(),
                                       errorWidget: (context, url, error) =>
                                           Image.asset(
                                         'asserts/images/ayikie_logo.png',
@@ -171,7 +213,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             margin: const EdgeInsets.only(top: 8),
                             child: SmoothPageIndicator(
                               controller: controller,
-                              count: bannerList.length,
+                              count: banners.length,
                               effect: const WormEffect(
                                 dotWidth: 5,
                                 dotHeight: 5,
@@ -217,7 +259,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             child: ListView.builder(
                               shrinkWrap: true,
                               scrollDirection: Axis.horizontal,
-                              itemCount: 15,
+                              itemCount: categories.length > 10
+                                  ? 10
+                                  : categories.length,
                               itemBuilder: (BuildContext context, int index) =>
                                   Column(
                                 children: [
@@ -231,18 +275,32 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                         borderRadius:
                                             BorderRadius.circular(100),
                                       ),
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        child: SvgPicture.asset(
-                                          'asserts/images/categories.svg',
-                                          fit: BoxFit.cover,
+                                      child: CachedNetworkImage(
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                                Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.scaleDown,
+                                                alignment: AlignmentDirectional
+                                                    .center),
+                                          ),
+                                        ),
+                                        imageUrl: categories[index]
+                                            .image!
+                                            .getBannerUrl(),
+                                        errorWidget: (context, url, error) =>
+                                            Image.asset(
+                                          'asserts/images/ayikie_logo.png',
+                                          fit: BoxFit.fitHeight,
                                         ),
                                       ),
                                     ),
                                   ),
                                   Text(
-                                    'Life Style',
+                                    categories[index].name,
                                     style: TextStyle(
                                         fontSize: 12,
                                         color: AppColors.primaryButtonColor),
@@ -288,7 +346,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             child: ListView.builder(
                               shrinkWrap: true,
                               scrollDirection: Axis.horizontal,
-                              itemCount: 15,
+                              itemCount: recommandedServices.length > 10
+                                  ? 10
+                                  : recommandedServices.length,
                               itemBuilder: (BuildContext context, int index) =>
                                   Column(
                                 children: [
@@ -301,16 +361,35 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                       height: 200,
                                       width: 150,
                                       decoration: BoxDecoration(
-                                        color: AppColors.primaryButtonColor,
+                                        color: AppColors.white,
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(8),
                                             topRight: Radius.circular(8)),
-                                        child: Image.asset(
-                                          'asserts/images/chair.jpg',
-                                          fit: BoxFit.cover,
+                                        child: CachedNetworkImage(
+                                          imageBuilder:
+                                              (context, imageProvider) =>
+                                                  Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.rectangle,
+                                              image: DecorationImage(
+                                                  image: imageProvider,
+                                                  fit: BoxFit.scaleDown,
+                                                  alignment:
+                                                      AlignmentDirectional
+                                                          .center),
+                                            ),
+                                          ),
+                                          imageUrl: recommandedServices[index]
+                                              .image!
+                                              .getBannerUrl(),
+                                          errorWidget: (context, url, error) =>
+                                              Image.asset(
+                                            'asserts/images/ayikie_logo.png',
+                                            fit: BoxFit.fitHeight,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -332,15 +411,15 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'Classic Chair',
+                                            recommandedServices[index].name,
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w900),
                                           ),
                                           Text(
-                                              'Best Production on sale in sri lanka',
+                                              recommandedServices[index].introduction,
                                               style: TextStyle(fontSize: 12)),
                                           Text(
-                                            '\$25.99',
+                                            '\$${recommandedServices[index].price}',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w900),
                                           ),
@@ -386,7 +465,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             child: ListView.builder(
                                 shrinkWrap: true,
                                 scrollDirection: Axis.vertical,
-                                itemCount: 15,
+                                itemCount: popularServices.length > 10
+                                    ? 10
+                                    : popularServices.length,
                                 itemBuilder: (BuildContext context,
                                         int index) =>
                                     Padding(
@@ -417,10 +498,30 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                                         Radius.circular(8),
                                                     topLeft: Radius.circular(8),
                                                   ),
-                                                  child: Image.asset(
-                                                    'asserts/images/chair.jpg',
-                                                    fit: BoxFit.cover,
-                                                  )),
+                                                  child: CachedNetworkImage(
+                                                    imageBuilder:
+                                                        (context, imageProvider) =>
+                                                        Container(
+                                                          decoration: BoxDecoration(
+                                                            shape: BoxShape.rectangle,
+                                                            image: DecorationImage(
+                                                                image: imageProvider,
+                                                                fit: BoxFit.scaleDown,
+                                                                alignment:
+                                                                AlignmentDirectional
+                                                                    .center),
+                                                          ),
+                                                        ),
+                                                    imageUrl: popularServices[index]
+                                                        .image!
+                                                        .getBannerUrl(),
+                                                    errorWidget: (context, url, error) =>
+                                                        Image.asset(
+                                                          'asserts/images/ayikie_logo.png',
+                                                          fit: BoxFit.fitHeight,
+                                                        ),
+                                                  ),
+                                              ),
                                             ),
                                             Padding(
                                               padding:
@@ -440,15 +541,15 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                                           .spaceEvenly,
                                                   children: [
                                                     Text(
-                                                      'Best pumbler in Sri lanka ',
+                                                      popularServices[index].name,
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.w900),
                                                     ),
                                                     Text(
-                                                        'I offer best prise plan and the highly productive service for your side'),
+                                                        popularServices[index].introduction),
                                                     Text(
-                                                      '\$10.00 / hr',
+                                                      '\$${popularServices[index].price}',
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.w900),

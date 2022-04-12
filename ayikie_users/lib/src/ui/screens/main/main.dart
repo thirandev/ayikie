@@ -2,7 +2,6 @@ import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/ui/screens/cart/cart_screen.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/my_order/my_order_screen.dart';
-import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_users/src/ui/screens/profile/profile.dart';
 import 'package:ayikie_users/src/ui/widget/custom_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -29,10 +28,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    // _buildScreens.add(UserHomeScreen());
-    // _buildScreens.add(MyOrderScreen());
-    // _buildScreens.add(CartScreen());
-    // _buildScreens.add(ProfileScreen());
   }
 
   void onTap(int index){

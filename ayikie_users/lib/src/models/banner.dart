@@ -1,20 +1,15 @@
-import 'package:ayikie_users/src/utils/common.dart';
+import 'package:ayikie_users/src/models/images.dart';
 
-class Banners{
-  int id;
+class Banners extends Images{
   int status;
-  String bannerName;
 
   Banners({
-    required this.id,
+    required int id,
     required this.status,
-    required this.bannerName,
-  });
+    required String bannerName,
+  }) : super(id: id,imageName: bannerName);
 
-  getBannerUrl(){
-    return Common.getImage(imageName: bannerName);
-  }
-
+  @override
   factory Banners.fromJson(Map<String, dynamic> json) {
     return Banners(
       id: json['id'],
