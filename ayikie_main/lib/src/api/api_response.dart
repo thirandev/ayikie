@@ -88,9 +88,13 @@ class ApiResponse {
          try {
             var jsonData = json.decode(response!.body) as Map<String, dynamic>;
             if (jsonData.runtimeType.toString() == "List<dynamic>" ||
-                jsonData.runtimeType.toString() == "_GrowableList<dynamic>") {
+                jsonData.runtimeType.toString() == "_GrowableList<dynamic>"
+            ) {
               return jsonData;
             } else {
+              if(jsonData.runtimeType.toString() == "_InternalLinkedHashMap<String, dynamic>"){
+                return jsonData["data"];
+              }
               return jsonData.cast<String, dynamic>();
             }
           }on FormatException catch (e) {

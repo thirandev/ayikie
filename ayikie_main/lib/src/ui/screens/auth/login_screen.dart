@@ -338,10 +338,10 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) {
         return;
       }
-
+      // print('kkff'+response.jsonBody);
       if (response.isSuccess) {
-        print("Here"+response.jsonBody);
-       await Settings.setAccessToken(response.jsonBody);
+        var token = response.jsonBody['token'];
+        await Settings.setAccessToken(token);
         Navigator.pushNamedAndRemoveUntil(
             context, '/UserScreen', (route) => false);
       } else {
