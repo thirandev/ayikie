@@ -9,13 +9,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SubProductScreen extends StatefulWidget {
-  const SubProductScreen({Key? key}) : super(key: key);
+  final int categoryId;
+  const SubProductScreen({Key? key, required this.categoryId}) : super(key: key);
 
   @override
   _SubProductScreenState createState() => _SubProductScreenState();
 }
 
 class _SubProductScreenState extends State<SubProductScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    print("Owner"+widget.categoryId.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

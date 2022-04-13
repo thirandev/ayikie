@@ -1,4 +1,3 @@
-
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/models/Item.dart';
@@ -416,7 +415,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                                 fontWeight: FontWeight.w900),
                                           ),
                                           Text(
-                                              recommandedServices[index].introduction,
+                                              recommandedServices[index]
+                                                  .introduction,
                                               style: TextStyle(fontSize: 12)),
                                           Text(
                                             '\$${recommandedServices[index].price}',
@@ -492,35 +492,36 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                                       40) /
                                                   3,
                                               child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    bottomLeft:
-                                                        Radius.circular(8),
-                                                    topLeft: Radius.circular(8),
+                                                borderRadius: BorderRadius.only(
+                                                  bottomLeft:
+                                                      Radius.circular(8),
+                                                  topLeft: Radius.circular(8),
+                                                ),
+                                                child: CachedNetworkImage(
+                                                  imageBuilder: (context,
+                                                          imageProvider) =>
+                                                      Container(
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.rectangle,
+                                                      image: DecorationImage(
+                                                          image: imageProvider,
+                                                          fit: BoxFit.scaleDown,
+                                                          alignment:
+                                                              AlignmentDirectional
+                                                                  .center),
+                                                    ),
                                                   ),
-                                                  child: CachedNetworkImage(
-                                                    imageBuilder:
-                                                        (context, imageProvider) =>
-                                                        Container(
-                                                          decoration: BoxDecoration(
-                                                            shape: BoxShape.rectangle,
-                                                            image: DecorationImage(
-                                                                image: imageProvider,
-                                                                fit: BoxFit.scaleDown,
-                                                                alignment:
-                                                                AlignmentDirectional
-                                                                    .center),
-                                                          ),
-                                                        ),
-                                                    imageUrl: popularServices[index]
-                                                        .image!
-                                                        .getBannerUrl(),
-                                                    errorWidget: (context, url, error) =>
-                                                        Image.asset(
-                                                          'asserts/images/ayikie_logo.png',
-                                                          fit: BoxFit.fitHeight,
-                                                        ),
+                                                  imageUrl:
+                                                      popularServices[index]
+                                                          .image!
+                                                          .getBannerUrl(),
+                                                  errorWidget:
+                                                      (context, url, error) =>
+                                                          Image.asset(
+                                                    'asserts/images/ayikie_logo.png',
+                                                    fit: BoxFit.fitHeight,
                                                   ),
+                                                ),
                                               ),
                                             ),
                                             Padding(
@@ -541,13 +542,14 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                                           .spaceEvenly,
                                                   children: [
                                                     Text(
-                                                      popularServices[index].name,
+                                                      popularServices[index]
+                                                          .name,
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.w900),
                                                     ),
-                                                    Text(
-                                                        popularServices[index].introduction),
+                                                    Text(popularServices[index]
+                                                        .introduction),
                                                     Text(
                                                       '\$${popularServices[index].price}',
                                                       style: TextStyle(

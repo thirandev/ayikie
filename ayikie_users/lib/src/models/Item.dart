@@ -13,7 +13,7 @@ class Item {
       id: json['id'],
       name: json['name'],
       description: json['description'] == null ? "" : json['description'],
-      image: Images.fromJson(json['images']),
+      image: json['images'] != null ? Images.fromJson(json['images']):Images(id: 1, imageName: "89b1e72d4027670d20c73440d5da3041.jpg"),
     );
   }
 }

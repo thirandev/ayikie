@@ -9,13 +9,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SubSeriveScreen extends StatefulWidget {
-  const SubSeriveScreen({Key? key}) : super(key: key);
+  final int categoryId;
+  const SubSeriveScreen({Key? key, required this.categoryId}) : super(key: key);
 
   @override
   _SubSeriveScreenState createState() => _SubSeriveScreenState();
 }
 
 class _SubSeriveScreenState extends State<SubSeriveScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    print("Power"+widget.categoryId.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
