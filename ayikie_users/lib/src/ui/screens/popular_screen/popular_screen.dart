@@ -1,11 +1,13 @@
+import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
+import 'package:ayikie_users/src/models/product.dart';
+import 'package:ayikie_users/src/models/service.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
-import 'package:ayikie_users/src/ui/screens/sub_categories_screen/sub_product_screen.dart';
-import 'package:ayikie_users/src/ui/screens/sub_categories_screen/sub_service_screen.dart';
-import 'package:ayikie_users/src/ui/widget/primary_button.dart';
+import 'package:ayikie_users/src/ui/widget/progress_view.dart';
+import 'package:ayikie_users/src/utils/alerts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class PopularScreen extends StatefulWidget {
   const PopularScreen({Key? key}) : super(key: key);
@@ -15,6 +17,57 @@ class PopularScreen extends StatefulWidget {
 }
 
 class _PopularScreenState extends State<PopularScreen> {
+  bool _isLoading = true;
+
+  List<Service> popularServices = [];
+  List<Product> popularProducts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _getServices();
+  }
+
+  void _getServices() async {
+    await ApiCalls.getPopularServices().then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        var data = response.jsonBody;
+        for (var item in data) {
+          Service popular = Service.fromJson(item);
+          popularServices.add(popular);
+        }
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      _getProducts();
+    });
+  }
+
+  void _getProducts() async {
+    await ApiCalls.getPopularProducts().then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        var data = response.jsonBody;
+        for (var item in data) {
+          Product popular = Product.fromJson(item);
+          popularProducts.add(popular);
+        }
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -28,7 +81,9 @@ class _PopularScreenState extends State<PopularScreen> {
             elevation: 0,
             title: Text(
               'Popular',
-              style: TextStyle(color: Colors.black, ),
+              style: TextStyle(
+                color: Colors.black,
+              ),
             ),
             leading: Container(
               width: 24,
@@ -103,95 +158,112 @@ class _PopularScreenState extends State<PopularScreen> {
                 ]),
           ),
           endDrawer: DrawerScreen(),
-          body: TabBarView(
-            children: [
-               Padding(
-                 padding: EdgeInsets.only(left: 16, right: 16, top: 20),
-                 child: SizedBox(
+          body: _isLoading
+              ? Center(
+                  child: ProgressView(),
+                )
+              : TabBarView(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 16, right: 16, top: 20),
+                      child: SizedBox(
                         height: 300,
                         child: ListView.builder(
                             shrinkWrap: true,
                             scrollDirection: Axis.vertical,
-                            itemCount: 15,
+                            itemCount: popularServices.length,
                             itemBuilder: (BuildContext context, int index) =>
-                                PopularServiceWidget()),
+                                PopularServiceWidget(
+                                    popularServices: popularServices,
+                                    index: index)),
                       ),
-               ),
-               Padding(
-                 padding: EdgeInsets.only(left: 16, right: 16, top: 20),
-                 child: SizedBox(
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 16, right: 16, top: 20),
+                      child: SizedBox(
                         height: 300,
                         child: ListView.builder(
                             shrinkWrap: true,
                             scrollDirection: Axis.vertical,
-                            itemCount: 15,
+                            itemCount: popularProducts.length,
                             itemBuilder: (BuildContext context, int index) =>
-                                PopularProductWidget()),
+                                PopularProductWidget(
+                                    popularProducts: popularProducts,
+                                    index: index)),
                       ),
-               ),
-            ],
-          ),
+                    ),
+                  ],
+                ),
         ),
       ),
     );
   }
 }
+
 class PopularProductWidget extends StatelessWidget {
-  const PopularProductWidget({
-    Key? key,
-  }) : super(key: key);
+  final List<Product> popularProducts;
+  final int index;
+
+  PopularProductWidget(
+      {Key? key, required this.popularProducts, required this.index})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
-          top: 8.0, bottom: 8.0),
+      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
       child: Container(
         height: 120,
         decoration: BoxDecoration(
             color: AppColors.textFieldBackground,
-            borderRadius: BorderRadius.all(
-                Radius.circular(8))),
+            borderRadius: BorderRadius.all(Radius.circular(8))),
         child: Row(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               height: 120,
-              width: (MediaQuery.of(context).size.width- 40)/3,
+              width: (MediaQuery.of(context).size.width - 40) / 3,
               child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(8),
-                    topLeft: Radius.circular(8),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(8),
+                  topLeft: Radius.circular(8),
+                ),
+                child: CachedNetworkImage(
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.scaleDown,
+                          alignment: AlignmentDirectional.center),
+                    ),
                   ),
-                  child: Image.asset(
-                    'asserts/images/chair.jpg',
-                    fit: BoxFit.cover,
-                  )),
+                  imageUrl: popularProducts[index].image!.getBannerUrl(),
+                  errorWidget: (context, url, error) => Image.asset(
+                    'asserts/images/ayikie_logo.png',
+                    fit: BoxFit.fitHeight,
+                  ),
+                ),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                width: (MediaQuery.of(context).size.width- 56)*1.8/3,
+                width: (MediaQuery.of(context).size.width - 56) * 1.8 / 3,
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                      'Best pumbler in Sri lanka ',
-                      
-                      style: TextStyle(
-                          fontWeight:
-                              FontWeight.w900),
+                      popularProducts[index].name,
+                      style: TextStyle(fontWeight: FontWeight.w900),
                     ),
                     Text(
-                        'I offer best prise plan and the highly productive service for your side'),
+                      popularProducts[index].introduction,
+                    ),
                     Text(
-                      '\$10.00',
-                      style: TextStyle(
-                          fontWeight:
-                              FontWeight.w900),
+                      '\$${popularProducts[index].price}',
+                      style: TextStyle(fontWeight: FontWeight.w900),
                     ),
                   ],
                 ),
@@ -203,65 +275,69 @@ class PopularProductWidget extends StatelessWidget {
     );
   }
 }
-
-
 
 class PopularServiceWidget extends StatelessWidget {
-  const PopularServiceWidget({
-    Key? key,
-  }) : super(key: key);
+  final List<Service> popularServices;
+  final int index;
+
+  PopularServiceWidget(
+      {Key? key, required this.popularServices, required this.index})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
-          top: 8.0, bottom: 8.0),
+      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
       child: Container(
         height: 120,
         decoration: BoxDecoration(
             color: AppColors.textFieldBackground,
-            borderRadius: BorderRadius.all(
-                Radius.circular(8))),
+            borderRadius: BorderRadius.all(Radius.circular(8))),
         child: Row(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               height: 120,
-              width: (MediaQuery.of(context).size.width- 40)/3,
+              width: (MediaQuery.of(context).size.width - 40) / 3,
               child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(8),
-                    topLeft: Radius.circular(8),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(8),
+                  topLeft: Radius.circular(8),
+                ),
+                child: CachedNetworkImage(
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.scaleDown,
+                          alignment: AlignmentDirectional.center),
+                    ),
                   ),
-                  child: Image.asset(
-                    'asserts/images/chair.jpg',
-                    fit: BoxFit.cover,
-                  )),
+                  imageUrl: popularServices[index].image!.getBannerUrl(),
+                  errorWidget: (context, url, error) => Image.asset(
+                    'asserts/images/ayikie_logo.png',
+                    fit: BoxFit.fitHeight,
+                  ),
+                ),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                width: (MediaQuery.of(context).size.width- 56)*1.8/3,
+                width: (MediaQuery.of(context).size.width - 56) * 1.8 / 3,
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                      'Best pumbler in Sri lanka ',
-                      
-                      style: TextStyle(
-                          fontWeight:
-                              FontWeight.w900),
+                      popularServices[index].name,
+                      style: TextStyle(fontWeight: FontWeight.w900),
                     ),
+                    Text(popularServices[index].introduction),
                     Text(
-                        'I offer best prise plan and the highly productive service for your side'),
-                    Text(
-                      '\$10.00 / hr',
-                      style: TextStyle(
-                          fontWeight:
-                              FontWeight.w900),
+                      '\$${popularServices[index].price}',
+                      style: TextStyle(fontWeight: FontWeight.w900),
                     ),
                   ],
                 ),
@@ -273,4 +349,3 @@ class PopularServiceWidget extends StatelessWidget {
     );
   }
 }
-

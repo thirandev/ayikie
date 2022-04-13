@@ -36,7 +36,7 @@ class Product extends Item {
       subCategoryId: json['sub_category_id'],
       location: json['location'] == null ? "" : json['location'],
       price: double.parse(json['price']),
-      stock: json['stock'],
+      stock: json['stock'] == null ?0:json['stock'],
       image: Images.fromJson(json['images']),
     );
   }
