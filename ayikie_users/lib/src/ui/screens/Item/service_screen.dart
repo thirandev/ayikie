@@ -11,7 +11,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ServiceScreen extends StatefulWidget {
-  const ServiceScreen({Key? key}) : super(key: key);
+  final int serviceId;
+  const ServiceScreen({Key? key, required this.serviceId}) : super(key: key);
 
   @override
   _ServiceScreenState createState() => _ServiceScreenState();
@@ -24,9 +25,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
     'asserts/images/caresol.jpg',
     'asserts/images/caresol.jpg'
   ];
-  final controller = PageController(
-    viewportFraction: 1,
-  );
 
   TextEditingController _priceController = TextEditingController();
   TextEditingController _durationController = TextEditingController();
@@ -128,34 +126,15 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   ),
                   child: SizedBox(
                     height: 175,
-                    child: PageView.builder(
-                      controller: controller,
-                      itemCount: images.length,
-                      itemBuilder: (context, index) {
-                        return ClipRRect(
+                    child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: Image.asset(
-                            images[index],
+                            images[1],
                             height: 175,
                             width: double.infinity,
                             fit: BoxFit.cover,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(top: 8),
-                  child: SmoothPageIndicator(
-                    controller: controller,
-                    count: images.length,
-                    effect: const WormEffect(
-                      dotWidth: 5,
-                      dotHeight: 5,
-                      dotColor: AppColors.black,
-                      activeDotColor: AppColors.primaryButtonColor,
-                    ),
+                          )
+                    )
                   ),
                 ),
                 SizedBox(

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:ayikie_main/src/api/api_calls.dart';
 import 'package:ayikie_main/src/utils/settings.dart';
@@ -15,12 +16,29 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    versionVerification();
+  }
+
+  void versionVerification() async{
+    final response = await ApiCalls.getVersion();
+    String versionIdAndroid = "12";
+    String versionIdIos = "11";
+
+    if (response.isSuccess) {
+      bool isVersionCompatible = true;
+      if(Platform.isAndroid){
+        isVersionCompatible = versionIdAndroid.contains(response.jsonBody['android_version']);
+      }else{
+        isVersionCompatible = versionIdIos.contains(response.jsonBody['ios_version']);
+      }
+      print(isVersionCompatible);
+    }
     rememberUser();
   }
 
   void rememberUser() async {
     String? accessToken = await Settings.getAccessToken();
-    Timer(Duration(seconds: 2), () {
+    Timer(Duration(seconds: 2), () async {
       if (accessToken == '' || accessToken == null) {
         Navigator.pushNamed(context, '/LoginScreen');
       } else {

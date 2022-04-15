@@ -119,7 +119,7 @@ class OrderTileWidget extends StatelessWidget {
          Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) {
-                            return ServiceScreen();
+                            return ServiceScreen(serviceId: 1);
                            
                           }),
                         );

@@ -297,8 +297,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         Container(
                           alignment: Alignment.centerRight,
                           child: InkWell(
-                            onTap: () {
-                              print('login as a guest');
+                            onTap: () async {
+                              await Settings.setIsGuest(true);
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context, '/UserScreen', (route) => false);
                             },
                             child: Text(
                               'Guest',
@@ -338,7 +340,6 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) {
         return;
       }
-      // print('kkff'+response.jsonBody);
       if (response.isSuccess) {
         var token = response.jsonBody['token'];
         await Settings.setAccessToken(token);

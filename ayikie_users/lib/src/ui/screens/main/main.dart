@@ -4,6 +4,8 @@ import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/my_order/my_order_screen.dart';
 import 'package:ayikie_users/src/ui/screens/profile/profile.dart';
 import 'package:ayikie_users/src/ui/widget/custom_app_bar.dart';
+import 'package:ayikie_users/src/utils/alerts.dart';
+import 'package:ayikie_users/src/utils/settings.dart';
 import 'package:flutter/material.dart';
 
 import '../home/ayikie_users.dart';
@@ -18,6 +20,8 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+  late bool isGuest;
+
   final Map<String,Widget> _buildScreens = <String,Widget>{
     "Home":UserHomeScreen(),
     "My Orders":MyOrderScreen(),
@@ -28,9 +32,18 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+    _checkIsGuest();
+  }
+
+  _checkIsGuest() async {
+    isGuest = await Settings.getIsGuest()??false;
   }
 
   void onTap(int index){
+    if(isGuest){
+      Alerts.showGuestMessage(context);
+      return;
+    }
     setState(() {
       _currentIndex = index;
     });

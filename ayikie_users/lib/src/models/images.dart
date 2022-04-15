@@ -10,7 +10,7 @@ class Images{
   });
 
   getBannerUrl(){
-    return Common.getImage(imageName: imageName);
+    return imageName;
   }
 
   factory Images.fromJson(Map<String, dynamic> json) {
