@@ -1,6 +1,7 @@
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
+import 'package:ayikie_users/src/ui/screens/verification_center_screen/email_verification.dart';
 import 'package:flutter/material.dart';
 
 class VerificationCenter extends StatefulWidget {
@@ -92,7 +93,14 @@ class _NotificationScreenState extends State<VerificationCenter> {
                     ItemRowWidget(
                       name: 'Email Verification',
                       imageUrl: 'asserts/icons/support.png',
-                      onPress: () {},
+                      onPress: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return EmailVerification();
+                          }),
+                        );
+                      },
                     ),
                     Divider(
                       thickness: 1,

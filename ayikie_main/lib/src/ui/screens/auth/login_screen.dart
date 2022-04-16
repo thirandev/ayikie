@@ -319,34 +319,34 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void onLogInPress() {
-    String phone = _phoneNoController.text.trim();
-    String password = _passwordController.text.trim();
-    String deviceName = Platform.isAndroid ? "android" : "ios";
+    // String phone = _phoneNoController.text.trim();
+    // String password = _passwordController.text.trim();
+    // String deviceName = Platform.isAndroid ? "android" : "ios";
 
-    if (!Validations.validateMobileNumber(phone)) {
-      Alerts.showMessage(context, "Invalid mobile number");
-      return;
-    }
+    // if (!Validations.validateMobileNumber(phone)) {
+    //   Alerts.showMessage(context, "Invalid mobile number");
+    //   return;
+    // }
 
-    if (!Validations.validateString(password)) {
-      Alerts.showMessage(context, "Invalid password number");
-      return;
-    }
+    // if (!Validations.validateString(password)) {
+    //   Alerts.showMessage(context, "Invalid password number");
+    //   return;
+    // }
 
-    ApiCalls.login(phone: phone, password: password, deviceName: deviceName)
-        .then((response) async {
-      if (!mounted) {
-        return;
-      }
-      // print('kkff'+response.jsonBody);
-      if (response.isSuccess) {
-        var token = response.jsonBody['token'];
-        await Settings.setAccessToken(token);
+    // ApiCalls.login(phone: phone, password: password, deviceName: deviceName)
+    //     .then((response) async {
+    //   if (!mounted) {
+    //     return;
+    //   }
+    //   // print('kkff'+response.jsonBody);
+    //   if (response.isSuccess) {
+    //     var token = response.jsonBody['token'];
+    //     await Settings.setAccessToken(token);
         Navigator.pushNamedAndRemoveUntil(
             context, '/UserScreen', (route) => false);
-      } else {
-        Alerts.showMessageForResponse(context, response);
-      }
-    });
+  //     } else {
+  //       Alerts.showMessageForResponse(context, response);
+  //     }
+  //   });
   }
 }

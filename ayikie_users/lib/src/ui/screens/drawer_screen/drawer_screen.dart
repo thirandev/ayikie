@@ -87,6 +87,18 @@ class _DrawerScreenState extends State<DrawerScreen> {
             },
           ),
           DrawerWidget(
+            title: 'Chat',
+            imagePath: 'asserts/icons/chat.png',
+            onPress: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) {
+              //     return InviteFriendsScreen();
+              //   }),
+              // );
+            },
+          ),
+          DrawerWidget(
             title: 'Support',
             imagePath: 'asserts/icons/support.png',
             onPress: () {

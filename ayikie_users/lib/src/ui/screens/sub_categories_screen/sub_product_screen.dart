@@ -18,99 +18,99 @@ class SubProductScreen extends StatefulWidget {
 class _SubProductScreenState extends State<SubProductScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: AppColors.black),
+    return SafeArea(
+      child: Scaffold(
         backgroundColor: AppColors.white,
-        elevation: 0,
-        title: Text(
-          'Sub Products',
-          style: TextStyle(color: Colors.black),
-        ),
-        leading: Container(
-          width: 24,
-          height: 24,
-          child: new IconButton(
-            icon: new Icon(
-              Icons.arrow_back_ios,
-              color: AppColors.black,
-            ),
-            onPressed: () => Navigator.of(context).pop(),
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: AppColors.black),
+          backgroundColor: AppColors.white,
+          elevation: 0,
+          title: Text(
+            'Sub Products',
+            style: TextStyle(color: Colors.black),
           ),
-        ),
-        actions: [
-          Builder(
-            builder: (context) => GestureDetector(
-              onTap: () => Scaffold.of(context).openEndDrawer(),
-              child: Padding(
-                padding: const EdgeInsets.only(right: 16),
-                child: Row(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return NotificationScreen();
-                          }),
-                        );
-                      },
-                      child: Container(
+          leading: Container(
+            width: 24,
+            height: 24,
+            child: new IconButton(
+              icon: new Icon(
+                Icons.arrow_back_ios,
+                color: AppColors.black,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+          actions: [
+            Builder(
+              builder: (context) => GestureDetector(
+                onTap: () => Scaffold.of(context).openEndDrawer(),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 16),
+                  child: Row(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) {
+                              return NotificationScreen();
+                            }),
+                          );
+                        },
+                        child: Container(
+                          width: 26,
+                          height: 26,
+                          child: new Icon(
+                            Icons.notifications_none,
+                            color: AppColors.black,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Container(
                         width: 26,
                         height: 26,
-                        child: new Icon(
-                          Icons.notifications_none,
-                          color: AppColors.black,
+                        child: RotationTransition(
+                          turns: AlwaysStoppedAnimation(180 / 360),
+                          child: Image.asset(
+                            'asserts/icons/menu.png',
+                            scale: 10,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Container(
-                      width: 26,
-                      height: 26,
-                      child: RotationTransition(
-                        turns: AlwaysStoppedAnimation(180 / 360),
-                        child: Image.asset(
-                          'asserts/icons/menu.png',
-                          scale: 10,
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
+        endDrawer: DrawerScreen(),
+        body: 
+             SizedBox(
+               height: MediaQuery.of(context).size.height ,
+               child: Container(
+                 padding: EdgeInsets.only(left: 16, right: 16, top: 20),
+                 child: Column(
+                   mainAxisSize: MainAxisSize.max,
+                   children: [
+                      SizedBox(
+                       height: MediaQuery.of(context).size.height - 100,
+                       child: ListView.builder(
+                           shrinkWrap: true,
+                           scrollDirection: Axis.vertical,
+                           itemCount: 15,
+                           itemBuilder: (BuildContext context, int index) =>
+                               SubCategoryWidget()),
+                     ),
+                   ],
+                 ),
+               ),
+             ),
+          
       ),
-      endDrawer: DrawerScreen(),
-      body: 
-           SafeArea(
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height ,
-              child: Container(
-                padding: EdgeInsets.only(left: 16, right: 16, top: 20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                     SizedBox(
-                      height: MediaQuery.of(context).size.height - 100,
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          itemCount: 15,
-                          itemBuilder: (BuildContext context, int index) =>
-                              SubCategoryWidget()),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        
     );
   }
 }
