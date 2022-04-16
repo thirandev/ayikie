@@ -56,7 +56,7 @@ class _NotificationScreenState extends State<PrivacyPoliciesScreen> {
                         width: 26,
                         height: 26,
                         child: new Icon(
-                          Icons.notifications_active_outlined,
+                          Icons.notifications_none,
                           color: AppColors.black,
                         ),
                       ),

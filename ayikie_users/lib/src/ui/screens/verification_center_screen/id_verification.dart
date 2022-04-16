@@ -5,23 +5,20 @@ import 'package:ayikie_users/src/ui/widget/custom_form_field.dart';
 import 'package:ayikie_users/src/ui/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 
-class LinkedinVerification extends StatefulWidget {
-  const LinkedinVerification({Key? key}) : super(key: key);
+class idVerification extends StatefulWidget {
+  const idVerification({Key? key}) : super(key: key);
 
   @override
-  _NotificationScreenState createState() => _NotificationScreenState();
+  _idVerificationState createState() => _idVerificationState();
 }
 
-class _NotificationScreenState extends State<LinkedinVerification> {
-
-  TextEditingController _fbController = TextEditingController();
+class _idVerificationState extends State<idVerification> {
+  TextEditingController _emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-
     bool _enterEmail = true;
     bool _enterOtp = false;
-
 
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -30,7 +27,7 @@ class _NotificationScreenState extends State<LinkedinVerification> {
         backgroundColor: AppColors.white,
         elevation: 0,
         title: Text(
-          'Linkedin Verification',
+          'ID Verification',
           style: TextStyle(color: Colors.black),
         ),
         leading: Container(
@@ -92,41 +89,53 @@ class _NotificationScreenState extends State<LinkedinVerification> {
         ],
       ),
       endDrawer: DrawerScreen(),
-      body:  SafeArea(
-            child: SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.only(left: 16, right: 16, top: 10),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Container(
-                      padding:
-                          const EdgeInsets.only(top: 20, bottom: 10, left: 5),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Enter your Facebook profile link bellow',
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                    CustomFormField(
-                      
-                      controller: _fbController,
-                      hintText: 'Enter your facebook link',
-                      inputType: TextInputType.emailAddress,
-                    ),
-                    SizedBox(height: 30,),
-                     PrimaryButton(
-                        text: 'SUBMIT',
-                        fontSize: 16,
-                        clickCallback: (){}),
-                  ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.only(left: 16, right: 16, top: 10),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(top: 20, bottom: 10, left: 5),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Upload ID verification document',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                  ),
                 ),
-              ),
-              
+                
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: AppColors.textFieldBackground,
+                  ),
+                  width: double.infinity,
+                  height: 75,
+                  child: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.camera_alt_outlined),
+                        Text('Photos'),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                PrimaryButton(
+                    text: 'SUBMIT', fontSize: 16, clickCallback: () {}),
+              ],
             ),
           ),
-        
+        ),
+      ),
     );
   }
 }

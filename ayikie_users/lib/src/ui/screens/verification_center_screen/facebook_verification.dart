@@ -5,14 +5,14 @@ import 'package:ayikie_users/src/ui/widget/custom_form_field.dart';
 import 'package:ayikie_users/src/ui/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 
-class EmailVerification extends StatefulWidget {
-  const EmailVerification({Key? key}) : super(key: key);
+class FbVerification extends StatefulWidget {
+  const FbVerification({Key? key}) : super(key: key);
 
   @override
-  _EmailVerificationState createState() => _EmailVerificationState();
+  _FbVerificationState createState() => _FbVerificationState();
 }
 
-class _EmailVerificationState extends State<EmailVerification> {
+class _FbVerificationState extends State<FbVerification> {
 
   TextEditingController _fbController = TextEditingController();
 
@@ -30,7 +30,7 @@ class _EmailVerificationState extends State<EmailVerification> {
         backgroundColor: AppColors.white,
         elevation: 0,
         title: Text(
-          'Facebook Verification',
+          'FB Verification',
           style: TextStyle(color: Colors.black),
         ),
         leading: Container(
