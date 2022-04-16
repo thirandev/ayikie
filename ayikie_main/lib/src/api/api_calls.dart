@@ -13,6 +13,18 @@ class ApiCalls {
     return headers;
   }
 
+  static Future<ApiResponse> getVersion() async {
+    try {
+      return ApiCaller.getRequest(
+          baseUrl + '/api/version',getCommonHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
   static Map<String, String> _getEmptyHeaders() {
     Map<String, String> headers = new Map();
     return headers;

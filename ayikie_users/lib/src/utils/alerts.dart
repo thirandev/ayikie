@@ -1,4 +1,6 @@
 import 'package:ayikie_users/src/api/api_response.dart';
+import 'package:ayikie_users/src/ui/widget/primary_button.dart';
+import 'package:ayikie_users/src/utils/settings.dart';
 import 'package:flutter/material.dart';
 
 import '../app_colors.dart';
@@ -104,4 +106,92 @@ class Alerts {
           );
         });
   }
+
+  static void showGuestMessage(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(8),
+                  topRight: Radius.circular(8),
+                  topLeft: Radius.circular(8),
+                  bottomRight: Radius.circular(8)),
+            ),
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Wrap(
+                  children: <Widget>[
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.person_rounded,
+                                  color: Colors.blueAccent,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 5,),
+                                Text(
+                                  "Guest Alert!",
+                                  style: TextStyle(
+                                      color: AppColors.gray,fontWeight: FontWeight.w400, fontSize: 18),
+                                ),
+                              ],
+                            ),
+                            GestureDetector(
+                              onTap: ()=> Navigator.of(context).pop(),
+                              child: Icon(
+                                Icons.close_outlined,
+                                color: AppColors.gray,
+                                size: 20,
+                              ),
+                            )
+
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          "Would you like to explore more...",
+                          style: TextStyle(
+                            color: AppColors.gray,
+                            fontSize: 14,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 24,
+                        ),
+                        SizedBox(
+                          height: 40.0,
+                          child: PrimaryButton(
+                            clickCallback: () async {
+                              await Settings.setIsGuest(false);
+                            Navigator.pushNamed(context, '/LoginScreen');
+                            },
+                            text: "Login"
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
 }

@@ -6,6 +6,17 @@ class Settings {
     await sharedPrefs.clear();
   }
 
+  static setIsGuest(bool isGuest) async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    sharedPrefs.setBool("guest", isGuest);
+  }
+
+  static Future<bool?> getIsGuest() async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    bool? token = sharedPrefs.getBool("guest");
+    return token;
+  }
+
   static setAccessToken(String token) async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     sharedPrefs.setString("access_token", token);
@@ -17,14 +28,14 @@ class Settings {
     return token;
   }
 
-  static setUserRole(String role) async {
+  static setUserRole(int role) async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
-    sharedPrefs.setString("role", role);
+    sharedPrefs.setInt("role", role);
   }
 
-  static Future<String?> getUserRole() async {
+  static Future<int?> getUserRole() async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
-    String? role = sharedPrefs.getString("role");
+    int? role = sharedPrefs.getInt("role");
     return role;
   }
 }

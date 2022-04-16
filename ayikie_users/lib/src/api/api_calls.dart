@@ -35,6 +35,17 @@ class ApiCalls {
     }
   }
 
+  static Future<ApiResponse> userLogOut() async {
+    try {
+      return ApiCaller.getRequestAuth(baseUrl + '/api/user/revoke', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
   static Future<ApiResponse> updateUser(
       {required String username,
       required String phone,

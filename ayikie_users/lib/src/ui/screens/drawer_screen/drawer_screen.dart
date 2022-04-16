@@ -1,9 +1,12 @@
+import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/ui/screens/invite_friends_screen/invite_friends_screen.dart';
 import 'package:ayikie_users/src/ui/screens/post_request_screen/post_request_screen.dart';
 import 'package:ayikie_users/src/ui/screens/privacy_policies_screen/privacy_policies_screen.dart';
 import 'package:ayikie_users/src/ui/screens/settings_screen/settings_screen.dart';
 import 'package:ayikie_users/src/ui/screens/support_screen/support_screen.dart';
 import 'package:ayikie_users/src/ui/screens/verification_center_screen/verification_center_screen.dart';
+import 'package:ayikie_users/src/utils/alerts.dart';
+import 'package:ayikie_users/src/utils/settings.dart';
 import 'package:flutter/material.dart';
 
 class DrawerScreen extends StatefulWidget {
@@ -14,6 +17,19 @@ class DrawerScreen extends StatefulWidget {
 }
 
 class _DrawerScreenState extends State<DrawerScreen> {
+
+  late bool isGuest;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIsGuest();
+  }
+
+  _checkIsGuest() async {
+    isGuest = await Settings.getIsGuest()??false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -42,6 +58,10 @@ class _DrawerScreenState extends State<DrawerScreen> {
             title: 'Verification Center',
             imagePath: 'asserts/icons/verification_center.png',
             onPress: () {
+              if(isGuest){
+                Alerts.showGuestMessage(context);
+                return;
+              }
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
@@ -66,6 +86,10 @@ class _DrawerScreenState extends State<DrawerScreen> {
             title: 'Settings',
             imagePath: 'asserts/icons/settings.png',
             onPress: () {
+              if(isGuest){
+                Alerts.showGuestMessage(context);
+                return;
+              }
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
@@ -78,6 +102,10 @@ class _DrawerScreenState extends State<DrawerScreen> {
             title: 'Post a Request',
             imagePath: 'asserts/icons/post_a_request.png',
             onPress: () {
+              if(isGuest){
+                Alerts.showGuestMessage(context);
+                return;
+              }
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
@@ -125,7 +153,20 @@ class _DrawerScreenState extends State<DrawerScreen> {
           DrawerWidget(
             title: 'Log Out',
             imagePath: 'asserts/icons/logout.png',
-            onPress: () {},
+            onPress: () async {
+              if(isGuest){
+                Alerts.showGuestMessage(context);
+                return;
+              }
+              final response = await ApiCalls.userLogOut();
+              if (response.isSuccess) {
+                await Settings.setAccessToken("");
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/LoginScreen', (route) => false);
+              } else {
+                print('Opps');
+              }
+            },
           ),
         ],
       ),

@@ -246,7 +246,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         return;
       }
       if (response.isSuccess) {
-        print("Here" + response.jsonBody);
         await Settings.setAccessToken(response.jsonBody);
         Navigator.pushNamed(context, '/SendOtpScreen');
       } else {
