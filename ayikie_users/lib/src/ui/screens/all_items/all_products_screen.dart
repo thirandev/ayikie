@@ -3,6 +3,7 @@ import 'package:ayikie_users/src/ui/screens/Item/product_screen.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_users/src/ui/widget/primary_button.dart';
+import 'package:ayikie_users/src/utils/alerts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -47,12 +48,14 @@ class _AllProductcreenState extends State<AllProductcreen> {
                   children: [
                     InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return NotificationScreen();
-                          }),
-                        );
+                        Alerts.showGuestMessage(context);
+                        return;
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) {
+                        //     return NotificationScreen();
+                        //   }),
+                        // );
                       },
                       child: Container(
                         width: 26,
@@ -122,12 +125,14 @@ class SubCategoryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-         Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return ProductScreen();
-                          }),
-                        );
+        Alerts.showGuestMessage(context);
+        return;
+         // Navigator.push(
+         //                  context,
+         //                  MaterialPageRoute(builder: (context) {
+         //                    return ProductScreen();
+         //                  }),
+         //                );
       },
       child: Padding(
         padding: const EdgeInsets.only(

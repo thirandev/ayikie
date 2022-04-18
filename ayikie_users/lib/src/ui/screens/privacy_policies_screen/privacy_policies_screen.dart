@@ -1,6 +1,7 @@
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
+import 'package:ayikie_users/src/utils/alerts.dart';
 
 import 'package:flutter/material.dart';
 
@@ -45,12 +46,14 @@ class _NotificationScreenState extends State<PrivacyPoliciesScreen> {
                   children: [
                     InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return NotificationScreen();
-                          }),
-                        );
+                        Alerts.showGuestMessage(context);
+                        return;
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) {
+                        //     return NotificationScreen();
+                        //   }),
+                        // );
                       },
                       child: Container(
                         width: 26,

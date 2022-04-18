@@ -1,4 +1,5 @@
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
+import 'package:ayikie_users/src/utils/alerts.dart';
 import 'package:flutter/material.dart';
 
 import '../../app_colors.dart';
@@ -37,12 +38,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 children: [
                   InkWell(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return NotificationScreen();
-                        }),
-                      );
+                      Alerts.showGuestMessage(context);
+                      return;
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) {
+                      //     return NotificationScreen();
+                      //   }),
+                      // );
                     },
                     child: Container(
                       width: 26,

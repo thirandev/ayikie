@@ -86,12 +86,14 @@ class _SubSeriveScreenState extends State<SubSeriveScreen> {
                   children: [
                     InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return NotificationScreen();
-                          }),
-                        );
+                        Alerts.showGuestMessage(context);
+                        return;
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) {
+                        //     return NotificationScreen();
+                        //   }),
+                        // );
                       },
                       child: Container(
                         width: 26,

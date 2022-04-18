@@ -22,7 +22,7 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
   @override
   void initState() {
     super.initState();
-    sendOtpRequest();
+    //sendOtpRequest();
   }
 
   void sendOtpRequest() async {
@@ -177,24 +177,24 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
 
   void verifyOtp(){
 
-    if (!Validations.validateOtp(_otp)) {
-      Alerts.showMessage(context, "Please enter a valid OTP");
-      return;
-    }
-
-    ApiCalls.otpVerification(otp: _otp)
-        .then((response) async {
-      if (!mounted) {
-        return;
-      }
-      if (response.isSuccess) {
-        print("Here"+response.jsonBody);
-        //await Settings.setAccessToken(response.jsonBody);
-        //Navigator.pushNamed(context, '/SendOtpScreen');
-      } else {
-        Alerts.showMessageForResponse(context, response);
-      }
-    });
+    // if (!Validations.validateOtp(_otp)) {
+    //   Alerts.showMessage(context, "Please enter a valid OTP");
+    //   return;
+    // }
+    //
+    // ApiCalls.otpVerification(otp: _otp)
+    //     .then((response) async {
+    //   if (!mounted) {
+    //     return;
+    //   }
+    //   if (response.isSuccess) {
+    //     print("Here"+response.jsonBody);
+    //     //await Settings.setAccessToken(response.jsonBody);
+    //     //Navigator.pushNamed(context, '/SendOtpScreen');
+    //   } else {
+    //     Alerts.showMessageForResponse(context, response);
+    //   }
+    // });
   }
 
 }

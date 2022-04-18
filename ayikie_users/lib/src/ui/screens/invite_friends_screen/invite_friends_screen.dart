@@ -2,6 +2,7 @@ import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_users/src/ui/widget/primary_button.dart';
+import 'package:ayikie_users/src/utils/alerts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -47,12 +48,14 @@ class _InviteFriendsScreenState extends State<InviteFriendsScreen> {
                     children: [
                       InkWell(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) {
-                              return NotificationScreen();
-                            }),
-                          );
+                          Alerts.showGuestMessage(context);
+                          return;
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(builder: (context) {
+                          //     return NotificationScreen();
+                          //   }),
+                          // );
                         },
                         child: Container(
                           width: 26,
@@ -122,7 +125,7 @@ class _InviteFriendsScreenState extends State<InviteFriendsScreen> {
                      text: 'Invite Now',
                      fontSize: 12,
                      clickCallback: () {
-                       Navigator.pushNamed(context, '/SendOtpScreen');
+                       // Navigator.pushNamed(context, '/SendOtpScreen');
                      }),
                      
                      SizedBox(height: 40,),

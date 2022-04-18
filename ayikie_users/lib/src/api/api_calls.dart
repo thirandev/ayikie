@@ -296,22 +296,40 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> updateUserProfile(File _profilePicture) async {
+  // static Future<ApiResponse> updateUserProfile(File _profilePicture) async {
+  //   try {
+  //     List<MultipartFile> files = [];
+  //     if (_profilePicture != null && _profilePicture.existsSync()) {
+  //       final length = await _profilePicture.length();
+  //       MediaType mediaType = new MediaType('images', 'jpeg');
+  //       var filePart = MultipartFile(
+  //           'files.profilePicture', _profilePicture.openRead(), length,
+  //           contentType: mediaType, filename: "profile_picture.jpg");
+  //       files.add(filePart);
+  //     }
+  //     Map<String, String> fields = new Map();
+  //     fields["data"] = "{}";
+  //     return ApiCaller.multiPartRequestAuth(
+  //         baseUrl + '/api/user/profile/picture/update', _getEmptyHeaders(),
+  //         fields: fields, files: files);
+  //   } catch (e) {
+  //     ApiResponse response = ApiResponse();
+  //     response.isSuccess = false;
+  //     response.statusMessage = e.toString();
+  //     return response;
+  //   }
+  // }
+
+  static Future<ApiResponse> updateUserProfile(
+      File _profilePicture
+     ) async {
     try {
-      List<MultipartFile> files = [];
-      if (_profilePicture != null && _profilePicture.existsSync()) {
-        final length = await _profilePicture.length();
-        MediaType mediaType = new MediaType('images', 'jpeg');
-        var filePart = MultipartFile(
-            'files.profilePicture', _profilePicture.openRead(), length,
-            contentType: mediaType, filename: "profile_picture.jpg");
-        files.add(filePart);
-      }
-      Map<String, String> fields = new Map();
-      fields["data"] = "{}";
+      List<MultipartFile> image = [];
+      var multipartFile = await MultipartFile.fromPath('images', _profilePicture.path);
+      image.add(multipartFile);
       return ApiCaller.multiPartRequestAuth(
-          baseUrl + '/api/user/profile/picture/update', _getEmptyHeaders(),
-          fields: fields, files: files);
+          baseUrl + '/api/user/profile/picture/update', await _getEmptyHeaders(),
+          requestType: 'POST', files: image);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -319,4 +337,6 @@ class ApiCalls {
       return response;
     }
   }
+
+
 }

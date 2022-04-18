@@ -270,9 +270,10 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                       height: 60,
                                       width: 60,
                                       decoration: BoxDecoration(
-                                        color: AppColors.primaryButtonColor,
+                                        color: Colors.white,
                                         borderRadius:
                                             BorderRadius.circular(100),
+                                          border: Border.all(color: AppColors.primaryButtonColor)
                                       ),
                                       child: CachedNetworkImage(
                                         imageBuilder:

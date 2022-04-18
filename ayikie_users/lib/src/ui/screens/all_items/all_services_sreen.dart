@@ -86,12 +86,14 @@ class _AllServicescreenState extends State<AllServicescreen> {
                   children: [
                     InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return NotificationScreen();
-                          }),
-                        );
+                        Alerts.showGuestMessage(context);
+                        return;
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) {
+                        //     return NotificationScreen();
+                        //   }),
+                        // );
                       },
                       child: Container(
                         width: 26,
@@ -165,12 +167,14 @@ class SubCategoryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) {
-            return ServiceScreen(serviceId: services[index].id);
-          }),
-        );
+        Alerts.showGuestMessage(context);
+        return;
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) {
+        //     return ServiceScreen(serviceId: services[index].id);
+        //   }),
+        // );
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),

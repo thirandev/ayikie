@@ -106,12 +106,14 @@ class _RecommandedScreenState extends State<RecommandedScreen> {
                       children: [
                         InkWell(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) {
-                                return NotificationScreen();
-                              }),
-                            );
+                            Alerts.showGuestMessage(context);
+                            return;
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(builder: (context) {
+                            //     return NotificationScreen();
+                            //   }),
+                            // );
                           },
                           child: Container(
                             width: 26,

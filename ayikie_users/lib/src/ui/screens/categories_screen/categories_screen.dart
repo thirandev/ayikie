@@ -107,12 +107,14 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       children: [
                         InkWell(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) {
-                                return NotificationScreen();
-                              }),
-                            );
+                            Alerts.showGuestMessage(context);
+                            return;
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(builder: (context) {
+                            //     return NotificationScreen();
+                            //   }),
+                            // );
                           },
                           child: Container(
                             width: 26,
@@ -282,7 +284,7 @@ class CategoryService extends StatelessWidget {
             Spacer(),
             Text(
             serviceCategories[index].name,
-              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
             ),
             SizedBox(
               height: 20,
@@ -355,7 +357,7 @@ class CategoryProduct extends StatelessWidget {
             Spacer(),
             Text(
               productCategories[index].name,
-              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
             ),
             SizedBox(
               height: 20,

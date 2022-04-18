@@ -1,6 +1,7 @@
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
+import 'package:ayikie_users/src/ui/screens/main/main.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_users/src/ui/widget/custom_form_field.dart';
 import 'package:ayikie_users/src/ui/widget/primary_button.dart';
@@ -55,12 +56,14 @@ class _SupportScreenState extends State<SupportScreen> {
                   children: [
                     InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return NotificationScreen();
-                          }),
-                        );
+                        Alerts.showGuestMessage(context);
+                        return;
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) {
+                        //     return NotificationScreen();
+                        //   }),
+                        // );
                       },
                       child: Container(
                         width: 26,
@@ -192,7 +195,7 @@ class _SupportScreenState extends State<SupportScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) {
-                      return UserHomeScreen();
+                      return MainScreen(menuScreenContext: context);
                     }),
                   )
                 });

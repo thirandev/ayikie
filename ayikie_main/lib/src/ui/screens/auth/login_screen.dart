@@ -341,10 +341,10 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
       if (response.isSuccess) {
-        var token = response.jsonBody['token'];
-        await Settings.setAccessToken(token);
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/UserScreen', (route) => false);
+        // var token = response.jsonBody['token'];
+        // await Settings.setAccessToken(token);
+        // Navigator.pushNamedAndRemoveUntil(
+        //     context, '/UserScreen', (route) => false);
        } else {
         Alerts.showMessageForResponse(context, response);
       }

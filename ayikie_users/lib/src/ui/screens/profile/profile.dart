@@ -238,24 +238,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
     var responseUpload = await ApiCalls.updateUserProfile(_profilePic);
     if (responseUpload.isSuccess) {
-      // if (responsePatch.isSuccess) {
-      //   _progressDlg.hide();
-      //   if (responseGet.isSuccess) {
-      //     setState(() {});
-      //   } else {
-      //     Alerts.showMessageForResponse(context, responseGet);
-      //   }
-      // } else {
-      //   _progressDlg.hide();
-      //   Alerts.showMessageForResponse(context, responsePatch);
-      // }
       print('Uploaded');
     } else {
-      setState(() {
-        _isLoading = false;
-      });
       Alerts.showMessageForResponse(context, responseUpload);
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
 
