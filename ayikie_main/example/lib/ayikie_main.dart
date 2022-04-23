@@ -1,6 +1,7 @@
 import 'package:ayikie_main/src/ui/screens/onboarding_screen/onboarding_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:ayikie_service/ayikie_service.dart';
+import 'package:ayikie_service/src/ui/screens/main/main.dart';
+
 
 class MyApp extends StatefulWidget {
   @override
@@ -72,12 +73,12 @@ class _SplashScreenState extends State<SplashScreen> {
                       borderRadius: BorderRadius.circular(25),
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return ServiceScreen();
-                        }),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) {
+                      //     return ServicesHomeScreen();
+                      //   }),
+                      // );
                     },
                     padding: EdgeInsets.all(12),
                     color: Colors.cyan,

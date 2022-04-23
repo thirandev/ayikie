@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'src/ui/screens/auth/forget_password.dart';
 import 'src/ui/screens/auth/login_screen.dart';
 import 'src/ui/screens/auth/send_otp_screen.dart';
+import 'package:ayikie_service/src/ui/screens/main/main.dart';
 
 class MyApp extends StatefulWidget {
   @override
@@ -31,6 +32,7 @@ class _MyAppState extends State<MyApp> {
         "/ForgetPasswordScreen": (BuildContext c) => ForgetPasswordScreen(),
         "/SendOtpScreen": (BuildContext c) => SendOtpScreen(),
         "/UserScreen": (BuildContext c) => MainScreen(menuScreenContext: context),
+        "/ServiceScreen": (BuildContext c) => ServiceMainScreen(menuScreenContext: context),
       },
     );
   }
