@@ -66,7 +66,7 @@ class _SupportScreenState extends State<SupportScreen> {
                         width: 26,
                         height: 26,
                         child: new Icon(
-                          Icons.notifications_active_outlined,
+                          Icons.notifications_none,
                           color: AppColors.black,
                         ),
                       ),

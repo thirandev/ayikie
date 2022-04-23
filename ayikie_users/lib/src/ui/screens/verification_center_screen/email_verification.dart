@@ -1,19 +1,28 @@
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
-
+import 'package:ayikie_users/src/ui/widget/custom_form_field.dart';
+import 'package:ayikie_users/src/ui/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 
-class PrivacyPoliciesScreen extends StatefulWidget {
-  const PrivacyPoliciesScreen({Key? key}) : super(key: key);
+class EmailVerification extends StatefulWidget {
+  const EmailVerification({Key? key}) : super(key: key);
 
   @override
-  _NotificationScreenState createState() => _NotificationScreenState();
+  _EmailVerificationState createState() => _EmailVerificationState();
 }
 
-class _NotificationScreenState extends State<PrivacyPoliciesScreen> {
+class _EmailVerificationState extends State<EmailVerification> {
+
+  TextEditingController _emailController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+
+    bool _enterEmail = true;
+    bool _enterOtp = false;
+
+
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
@@ -21,7 +30,7 @@ class _NotificationScreenState extends State<PrivacyPoliciesScreen> {
         backgroundColor: AppColors.white,
         elevation: 0,
         title: Text(
-          'Privacy Policies',
+          'Email Verification',
           style: TextStyle(color: Colors.black),
         ),
         leading: Container(
@@ -61,7 +70,9 @@ class _NotificationScreenState extends State<PrivacyPoliciesScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 10),
+                    SizedBox(
+                      width: 10,
+                    ),
                     Container(
                       width: 26,
                       height: 26,
@@ -87,29 +98,35 @@ class _NotificationScreenState extends State<PrivacyPoliciesScreen> {
                 padding: EdgeInsets.only(left: 16, right: 16, top: 10),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Privacy Policy Document',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 20),
+                    Container(
+                      padding:
+                          const EdgeInsets.only(top: 20, bottom: 10, left: 5),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Enter your email bellow',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
                     ),
-                    SizedBox(
-                      height: 10,
+                    CustomFormField(
+                      
+                      controller: _emailController,
+                      hintText: 'Enter your email',
+                      inputType: TextInputType.emailAddress,
                     ),
-                    Text(
-                      'Contrary to popular bel ief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Contrary to popular bel ief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Contrary to popular bel ief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45',
-                      textAlign: TextAlign.justify,
-                    ),
+                    SizedBox(height: 30,),
+                     PrimaryButton(
+                        text: 'SUBMIT',
+                        fontSize: 16,
+                        clickCallback: (){}),
                   ],
                 ),
               ),
+              
             ),
           ),
-      
+        
     );
   }
 }

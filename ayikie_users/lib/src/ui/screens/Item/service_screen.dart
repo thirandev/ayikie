@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
-import 'package:ayikie_users/src/ui/screens/order_screen/order_landing_screen.dart';
+
 import 'package:ayikie_users/src/ui/widget/custom_form_field.dart';
 import 'package:ayikie_users/src/ui/widget/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -239,12 +239,12 @@ class _ServiceScreenState extends State<ServiceScreen> {
                       height: 30,
                     ),
                     PrimaryButton(text: 'Request Offer', clickCallback: () {
-                      Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) {
-                                return OrderLandingScreen();
-                              }),
-                            );
+                      // Navigator.push(
+                      //         context,
+                      //         MaterialPageRoute(builder: (context) {
+                      //           return OrderLandingScreen();
+                      //         }),
+                      //       );
                     }),
                     SizedBox(
                       height: 10,

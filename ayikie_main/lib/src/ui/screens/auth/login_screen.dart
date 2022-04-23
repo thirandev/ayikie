@@ -344,7 +344,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await Settings.setAccessToken(token);
         Navigator.pushNamedAndRemoveUntil(
             context, '/UserScreen', (route) => false);
-      } else {
+       } else {
         Alerts.showMessageForResponse(context, response);
       }
     });

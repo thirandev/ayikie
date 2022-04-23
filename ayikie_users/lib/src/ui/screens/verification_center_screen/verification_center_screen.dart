@@ -1,6 +1,12 @@
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
+import 'package:ayikie_users/src/ui/screens/verification_center_screen/address_verification.dart';
+import 'package:ayikie_users/src/ui/screens/verification_center_screen/credit_card__verification.dart';
+import 'package:ayikie_users/src/ui/screens/verification_center_screen/email_verification.dart';
+import 'package:ayikie_users/src/ui/screens/verification_center_screen/facebook_verification.dart';
+import 'package:ayikie_users/src/ui/screens/verification_center_screen/id_verification.dart';
+import 'package:ayikie_users/src/ui/screens/verification_center_screen/linkedin_verification.dart';
 import 'package:flutter/material.dart';
 
 class VerificationCenter extends StatefulWidget {
@@ -92,7 +98,14 @@ class _NotificationScreenState extends State<VerificationCenter> {
                     ItemRowWidget(
                       name: 'Email Verification',
                       imageUrl: 'asserts/icons/support.png',
-                      onPress: () {},
+                      onPress: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return EmailVerification();
+                          }),
+                        );
+                      },
                     ),
                     Divider(
                       thickness: 1,
@@ -100,7 +113,15 @@ class _NotificationScreenState extends State<VerificationCenter> {
                     ItemRowWidget(
                       name: 'Facebook Verification',
                       imageUrl: 'asserts/icons/facebook.png',
-                      onPress: () {},
+                      onPress: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return FbVerification();
+                          }),
+                        );
+                        
+                      },
                     ),
                     Divider(
                       thickness: 1,
@@ -108,7 +129,15 @@ class _NotificationScreenState extends State<VerificationCenter> {
                     ItemRowWidget(
                       name: 'LinkedIn Verification',
                       imageUrl: 'asserts/icons/linkedin.png',
-                      onPress: () {},
+                      onPress: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return LinkedinVerification();
+                          }),
+                        );
+                        
+                      },
                     ),
                     Divider(
                       thickness: 1,
@@ -116,7 +145,15 @@ class _NotificationScreenState extends State<VerificationCenter> {
                     ItemRowWidget(
                       name: 'Credit Card Verification',
                       imageUrl: 'asserts/icons/credit_card.png',
-                      onPress: () {},
+                      onPress: () {
+                         Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return CreditCardVerification();
+                          }),
+                        );
+                        
+                      },
                     ),
                     Divider(
                       thickness: 1,
@@ -124,7 +161,15 @@ class _NotificationScreenState extends State<VerificationCenter> {
                     ItemRowWidget(
                       name: 'Address Verification',
                       imageUrl: 'asserts/icons/address.png',
-                      onPress: () {},
+                      onPress: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return AddressVerification();
+                          }),
+                        );
+                        
+                      },
                     ),
                     Divider(
                       thickness: 1,
@@ -132,7 +177,15 @@ class _NotificationScreenState extends State<VerificationCenter> {
                     ItemRowWidget(
                       name: 'ID Verification',
                       imageUrl: 'asserts/icons/id.png',
-                      onPress: () {},
+                      onPress: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return idVerification();
+                          }),
+                        );
+                        
+                      },
                     ),
                     Divider(
                       thickness: 1,
