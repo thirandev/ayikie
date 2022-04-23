@@ -21,6 +21,7 @@ dependencies:
   pin_code_fields: ^7.3.0
   smooth_page_indicator: ^1.0.0+2
   timeline_list: ^0.0.6
+  country_code_picker: ^2.0.2
   
 
 

@@ -22,8 +22,10 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   int _value = 1;
+  bool _isUser = true;
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _phoneNoController = TextEditingController();
+  
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +34,43 @@ class _LoginScreenState extends State<LoginScreen> {
           backgroundColor: AppColors.white,
           body: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20, top: 50),
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
               child: Column(
                 children: [
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Country/Region :',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 14,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        SizedBox(
+                            width: 30,
+                            height: 20,
+                            child: Image.asset(
+                              'asserts/images/flag.png',
+                              fit: BoxFit.contain,
+                            )),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          'Ghana',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                   Container(
                     alignment: Alignment.center,
                     height: 120,
@@ -63,74 +99,184 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        GestureDetector(
-                          onTap: () => setState((){_value = 1;}),
+                      padding: const EdgeInsets.only( bottom: 10),
+                      child: Container(
+                        height: 130,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.grey[300],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 10.0, left: 4,right: 4),
                           child: Column(
                             children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20)),
-                                  color: _value == 1
-                                      ? AppColors.selectedTextColor
-                                      : Colors.transparent,
-                                  border: Border.all(
-                                      width: 1.2, color: AppColors.black),
-                                ),
-                                height: 150,
-                                width: 120,
-                                child:
-                                    SvgPicture.asset('asserts/images/user.svg'),
+                              Text(
+                                'Please select trade role',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  'User',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                              ),
+                              SizedBox(height: 10,),
+                              Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Container(
+                                    height: 80,
+                                    width:(MediaQuery.of(context).size.width - 60 ) / 2,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.textFieldBackground,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text('BUYER',style: TextStyle(fontWeight: FontWeight.w700),),
+                                              Spacer(),
+                                              SizedBox(
+                                                height: 20,
+                                                width: 20,
+                                                child: Radio<bool>(
+                                                  value: true,
+                                                  groupValue: _isUser,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      _isUser = value!;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 5,),
+                                          Text(
+                                              'I am abuying a \n product or service'),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+
+
+                                  Container(
+                                    height: 80,
+                                    width:(MediaQuery.of(context).size.width - 60 ) / 2,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.textFieldBackground,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                       
+                                       crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text('SELLER',style: TextStyle(fontWeight: FontWeight.w700),),
+                                              Spacer(),
+                                              SizedBox(
+                                                height: 20,
+                                                width: 20,
+                                                child: Radio<bool>(
+                                                  value: false,
+                                                  groupValue: _isUser,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      _isUser = value!;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 5,),
+                                          Text(
+                                              'I am selling a \n product or service'),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  
+                                ],
+                              )
                             ],
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () => setState((){_value = 2;}),
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(20)),
-                                    color: _value == 2
-                                        ? AppColors.selectedTextColor
-                                        : Colors.transparent,
-                                    border: Border.all(
-                                        width: 1.2, color: AppColors.black)),
-                                height: 150,
-                                width: 120,
-                                child: SvgPicture.asset(
-                                    'asserts/images/professional.svg'),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  'Professional',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                      )
+                      // child: Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //   children: <Widget>[
+                      //     GestureDetector(
+                      //       onTap: () => setState(() {
+                      //         _value = 1;
+                      //       }),
+                      //       child: Column(
+                      //         children: [
+                      //           Container(
+                      //             decoration: BoxDecoration(
+                      //               borderRadius:
+                      //                   BorderRadius.all(Radius.circular(20)),
+                      //               color: _value == 1
+                      //                   ? AppColors.selectedTextColor
+                      //                   : Colors.transparent,
+                      //               border: Border.all(
+                      //                   width: 1.2, color: AppColors.black),
+                      //             ),
+                      //             height: 150,
+                      //             width: 120,
+                      //             child:
+                      //                Text('data'),
+                      //           ),
+                      //           Padding(
+                      //             padding: const EdgeInsets.only(top: 8.0),
+                      //             child: Text(
+                      //               'User',
+                      //               style: TextStyle(
+                      //                   fontSize: 14,
+                      //                   fontWeight: FontWeight.w700),
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //     GestureDetector(
+                      //       onTap: () => setState(() {
+                      //         _value = 2;
+                      //       }),
+                      //       child: Column(
+                      //         children: [
+                      //           Container(
+                      //             decoration: BoxDecoration(
+                      //                 borderRadius:
+                      //                     BorderRadius.all(Radius.circular(20)),
+                      //                 color: _value == 2
+                      //                     ? AppColors.selectedTextColor
+                      //                     : Colors.transparent,
+                      //                 border: Border.all(
+                      //                     width: 1.2, color: AppColors.black)),
+                      //             height: 150,
+                      //             width: 120,
+                      //             child: SvgPicture.asset(
+                      //                 'asserts/images/professional.svg'),
+                      //           ),
+                      //           Padding(
+                      //             padding: const EdgeInsets.only(top: 8.0),
+                      //             child: Text(
+                      //               'Professional',
+                      //               style: TextStyle(
+                      //                   fontSize: 14,
+                      //                   fontWeight: FontWeight.w700),
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+                      ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 20),
                     child: Container(
@@ -143,6 +289,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   CustomFormField(
+
                     controller: _phoneNoController,
                     hintText: 'phone no',
                     inputType: TextInputType.number,
@@ -196,7 +343,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   PrimaryButton(
-                      text: 'Log In',
+                      text: 'LOG IN',
                       fontSize: 12,
                       clickCallback: () {
                         onLogInPress();
@@ -264,7 +411,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => RegistrationScreen(userRole: _value),
+                                  builder: (context) =>
+                                      RegistrationScreen(userRole: _value),
                                 ),
                               );
                             },
@@ -321,6 +469,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void onLogInPress() {
+    //  Navigator.pushNamedAndRemoveUntil(context, '/UserScreen', (route) => false);
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/ServiceScreen', (route) => false);
+
     String phone = _phoneNoController.text.trim();
     String password = _passwordController.text.trim();
     String deviceName = Platform.isAndroid ? "android" : "ios";
@@ -345,7 +497,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await Settings.setAccessToken(token);
         Navigator.pushNamedAndRemoveUntil(
             context, '/UserScreen', (route) => false);
-       } else {
+      } else {
         Alerts.showMessageForResponse(context, response);
       }
     });

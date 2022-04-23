@@ -54,7 +54,8 @@ class _MainScreenState extends State<MainScreen> {
     return SafeArea(
       child: Scaffold(
         body: _buildScreens.values.elementAt(_currentIndex),
-        appBar: CustomAppBar(title:  _buildScreens.keys.elementAt(_currentIndex)),
+       appBar: CustomAppBar(title:  _buildScreens.keys.elementAt(_currentIndex)),
+      
         endDrawer: DrawerScreen(),
         bottomNavigationBar: BottomNavigationBar(
           selectedFontSize: 0,
