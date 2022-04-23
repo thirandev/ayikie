@@ -5,9 +5,12 @@ import 'package:ayikie_users/src/ui/screens/privacy_policies_screen/privacy_poli
 import 'package:ayikie_users/src/ui/screens/settings_screen/settings_screen.dart';
 import 'package:ayikie_users/src/ui/screens/support_screen/support_screen.dart';
 import 'package:ayikie_users/src/ui/screens/verification_center_screen/verification_center_screen.dart';
+import 'package:ayikie_users/src/ui/widget/primary_button.dart';
 import 'package:ayikie_users/src/utils/alerts.dart';
 import 'package:ayikie_users/src/utils/settings.dart';
 import 'package:flutter/material.dart';
+
+import '../../../app_colors.dart';
 
 class DrawerScreen extends StatefulWidget {
   const DrawerScreen({Key? key}) : super(key: key);
@@ -18,7 +21,7 @@ class DrawerScreen extends StatefulWidget {
 
 class _DrawerScreenState extends State<DrawerScreen> {
 
-  late bool isGuest;
+  bool isGuest = true;
 
   @override
   void initState() {
@@ -32,6 +35,9 @@ class _DrawerScreenState extends State<DrawerScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    var width = MediaQuery.of(context).size.width;
+
     return Drawer(
       child: Column(
         children: [
@@ -54,6 +60,93 @@ class _DrawerScreenState extends State<DrawerScreen> {
               ),
             ],
           ),
+          isGuest?SizedBox(
+            width: width,
+            child: Container(
+              color: Colors.grey[300],
+              padding: EdgeInsets.only(left: 15,top:20),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      "Welcome",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: AppColors.primaryButtonColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      "Login account or create new one for free",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          color: AppColors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w300
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: Row(
+                      children: [
+                        PrimaryButton(
+                            buttonWidth: width/3.5,
+                            buttonHeight: 40,
+                            text: "Login",
+                            fontSize: 16,
+                            clickCallback: (){
+                              Navigator.pushNamed(
+                                  context, '/LoginScreen');
+                            },
+                          prexIcon: Icon(
+                            Icons.logout,
+                            color: AppColors.white,
+                            size: 20,
+                          ),
+
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        PrimaryButton(
+                            buttonWidth: width/3,
+                            buttonHeight: 40,
+                            text: "Register",
+                            bgColor: AppColors.white,
+                            textColor: AppColors.primaryButtonColor,
+                            fontSize: 16,
+                            prexIcon: Icon(
+                              Icons.assignment_ind,
+                              color: AppColors.primaryButtonColor,
+                              size: 20,
+                            ),
+                            clickCallback: (){
+                              Navigator.pushNamed(
+                                  context, '/RegistrationScreen');
+                            }),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                ],
+              ),
+            ),
+          ):Container(),
           DrawerWidget(
             title: 'Verification Center',
             imagePath: 'asserts/icons/verification_center.png',

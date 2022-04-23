@@ -33,28 +33,45 @@ class _SplashScreenState extends State<SplashScreen> {
       }
       print(isVersionCompatible);
     }
-    rememberUser();
+    isFirstSession();
   }
 
   void rememberUser() async {
     String? accessToken = await Settings.getAccessToken();
     Timer(Duration(seconds: 2), () async {
       if (accessToken == '' || accessToken == null) {
-        Navigator.pushNamed(context, '/LoginScreen');
+        await Settings.setIsGuest(true);
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/UserScreen', (route) => false);
       } else {
         refreshToken();
       }
     });
   }
 
+  void isFirstSession() async{
+    bool isFirstSession = await Settings.getIsFirstSession()
+        ?? true;
+    if(isFirstSession){
+      await Settings.setIsFirstSession(false);
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/OnbordingScreen', (route) => false);
+    }else{
+      rememberUser();
+    }
+  }
+
   void refreshToken() async {
     final response = await ApiCalls.refreshToken();
     if (response.isSuccess) {
       await Settings.setAccessToken(response.jsonBody['token']);
+      await Settings.setIsGuest(false);
       Navigator.pushNamedAndRemoveUntil(
           context, '/UserScreen', (route) => false);
     } else {
-      Navigator.pushNamed(context, '/LoginScreen');
+      await Settings.setIsGuest(true);
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/UserScreen', (route) => false);
     }
   }
 

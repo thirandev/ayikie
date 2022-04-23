@@ -6,6 +6,17 @@ class Settings {
     await sharedPrefs.clear();
   }
 
+  static Future<bool?> getIsFirstSession() async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    bool? token = sharedPrefs.getBool("session");
+    return token;
+  }
+
+  static setIsFirstSession(bool session) async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    sharedPrefs.setBool("session", session);
+  }
+
   static setIsGuest(bool isGuest) async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     sharedPrefs.setBool("guest", isGuest);

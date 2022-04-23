@@ -96,8 +96,8 @@ class _OnbordingScreenState extends State<OnbordingScreen> {
                           ),
                           onPressed: () {
                             if (currentIndex == contents.length - 1) {
-                              Navigator.pushNamed(
-            context, '/LoginScreen', );
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context, '/UserScreen', (route) => false);
                             }
                             _controller.nextPage(
                               duration: Duration(milliseconds: 1),
@@ -125,8 +125,8 @@ class _OnbordingScreenState extends State<OnbordingScreen> {
                                       color: AppColors.primaryButtonColor),
                                 ),
                                 onPressed: () {
-                                   Navigator.pushNamed(
-            context, '/LoginScreen', );
+                                  Navigator.pushNamedAndRemoveUntil(
+                                      context, '/UserScreen', (route) => false);
                                 },
                               ),
                             ),

@@ -15,6 +15,7 @@ class PrimaryButton extends StatelessWidget {
   final double? buttonWidth;
   final BorderRadiusGeometry? radius;
   final Gradient? gradient;
+  final Icon? prexIcon;
 
   const PrimaryButton({
     Key? key,
@@ -30,6 +31,7 @@ class PrimaryButton extends StatelessWidget {
     this.borderColor,
     this.borderWidth,
     this.gradient,
+    this.prexIcon,
   }) : super(key: key);
 
   @override
@@ -61,13 +63,20 @@ class PrimaryButton extends StatelessWidget {
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Flexible(
                 flex: 1,
-                child: Text(
-                  text,
-                  style: TextStyle(
-                    color: textColor ?? AppColors.primaryButtonTextColor,
-                    fontSize: fontSize ?? 12.0,
-                    fontWeight: fontWeight ?? FontWeight.w500,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    prexIcon??Container(),
+                    prexIcon!=null?SizedBox(width: 5):Container(),
+                    Text(
+                      text,
+                      style: TextStyle(
+                        color: textColor ?? AppColors.primaryButtonTextColor,
+                        fontSize: fontSize ?? 12.0,
+                        fontWeight: fontWeight ?? FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ]),

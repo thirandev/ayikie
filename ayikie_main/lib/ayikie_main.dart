@@ -1,3 +1,4 @@
+import 'package:ayikie_main/src/ui/screens/auth/registration_screen.dart';
 import 'package:ayikie_main/src/ui/screens/onboarding_screen/onboarding_screen.dart';
 import 'src/ui/screens/splash_screen.dart';
 import 'package:ayikie_users/src/ui/screens/main/main.dart';
@@ -26,6 +27,7 @@ class _MyAppState extends State<MyApp> {
        routes: <String, WidgetBuilder>{
         "/OnbordingScreen": (BuildContext c) => OnbordingScreen(),
         "/LoginScreen": (BuildContext c) => LoginScreen(),
+        "/RegistrationScreen": (BuildContext c) => RegistrationScreen(userRole: 1),
         "/ForgetPasswordScreen": (BuildContext c) => ForgetPasswordScreen(),
         "/SendOtpScreen": (BuildContext c) => SendOtpScreen(),
         "/UserScreen": (BuildContext c) => MainScreen(menuScreenContext: context),
