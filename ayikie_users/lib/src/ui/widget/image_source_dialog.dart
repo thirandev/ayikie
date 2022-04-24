@@ -1,3 +1,4 @@
+import 'package:ayikie_users/src/ui/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../app_colors.dart';
@@ -47,7 +48,7 @@ class _Widget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        color: AppColors.transparent,
+        color: AppColors.white,
         boxShadow: [
           BoxShadow(
             color: const Color(0x20000000),
@@ -64,46 +65,49 @@ class _Widget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
          Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: GestureDetector(
+              alignment: AlignmentDirectional.topEnd,
+              child:  GestureDetector(
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: Align(
-                  alignment: AlignmentDirectional.topEnd,
-                  child: Text(
-                   "close"
-                  ),
+                child: Icon(
+                  Icons.close_rounded,
+                  color: AppColors.gray,
+                  size: 25,
                 ),
-              ),
+              )
             ),
 
-          SizedBox(height: 10),
-          SizedBox(
-            height: 60,
-            child: GestureDetector(
-              onTap: () {
+          SizedBox(height: 5),
+          PrimaryButton(
+              text: "Take a Photo",
+              clickCallback: () {
                 Navigator.of(context).pop();
                 onSelectCallback(1);
               },
-              child: Text(
-                "Take a Photo",
-              ),
+            fontSize: 16,
+            prexIcon: Icon(
+              Icons.camera_alt
             ),
-          ),
+              ),
           SizedBox(height: 16),
-          SizedBox(
-            height: 60,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-                onSelectCallback(0);
-              },
-              child: Text(
-                "Upload from Gallery",
-              ),
+          PrimaryButton(
+            bgColor: Colors.white,
+            borderWidth: 1,
+            borderColor: AppColors.primaryButtonColor,
+            text: "Upload from Gallery",
+            textColor: AppColors.primaryButtonColor,
+            clickCallback: () {
+              Navigator.of(context).pop();
+              onSelectCallback(0);
+            },
+            fontSize: 16,
+            prexIcon: Icon(
+                Icons.photo,
+              color: AppColors.primaryButtonColor,
             ),
           ),
+
           SizedBox(height: 16),
         ],
       ),
