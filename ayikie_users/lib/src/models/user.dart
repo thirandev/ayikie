@@ -1,10 +1,12 @@
+import 'package:ayikie_users/src/models/images.dart';
+
 class User {
   String name;
   String address;
   String email;
   String phone;
   int role;
-  String imgUrl;
+  Images imgUrl;
 
   User({
     required this.name,
@@ -22,7 +24,7 @@ class User {
       email: json['email'] == null ? "" : json['email'],
       phone: json['phone'] == null ? "" : json['phone'],
       role: json['role'],
-      imgUrl: json['profile_photo_url'],
+      imgUrl: Images.fromJson(json['images']),
     );
   }
 }
