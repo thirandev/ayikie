@@ -10,6 +10,7 @@ class Service extends Item {
   String introduction;
   String location;
   double price;
+  String phoneNumber;
 
   Service(
       {required int id,
@@ -21,6 +22,7 @@ class Service extends Item {
       required this.subCategoryId,
       required this.location,
       required this.price,
+      required this.phoneNumber,
       Images? image})
       : super(id: id, name: name, description: description, image: image);
 
@@ -37,6 +39,7 @@ class Service extends Item {
       location: json['location'] == null ? "" : json['location'],
       price: double.parse(json['price']),
       image: Images.fromJson(json['images']),
+      phoneNumber: json['phone']== null ? "" : json['phone'],
     );
   }
 }

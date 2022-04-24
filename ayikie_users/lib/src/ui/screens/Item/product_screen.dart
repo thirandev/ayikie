@@ -23,9 +23,6 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   bool _isLoading = true;
-  final controller = PageController(
-    viewportFraction: 1,
-  );
 
   TextEditingController _priceController = TextEditingController();
   TextEditingController _messageController = TextEditingController();
@@ -359,7 +356,6 @@ class _ProductScreenState extends State<ProductScreen> {
     );
     await launchUrl(launchUri);
   }
-
 
   void addToCart() async {
     setState(() {

@@ -380,7 +380,30 @@ class ApiCalls {
   }
 
 
+  static Future<ApiResponse> createServiceOrder({
+    required int serviceId,
+    required int duration,
+    required double price,
+    required String location,
+    required String message,
+  }) async {
+    try {
+      var payload = new Map<String, dynamic>();
+      payload['service_id'] = serviceId;
+      payload['price'] = price;
+      payload['duration'] = duration;
+      payload['location'] = location;
+      payload['note'] = message;
 
+      return ApiCaller.jsonRequestAuth(baseUrl + '/api/customer/order/service',
+          _getEmptyHeaders(), jsonEncode(payload));
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
 
 
 }
