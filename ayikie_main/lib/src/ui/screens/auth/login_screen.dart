@@ -9,7 +9,11 @@ import 'package:ayikie_main/src/ui/widgets/primary_button.dart';
 import 'package:ayikie_main/src/utils/alerts.dart';
 import 'package:ayikie_main/src/utils/settings.dart';
 import 'package:ayikie_main/src/utils/validations.dart';
+import 'package:country_code_picker/country_code_picker.dart';
+
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+//import 'package:intl_phone_field/intl_phone_field.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -22,7 +26,6 @@ class _LoginScreenState extends State<LoginScreen> {
   int _value = 1;
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _phoneNoController = TextEditingController();
-  
 
   @override
   Widget build(BuildContext context) {
@@ -76,11 +79,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 20),
                     child: Container(
-                      alignment: Alignment.centerLeft,
+                      alignment: Alignment.center,
                       child: Text(
-                        'Log In',
+                        'Log In to Ayikie',
                         style: TextStyle(
-                            fontSize: 26, fontWeight: FontWeight.w900),
+                            fontSize: 26, fontWeight: FontWeight.w700),
                       ),
                     ),
                   ),
@@ -96,53 +99,63 @@ class _LoginScreenState extends State<LoginScreen> {
                   //   ),
                   // ),
                   Padding(
-                      padding: const EdgeInsets.only( bottom: 20),
+                      padding: const EdgeInsets.only(bottom: 20),
                       child: Container(
-                        height: 150,
+                        height: 140,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: AppColors.primaryButtonColor.withOpacity(.8),
-                        ),
+                            borderRadius: BorderRadius.circular(10),
+                            color: AppColors.greyLightColor),
                         child: Padding(
-                          padding: const EdgeInsets.only(top: 10.0, left: 4,right: 4),
+                          padding: const EdgeInsets.only(
+                              top: 10.0, left: 4, right: 4),
                           child: Column(
                             children: [
                               Container(
-                                alignment: Alignment.topLeft,
-                                padding: EdgeInsets.only(left: 10,top: 10),
-                                child:
-                                  Text(
-                                    'Please select trade role',
-                                    style: TextStyle(
-                                      color: AppColors.black,
-                                        fontSize: 16, fontWeight: FontWeight.w400),
-                                  ),
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.only(left: 10, top: 5),
+                                child: Text(
+                                  'Please select trade role',
+                                  style: TextStyle(
+                                      color: Colors.grey[800],
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600),
+                                ),
                               ),
                               SizedBox(height: 10),
                               Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Container(
                                     height: 80,
-                                    width:(MediaQuery.of(context).size.width - 80 ) / 2,
+                                    width: (MediaQuery.of(context).size.width -
+                                            80) /
+                                        2,
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: Colors.grey[400],
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Row(
                                             children: [
-                                              Text('BUYER',style: TextStyle(fontWeight: FontWeight.w700),),
+                                              Text(
+                                                'BUYER',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.w700),
+                                              ),
                                               Spacer(),
                                               SizedBox(
                                                 height: 20,
                                                 width: 20,
                                                 child: Radio<int>(
                                                   value: 1,
+                                                  activeColor: Colors.white,
                                                   groupValue: _value,
                                                   onChanged: (value) {
                                                     setState(() {
@@ -153,7 +166,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                               ),
                                             ],
                                           ),
-                                          SizedBox(height: 5,),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
                                           Text(
                                               'I am abuying a \n product or service'),
                                         ],
@@ -162,26 +177,34 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   Container(
                                     height: 80,
-                                    width:(MediaQuery.of(context).size.width - 80 ) / 2,
+                                    width: (MediaQuery.of(context).size.width -
+                                            80) /
+                                        2,
                                     decoration: BoxDecoration(
-                                      color: AppColors.white,
+                                      color: Colors.grey[400],
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Column(
-                                       
-                                       crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
                                           Row(
                                             children: [
-                                              Text('SELLER',style: TextStyle(fontWeight: FontWeight.w700),),
+                                              Text(
+                                                'SELLER',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.w700),
+                                              ),
                                               Spacer(),
                                               SizedBox(
                                                 height: 20,
                                                 width: 20,
                                                 child: Radio<int>(
                                                   value: 2,
+                                                  activeColor: Colors.white,
                                                   groupValue: _value,
                                                   onChanged: (value) {
                                                     setState(() {
@@ -192,14 +215,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                               ),
                                             ],
                                           ),
-                                          SizedBox(height: 5,),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
                                           Text(
                                               'I am selling a \n product or service'),
                                         ],
                                       ),
                                     ),
                                   ),
-                                  
                                 ],
                               )
                             ],
@@ -288,11 +312,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
+                  
                   CustomFormField(
-
                     controller: _phoneNoController,
-                    hintText: 'phone no',
+                    hintText: 'enter your phone no',
                     inputType: TextInputType.number,
+                    prefixEnable: true,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 20, top: 20),
@@ -307,10 +332,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   CustomFormField(
                     controller: _passwordController,
-                    hintText: 'password',
+                    hintText: 'enter your password',
                     inputType: TextInputType.text,
                     isObsucure: true,
                   ),
+
                   Padding(
                     padding: const EdgeInsets.only(top: 20, bottom: 50),
                     child: Row(
@@ -469,8 +495,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void onLogInPress() {
-
-
     String phone = _phoneNoController.text.trim();
     String password = _passwordController.text.trim();
     String deviceName = Platform.isAndroid ? "android" : "ios";
@@ -496,11 +520,11 @@ class _LoginScreenState extends State<LoginScreen> {
         await Settings.setIsGuest(false);
         User user = User.fromJson(response.jsonBody['user']);
         await Settings.setUserRole(user.role);
-        user.role==1?
-          Navigator.pushNamedAndRemoveUntil(
-              context, '/UserScreen', (route) => false):
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/ServiceScreen', (route) => false);
+        user.role == 1
+            ? Navigator.pushNamedAndRemoveUntil(
+                context, '/UserScreen', (route) => false)
+            : Navigator.pushNamedAndRemoveUntil(
+                context, '/ServiceScreen', (route) => false);
       } else {
         Alerts.showMessageForResponse(context, response);
       }

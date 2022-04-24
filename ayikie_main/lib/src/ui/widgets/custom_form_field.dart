@@ -1,6 +1,8 @@
 import 'package:ayikie_main/src/app_colors.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 class CustomFormField extends StatelessWidget {
   final TextEditingController controller;
@@ -106,7 +108,19 @@ class CustomFormField extends StatelessWidget {
                   fontSize: 13.0,
                 ),
                 filled: true,
-                fillColor: AppColors.textFieldBackground,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide(
+                    color: AppColors.greyLightColor,
+                    width: 1.0,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide:
+                      BorderSide(color: AppColors.greyLightColor, width: 1.5),
+                ),
+                fillColor: Colors.transparent,
                 suffixIcon: (suffixEnable)
                     ? GestureDetector(
                         onTap: () {
@@ -128,23 +142,30 @@ class CustomFormField extends StatelessWidget {
                     ? Container(
                         height: 42.5,
                         margin: const EdgeInsets.only(right: 15),
-                        width: 65,
+                        width: 115,
                         decoration: const BoxDecoration(
-                          color: AppColors.primaryButtonColor,
+                          color: AppColors.greyLightColor,
                           borderRadius:
                               BorderRadius.horizontal(left: Radius.circular(8)),
                         ),
-                        child: Center(
-                            child:
-                                (prefixText != null && prefixText!.isNotEmpty)
-                                    ? Text(
-                                        prefixText!,
-                                        style: TextStyle(
-                                            color: AppColors.white,
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w400),
-                                      )
-                                    : Container()))
+                        child: Expanded(
+                          child: CountryCodePicker(
+                            onChanged: (CountryCode countryCode) {
+                              // this.phoneNumber = countryCode.toString();
+                              print("New Country selected: " +
+                                  countryCode.toString());
+                            },
+                            // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+                            initialSelection: 'IT',
+                            favorite: ['+39', 'FR'],
+                            // optional. Shows only country name and flag
+                            showCountryOnly: false,
+                            // optional. Shows only country name and flag when popup is closed.
+                            showOnlyCountryWhenClosed: false,
+                            // optional. aligns the flag and the Text left
+                            alignLeft: false,
+                          ),
+                        ))
                     : null,
                 contentPadding: (prefixEnable)
                     ? const EdgeInsets.only(left: 15, top: 0, right: 0)
