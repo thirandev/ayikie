@@ -1,10 +1,9 @@
-import 'dart:io';
-
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/models/cartItem.dart';
 import 'package:ayikie_users/src/ui/widget/progress_view.dart';
 import 'package:ayikie_users/src/utils/alerts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'checkout_screen.dart';
@@ -248,10 +247,24 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> {
                     bottomLeft: Radius.circular(8),
                     topLeft: Radius.circular(8),
                   ),
-                  child: Image.asset(
-                    'asserts/images/chair.jpg',
-                    fit: BoxFit.cover,
-                  )),
+                  child: CachedNetworkImage(
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.scaleDown,
+                            alignment: AlignmentDirectional.center),
+                      ),
+                    ),
+                    imageUrl: widget.item.product.image!.getBannerUrl(),
+                    errorWidget: (context, url, error) => Image.asset(
+                      'asserts/images/ayikie_logo.png',
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
+
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 8.0, top: 8, bottom: 8),

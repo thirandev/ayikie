@@ -105,7 +105,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       AlignmentDirectional.topCenter),
                                 ),
                               ),
-                          imageUrl:"http://via.placeholder.com/350x150",
+                          imageUrl:_user.imgUrl,
                           errorWidget: (context, url, error) => Icon(
                             Icons.account_circle_sharp,
                             size: 100,
@@ -251,11 +251,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // }
       print('Uploaded');
     } else {
-      setState(() {
-        _isLoading = false;
-      });
       Alerts.showMessageForResponse(context, responseUpload);
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
 
