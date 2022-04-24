@@ -5,4 +5,21 @@ import 'api_caller.dart';
 import 'api_response.dart';
 
 class ApiCalls {
+  static const String baseUrl = "https://ayikie.cyberelysium.app";
+
+  static Map<String, String> _getEmptyHeaders() {
+    Map<String, String> headers = new Map();
+    return headers;
+  }
+
+  static Future<ApiResponse> userLogOut() async {
+    try {
+      return ApiCaller.getRequestAuth(baseUrl + '/api/user/revoke', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:ayikie_main/src/api/api_calls.dart';
+import 'package:ayikie_main/src/models/user.dart';
 import 'package:ayikie_main/src/utils/settings.dart';
 import 'package:flutter/material.dart';
 
@@ -66,8 +67,13 @@ class _SplashScreenState extends State<SplashScreen> {
     if (response.isSuccess) {
       await Settings.setAccessToken(response.jsonBody['token']);
       await Settings.setIsGuest(false);
+      User user = User.fromJson(response.jsonBody['user']);
+      await Settings.setUserRole(user.role);
+      user.role==1?
       Navigator.pushNamedAndRemoveUntil(
-          context, '/UserScreen', (route) => false);
+          context, '/UserScreen', (route) => false):
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/ServiceScreen', (route) => false);
     } else {
       await Settings.setIsGuest(true);
       Navigator.pushNamedAndRemoveUntil(

@@ -2,16 +2,14 @@ import 'dart:io';
 
 import 'package:ayikie_main/src/api/api_calls.dart';
 import 'package:ayikie_main/src/app_colors.dart';
-import 'package:ayikie_main/src/ui/screens/auth/forget_password.dart';
+import 'package:ayikie_main/src/models/user.dart';
 import 'package:ayikie_main/src/ui/screens/auth/registration_screen.dart';
-import 'package:ayikie_main/src/ui/screens/auth/send_otp_screen.dart';
 import 'package:ayikie_main/src/ui/widgets/custom_form_field.dart';
 import 'package:ayikie_main/src/ui/widgets/primary_button.dart';
 import 'package:ayikie_main/src/utils/alerts.dart';
 import 'package:ayikie_main/src/utils/settings.dart';
 import 'package:ayikie_main/src/utils/validations.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -22,7 +20,6 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   int _value = 1;
-  bool _isUser = true;
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _phoneNoController = TextEditingController();
   
@@ -77,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Image.asset('asserts/images/ayikie_logo.png'),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.only(bottom: 20),
                     child: Container(
                       alignment: Alignment.centerLeft,
                       child: Text(
@@ -87,43 +84,49 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
+                  // Padding(
+                  //   padding: const EdgeInsets.only(bottom: 10),
+                  //   child: Container(
+                  //     alignment: Alignment.centerLeft,
+                  //     child: Text(
+                  //       'Select Your role',
+                  //       style: TextStyle(
+                  //           fontSize: 14, fontWeight: FontWeight.w700),
+                  //     ),
+                  //   ),
+                  // ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Select Your role',
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.only( bottom: 10),
+                      padding: const EdgeInsets.only( bottom: 20),
                       child: Container(
-                        height: 130,
+                        height: 150,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: Colors.grey[300],
+                          color: AppColors.primaryButtonColor.withOpacity(.8),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.only(top: 10.0, left: 4,right: 4),
                           child: Column(
                             children: [
-                              Text(
-                                'Please select trade role',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w600),
+                              Container(
+                                alignment: Alignment.topLeft,
+                                padding: EdgeInsets.only(left: 10,top: 10),
+                                child:
+                                  Text(
+                                    'Please select trade role',
+                                    style: TextStyle(
+                                      color: AppColors.black,
+                                        fontSize: 16, fontWeight: FontWeight.w400),
+                                  ),
                               ),
-                              SizedBox(height: 10,),
+                              SizedBox(height: 10),
                               Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Container(
                                     height: 80,
-                                    width:(MediaQuery.of(context).size.width - 60 ) / 2,
+                                    width:(MediaQuery.of(context).size.width - 80 ) / 2,
                                     decoration: BoxDecoration(
-                                      color: AppColors.textFieldBackground,
+                                      color: Colors.white,
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Padding(
@@ -138,12 +141,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                               SizedBox(
                                                 height: 20,
                                                 width: 20,
-                                                child: Radio<bool>(
-                                                  value: true,
-                                                  groupValue: _isUser,
+                                                child: Radio<int>(
+                                                  value: 1,
+                                                  groupValue: _value,
                                                   onChanged: (value) {
                                                     setState(() {
-                                                      _isUser = value!;
+                                                      _value = value!;
                                                     });
                                                   },
                                                 ),
@@ -157,14 +160,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                     ),
                                   ),
-
-
-
                                   Container(
                                     height: 80,
-                                    width:(MediaQuery.of(context).size.width - 60 ) / 2,
+                                    width:(MediaQuery.of(context).size.width - 80 ) / 2,
                                     decoration: BoxDecoration(
-                                      color: AppColors.textFieldBackground,
+                                      color: AppColors.white,
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Padding(
@@ -180,12 +180,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                               SizedBox(
                                                 height: 20,
                                                 width: 20,
-                                                child: Radio<bool>(
-                                                  value: false,
-                                                  groupValue: _isUser,
+                                                child: Radio<int>(
+                                                  value: 2,
+                                                  groupValue: _value,
                                                   onChanged: (value) {
                                                     setState(() {
-                                                      _isUser = value!;
+                                                      _value = value!;
                                                     });
                                                   },
                                                 ),
@@ -427,40 +427,40 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: 40,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          child: Text(
-                            'Login as a ',
-                            style: TextStyle(
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.centerRight,
-                          child: InkWell(
-                            onTap: () async {
-                              await Settings.setIsGuest(true);
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context, '/UserScreen', (route) => false);
-                            },
-                            child: Text(
-                              'Guest',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.primaryButtonColor),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.only(
+                  //     bottom: 40,
+                  //   ),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     children: [
+                  //       Container(
+                  //         child: Text(
+                  //           'Login as a ',
+                  //           style: TextStyle(
+                  //             fontSize: 14,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       Container(
+                  //         alignment: Alignment.centerRight,
+                  //         child: InkWell(
+                  //           onTap: () async {
+                  //             await Settings.setIsGuest(true);
+                  //             Navigator.pushNamedAndRemoveUntil(
+                  //                 context, '/UserScreen', (route) => false);
+                  //           },
+                  //           child: Text(
+                  //             'Guest',
+                  //             style: TextStyle(
+                  //                 fontSize: 14,
+                  //                 color: AppColors.primaryButtonColor),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -469,15 +469,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void onLogInPress() {
-    //  Navigator.pushNamedAndRemoveUntil(context, '/UserScreen', (route) => false);
-    Navigator.pushNamedAndRemoveUntil(
-        context, '/ServiceScreen', (route) => false);
+
 
     String phone = _phoneNoController.text.trim();
     String password = _passwordController.text.trim();
     String deviceName = Platform.isAndroid ? "android" : "ios";
 
-    if (!Validations.validateMobileNumber(phone)) {
+    if (!Validations.validateString(phone)) {
       Alerts.showMessage(context, "Invalid mobile number");
       return;
     }
@@ -495,8 +493,14 @@ class _LoginScreenState extends State<LoginScreen> {
       if (response.isSuccess) {
         var token = response.jsonBody['token'];
         await Settings.setAccessToken(token);
+        await Settings.setIsGuest(false);
+        User user = User.fromJson(response.jsonBody['user']);
+        await Settings.setUserRole(user.role);
+        user.role==1?
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/UserScreen', (route) => false):
         Navigator.pushNamedAndRemoveUntil(
-            context, '/UserScreen', (route) => false);
+            context, '/ServiceScreen', (route) => false);
       } else {
         Alerts.showMessageForResponse(context, response);
       }

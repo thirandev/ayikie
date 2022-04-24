@@ -30,7 +30,10 @@ class _DrawerScreenState extends State<DrawerScreen> {
   }
 
   _checkIsGuest() async {
-    isGuest = await Settings.getIsGuest()??false;
+    var guest = await Settings.getIsGuest()??false;
+    setState(() {
+      isGuest = guest;
+    });
   }
 
   @override
