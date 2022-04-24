@@ -9,7 +9,7 @@ import 'package:ayikie_users/src/ui/widget/progress_view.dart';
 import 'package:ayikie_users/src/utils/alerts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({Key? key}) : super(key: key);
@@ -20,8 +20,11 @@ class CategoriesScreen extends StatefulWidget {
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
   bool _isLoading = true;
+  int currentIndex = 1;
   List<Item> productCategories = [];
   List<Item> serviceCategories = [];
+
+
 
   @override
   void initState() {
@@ -29,8 +32,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     _getServiceCategories();
   }
 
-  void _getServiceCategories() async {
-    await ApiCalls.getAllServiceCategory().then((response) {
+  void _getServiceCategories({bool isRefresh = false}) async {
+
+    if(isRefresh){
+      setState(() {
+        currentIndex++;
+      });
+    }
+
+    await ApiCalls.getAllServiceCategory(page: currentIndex).then((response) {
       if (!mounted) {
         return;
       }
@@ -45,7 +55,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
             title: "Oops!");
       }
-      _getProductCategories();
     });
   }
 

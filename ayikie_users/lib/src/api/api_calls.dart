@@ -207,10 +207,10 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> getAllServiceCategory() async {
+  static Future<ApiResponse> getAllServiceCategory({required int page}) async {
     try {
       return ApiCaller.getRequest(
-          baseUrl + '/api/services/categories', _getEmptyHeaders());
+          baseUrl + '/api/services/categories?page=$page', _getEmptyHeaders());
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -320,6 +320,19 @@ class ApiCalls {
     }
   }
 
+  static Future<ApiResponse> getAllCartItems() async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/customer/carts',
+          _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
   static Future<ApiResponse> addProductToCart({
     required int productId,
     required int quantity,
@@ -338,4 +351,42 @@ class ApiCalls {
       return response;
     }
   }
+
+  static Future<ApiResponse> removeCartItem(int productId) async {
+    try {
+      return ApiCaller.requestAuth(
+          baseUrl +
+              "/api/customer/carts/$productId",
+          _getEmptyHeaders(),
+          requestType: "DELETE");
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> updateCartItem(
+      int productId, int quantity) async {
+    try {
+      var payload = new Map<String, dynamic>();
+      payload['quantity'] = quantity;
+      return ApiCaller.jsonRequestAuth(
+          baseUrl +
+              "/api/customer/carts/$productId",
+          _getEmptyHeaders(), jsonEncode(payload),
+          requestType: "PUT");
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+
+
+
+
 }

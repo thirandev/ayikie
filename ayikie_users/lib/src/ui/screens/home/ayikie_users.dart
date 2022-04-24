@@ -53,7 +53,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   }
 
   void _getCategories() async {
-    await ApiCalls.getAllServiceCategory().then((response) {
+    await ApiCalls.getAllServiceCategory(page: 1).then((response) {
       if (!mounted) {
         return;
       }
