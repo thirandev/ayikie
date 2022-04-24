@@ -19,7 +19,7 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   bool _isLoading = true;
   List<CartItem> cartItems = [];
-
+  double totalPrice = 0.0;
 
   @override
   void initState() {
@@ -35,9 +35,11 @@ class _CartScreenState extends State<CartScreen> {
       if (response.isSuccess) {
         var data = response.jsonBody;
         cartItems.clear();
+        totalPrice = 0.0;
         for (var item in data) {
          CartItem cartItem = CartItem.fromJson(item);
          cartItems.add(cartItem);
+         totalPrice = totalPrice + cartItem.quantity*cartItem.product.price;
         }
       } else {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
@@ -97,7 +99,7 @@ class _CartScreenState extends State<CartScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '\$100',
+                          '\$$totalPrice',
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.w900),
                         ),

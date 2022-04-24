@@ -51,6 +51,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           Item category = Item.fromJson(item);
           serviceCategories.add(category);
         }
+        _getProductCategories();
       } else {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
             title: "Oops!");
