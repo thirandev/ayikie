@@ -25,7 +25,6 @@ class _SubSeriveScreenState extends State<SubSeriveScreen> {
   @override
   void initState() {
     super.initState();
-    print("Power" + widget.categoryId.toString());
     _getSubServices();
   }
 
@@ -40,7 +39,6 @@ class _SubSeriveScreenState extends State<SubSeriveScreen> {
         var data = response.jsonBody;
         for (var item in data) {
           Item subService  = Item.fromJson(item);
-          print(subService.image!.getBannerUrl());
           subServices.add(subService);
         }
       } else {
@@ -142,7 +140,7 @@ class _SubSeriveScreenState extends State<SubSeriveScreen> {
                           scrollDirection: Axis.vertical,
                           itemCount: subServices.length,
                           itemBuilder: (BuildContext context, int index) =>
-                              SubCategoryWidget(subServices: subServices,index: index,)),
+                              SubCategoryWidget(subService: subServices[index])),
                     ),
                   ],
                 ),
@@ -153,12 +151,10 @@ class _SubSeriveScreenState extends State<SubSeriveScreen> {
 }
 
 class SubCategoryWidget extends StatelessWidget {
-  final List<Item> subServices;
-  final int index;
+  final Item subService;
   const SubCategoryWidget({
     Key? key,
-    required this.subServices,
-    required this.index
+    required this.subService,
   }) : super(key: key);
 
   @override
@@ -168,7 +164,7 @@ class SubCategoryWidget extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) {
-            return AllServicescreen(subCategoryId: subServices[index].id);
+            return AllServicescreen(subCategoryId: subService.id);
           }),
         );
       },
@@ -200,7 +196,7 @@ class SubCategoryWidget extends StatelessWidget {
                               alignment: AlignmentDirectional.center),
                         ),
                       ),
-                      imageUrl: subServices[index].image!.getBannerUrl(),
+                      imageUrl: subService.image!.getBannerUrl(),
                       errorWidget: (context, url, error) => Image.asset(
                         'asserts/images/ayikie_logo.png',
                         fit: BoxFit.fitHeight,
@@ -217,10 +213,10 @@ class SubCategoryWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                      subServices[index].name,
+                      subService.name,
                         style: TextStyle(fontWeight: FontWeight.w900),
                       ),
-                      Text(subServices[index].description??""),
+                      Text(subService.description??""),
                       SizedBox(height: 5)
                     ],
                   ),

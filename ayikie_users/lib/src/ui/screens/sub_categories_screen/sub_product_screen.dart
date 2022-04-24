@@ -1,15 +1,15 @@
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
+import 'package:ayikie_users/src/models/Item.dart';
 import 'package:ayikie_users/src/ui/screens/all_items/all_products_screen.dart';
 
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
 
-import 'package:ayikie_users/src/ui/widget/primary_button.dart';
 import 'package:ayikie_users/src/ui/widget/progress_view.dart';
 import 'package:ayikie_users/src/utils/alerts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class SubProductScreen extends StatefulWidget {
   final int categoryId;
@@ -24,10 +24,11 @@ class SubProductScreen extends StatefulWidget {
 class _SubProductScreenState extends State<SubProductScreen> {
   bool _isLoading = true;
 
+  List<Item> subProducts = [];
+
   @override
   void initState() {
     super.initState();
-    print("Owner" + widget.categoryId.toString());
     _getProductsInCategory();
   }
 
@@ -40,7 +41,8 @@ class _SubProductScreenState extends State<SubProductScreen> {
         print(response.jsonBody);
         var data = response.jsonBody;
         for (var item in data) {
-          print(item);
+          Item subProduct  = Item.fromJson(item);
+          subProducts.add(subProduct);
         }
       } else {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
@@ -54,110 +56,110 @@ class _SubProductScreenState extends State<SubProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: AppColors.black),
         backgroundColor: AppColors.white,
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: AppColors.black),
-          backgroundColor: AppColors.white,
-          elevation: 0,
-          title: Text(
-            'Sub Products',
-            style: TextStyle(color: Colors.black),
-          ),
-          leading: Container(
-            width: 24,
-            height: 24,
-            child: new IconButton(
-              icon: new Icon(
-                Icons.arrow_back_ios,
-                color: AppColors.black,
-              ),
-              onPressed: () => Navigator.of(context).pop(),
+        elevation: 0,
+        title: Text(
+          'Sub Products',
+          style: TextStyle(color: Colors.black),
+        ),
+        leading: Container(
+          width: 24,
+          height: 24,
+          child: new IconButton(
+            icon: new Icon(
+              Icons.arrow_back_ios,
+              color: AppColors.black,
             ),
+            onPressed: () => Navigator.of(context).pop(),
           ),
-          actions: [
-            Builder(
-              builder: (context) => GestureDetector(
-                onTap: () => Scaffold.of(context).openEndDrawer(),
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: Row(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) {
-                              return NotificationScreen();
-                            }),
-                          );
-                        },
-                        child: Container(
-                          width: 26,
-                          height: 26,
-                          child: new Icon(
-                            Icons.notifications_none,
-                            color: AppColors.black,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Container(
+        ),
+        actions: [
+          Builder(
+            builder: (context) => GestureDetector(
+              onTap: () => Scaffold.of(context).openEndDrawer(),
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return NotificationScreen();
+                          }),
+                        );
+                      },
+                      child: Container(
                         width: 26,
                         height: 26,
-                        child: RotationTransition(
-                          turns: AlwaysStoppedAnimation(180 / 360),
-                          child: Image.asset(
-                            'asserts/icons/menu.png',
-                            scale: 10,
-                          ),
+                        child: new Icon(
+                          Icons.notifications_none,
+                          color: AppColors.black,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Container(
+                      width: 26,
+                      height: 26,
+                      child: RotationTransition(
+                        turns: AlwaysStoppedAnimation(180 / 360),
+                        child: Image.asset(
+                          'asserts/icons/menu.png',
+                          scale: 10,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
-        
-      endDrawer: DrawerScreen(),
-      body: _isLoading
-          ? Center(
-              child: ProgressView(),
-            )
-          : SafeArea(
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: Container(
-                  padding: EdgeInsets.only(left: 16, right: 16, top: 20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height - 100,
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.vertical,
-                            itemCount: 15,
-                            itemBuilder: (BuildContext context, int index) =>
-                                SubCategoryWidget()),
-                      ),
-                    ],
-                  ),
+          ),
+        ],
+      ),
+
+    endDrawer: DrawerScreen(),
+    body: _isLoading
+        ? Center(
+            child: ProgressView(),
+          )
+        : SafeArea(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: Container(
+                padding: EdgeInsets.only(left: 16, right: 16, top: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height - 100,
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.vertical,
+                          itemCount: subProducts.length,
+                          itemBuilder: (BuildContext context, int index) =>
+                              SubCategoryWidget(subProduct: subProducts[index],)),
+                    ),
+                  ],
                 ),
               ),
-            ),)
-    );
+            ),
+          ),);
   }
 }
 
 class SubCategoryWidget extends StatelessWidget {
+  final Item subProduct;
   const SubCategoryWidget({
     Key? key,
+    required this.subProduct
   }) : super(key: key);
 
   @override
@@ -167,7 +169,7 @@ class SubCategoryWidget extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) {
-            return AllProductcreen();
+            return AllProductcreen(subCategoryId: subProduct.id);
           }),
         );
       },
@@ -189,10 +191,23 @@ class SubCategoryWidget extends StatelessWidget {
                       bottomLeft: Radius.circular(8),
                       topLeft: Radius.circular(8),
                     ),
-                    child: Image.asset(
-                      'asserts/images/chair.jpg',
-                      fit: BoxFit.cover,
-                    )),
+                    child: CachedNetworkImage(
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.scaleDown,
+                              alignment: AlignmentDirectional.center),
+                        ),
+                      ),
+                      imageUrl: subProduct.image!.getBannerUrl(),
+                      errorWidget: (context, url, error) => Image.asset(
+                        'asserts/images/ayikie_logo.png',
+                        fit: BoxFit.fitHeight,
+                      ),
+                    ),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -202,16 +217,11 @@ class SubCategoryWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text(
-                        'Best pumbler in Sri lanka ',
+                      Text(subProduct.name,
                         style: TextStyle(fontWeight: FontWeight.w900),
                       ),
-                      Text(
-                          'I offer best prise plan and the highly productive service for your side'),
-                      Text(
-                        '\$10.00',
-                        style: TextStyle(fontWeight: FontWeight.w900),
-                      ),
+                      Text(subProduct.description??""),
+                      SizedBox(height: 5)
                     ],
                   ),
                 ),

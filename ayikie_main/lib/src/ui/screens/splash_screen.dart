@@ -55,6 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
         ?? true;
     if(isFirstSession){
       await Settings.setIsFirstSession(false);
+      await Settings.setIsGuest(true);
       Navigator.pushNamedAndRemoveUntil(
           context, '/OnbordingScreen', (route) => false);
     }else{

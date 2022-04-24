@@ -4,12 +4,10 @@ import 'package:ayikie_users/src/models/service.dart';
 import 'package:ayikie_users/src/ui/screens/Item/service_screen.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
-import 'package:ayikie_users/src/ui/widget/primary_button.dart';
 import 'package:ayikie_users/src/ui/widget/progress_view.dart';
 import 'package:ayikie_users/src/utils/alerts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class AllServicescreen extends StatefulWidget {
   final int subCategoryId;
@@ -142,7 +140,7 @@ class _AllServicescreenState extends State<AllServicescreen> {
                           scrollDirection: Axis.vertical,
                           itemCount: services.length,
                           itemBuilder: (BuildContext context, int index) =>
-                              SubCategoryWidget(index: index,services: services)),
+                              SubCategoryWidget(service: services[index])),
                     ),
                   ],
                 ),
@@ -153,12 +151,10 @@ class _AllServicescreenState extends State<AllServicescreen> {
 }
 
 class SubCategoryWidget extends StatelessWidget {
-  final List<Service> services;
-  final int index;
+  final Service service;
   SubCategoryWidget({
     Key? key,
-    required this.index,
-    required this.services
+    required this.service
   }) : super(key: key);
 
   @override
@@ -168,7 +164,7 @@ class SubCategoryWidget extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) {
-            return ServiceScreen(serviceId: services[index].id);
+            return ServiceScreen(serviceId: service.id);
           }),
         );
       },
@@ -200,7 +196,7 @@ class SubCategoryWidget extends StatelessWidget {
                               alignment: AlignmentDirectional.center),
                         ),
                       ),
-                      imageUrl: services[index].image!.getBannerUrl(),
+                      imageUrl: service.image!.getBannerUrl(),
                       errorWidget: (context, url, error) => Image.asset(
                         'asserts/images/ayikie_logo.png',
                         fit: BoxFit.fitHeight,
@@ -217,13 +213,13 @@ class SubCategoryWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        services[index].name,
+                        service.name,
                         style: TextStyle(fontWeight: FontWeight.w900),
                       ),
                       Text(
-                        services[index].introduction),
+                        service.introduction),
                       Text(
-                        '\$${services[index].price} / hr',
+                        '\$${service.price} / hr',
                         style: TextStyle(fontWeight: FontWeight.w900),
                       ),
                     ],

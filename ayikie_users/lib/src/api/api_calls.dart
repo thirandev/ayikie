@@ -37,7 +37,8 @@ class ApiCalls {
 
   static Future<ApiResponse> userLogOut() async {
     try {
-      return ApiCaller.getRequestAuth(baseUrl + '/api/user/revoke', _getEmptyHeaders());
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/user/revoke', _getEmptyHeaders());
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -284,7 +285,6 @@ class ApiCalls {
     }
   }
 
-
   static Future<ApiResponse> getBanners() async {
     try {
       return ApiCaller.getRequest(baseUrl + '/api/banners', _getEmptyHeaders());
@@ -312,6 +312,25 @@ class ApiCalls {
       return ApiCaller.multiPartRequestAuth(
           baseUrl + '/api/user/profile/picture/update', _getEmptyHeaders(),
           fields: fields, files: files);
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> addProductToCart({
+    required int productId,
+    required int quantity,
+  }) async {
+    try {
+      var payload = new Map<String, dynamic>();
+      payload['item_id'] = productId;
+      payload['quantity'] = quantity;
+
+      return ApiCaller.jsonRequestAuth(baseUrl + '/api/customer/carts',
+          _getEmptyHeaders(), jsonEncode(payload));
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;

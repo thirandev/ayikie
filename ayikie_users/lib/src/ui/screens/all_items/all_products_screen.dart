@@ -1,19 +1,57 @@
+import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
+import 'package:ayikie_users/src/models/product.dart';
 import 'package:ayikie_users/src/ui/screens/Item/product_screen.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
-import 'package:ayikie_users/src/ui/widget/primary_button.dart';
+import 'package:ayikie_users/src/ui/widget/progress_view.dart';
+import 'package:ayikie_users/src/utils/alerts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class AllProductcreen extends StatefulWidget {
-  const AllProductcreen({Key? key}) : super(key: key);
+  final int subCategoryId;
+
+  const AllProductcreen({Key? key, required this.subCategoryId})
+      : super(key: key);
 
   @override
   _AllProductcreenState createState() => _AllProductcreenState();
 }
 
 class _AllProductcreenState extends State<AllProductcreen> {
+  bool _isLoading = true;
+  List<Product> products = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _getSubProducts();
+  }
+
+  void _getSubProducts() async {
+    await ApiCalls.getProductsInSubCategory(categoryId: widget.subCategoryId)
+        .then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        print(response.jsonBody);
+        var data = response.jsonBody;
+        for (var item in data) {
+          Product subProduct = Product.fromJson(item);
+          products.add(subProduct);
+        }
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,99 +123,103 @@ class _AllProductcreenState extends State<AllProductcreen> {
         ],
       ),
       endDrawer: DrawerScreen(),
-      body: 
-           SafeArea(
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height ,
+      body: _isLoading
+          ? Center(
+              child: ProgressView(),
+            )
+          : SizedBox(
+              height: MediaQuery.of(context).size.height,
               child: Container(
                 padding: EdgeInsets.only(left: 16, right: 16, top: 20),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                     SizedBox(
+                    SizedBox(
                       height: MediaQuery.of(context).size.height - 100,
                       child: ListView.builder(
                           shrinkWrap: true,
                           scrollDirection: Axis.vertical,
-                          itemCount: 15,
+                          itemCount: products.length,
                           itemBuilder: (BuildContext context, int index) =>
-                              SubCategoryWidget()),
+                              SubCategoryWidget(product: products[index],)),
                     ),
                   ],
                 ),
               ),
             ),
-          ),
-        
     );
   }
 }
 
 class SubCategoryWidget extends StatelessWidget {
-  const SubCategoryWidget({
+  final Product product;
+  SubCategoryWidget({
     Key? key,
+    required this.product
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
-         Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return ProductScreen();
-                          }),
-                        );
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) {
+            return ProductScreen(productId: product.id);
+          }),
+        );
       },
       child: Padding(
-        padding: const EdgeInsets.only(
-            top: 8.0, bottom: 8.0),
+        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
         child: Container(
           height: 120,
           decoration: BoxDecoration(
               color: AppColors.textFieldBackground,
-              borderRadius: BorderRadius.all(
-                  Radius.circular(8))),
+              borderRadius: BorderRadius.all(Radius.circular(8))),
           child: Row(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 height: 120,
-                width: (MediaQuery.of(context).size.width- 40)/3,
+                width: (MediaQuery.of(context).size.width - 40) / 3,
                 child: ClipRRect(
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(8),
                       topLeft: Radius.circular(8),
                     ),
-                    child: Image.asset(
-                      'asserts/images/chair.jpg',
-                      fit: BoxFit.cover,
-                    )),
+                    child: CachedNetworkImage(
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.scaleDown,
+                              alignment: AlignmentDirectional.center),
+                        ),
+                      ),
+                      imageUrl: product.image!.getBannerUrl(),
+                      errorWidget: (context, url, error) => Image.asset(
+                        'asserts/images/ayikie_logo.png',
+                        fit: BoxFit.fitHeight,
+                      ),
+                    ),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  width: (MediaQuery.of(context).size.width- 56)*1.8/3,
+                  width: (MediaQuery.of(context).size.width - 56) * 1.8 / 3,
                   child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text(
-                        'Best pumbler in Sri lanka ',
-                        
-                        style: TextStyle(
-                            fontWeight:
-                                FontWeight.w900),
+                      Text(product.name,
+                        style: TextStyle(fontWeight: FontWeight.w900),
                       ),
+                      Text(product.introduction),
                       Text(
-                          'I offer best prise plan and the highly productive service for your side'),
-                      Text(
-                        '\$10.00',
-                        style: TextStyle(
-                            fontWeight:
-                                FontWeight.w900),
+                        '\$${product.price}',
+                        style: TextStyle(fontWeight: FontWeight.w900),
                       ),
                     ],
                   ),
