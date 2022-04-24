@@ -210,13 +210,13 @@ class _ProductScreenState extends State<ProductScreen> {
                                   fontWeight: FontWeight.w900, fontSize: 16),
                             ),
                             Spacer(),
-                            new IconButton(
-                              icon: new Icon(
-                                Icons.call_outlined,
-                                color: AppColors.black,
-                              ),
-                              onPressed:(){ _makePhoneCall("0778986457");},
-                            ),
+                            // new IconButton(
+                            //   icon: new Icon(
+                            //     Icons.call_outlined,
+                            //     color: AppColors.black,
+                            //   ),
+                            //   onPressed:(){ _makePhoneCall("0778986457");},
+                            // ),
                             new IconButton(
                               icon: new Icon(
                                 Icons.chat_bubble_outline_sharp,

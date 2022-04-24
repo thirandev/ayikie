@@ -100,12 +100,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
                                       image: imageProvider,
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.scaleDown,
                                       alignment:
                                       AlignmentDirectional.topCenter),
                                 ),
                               ),
-                          imageUrl:_user.imgUrl,
+                          imageUrl:_user.imgUrl.getBannerUrl(),
                           errorWidget: (context, url, error) => Icon(
                             Icons.account_circle_sharp,
                             size: 100,
@@ -238,18 +238,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
     var responseUpload = await ApiCalls.updateUserProfile(_profilePic);
     if (responseUpload.isSuccess) {
-      // if (responsePatch.isSuccess) {
-      //   _progressDlg.hide();
-      //   if (responseGet.isSuccess) {
-      //     setState(() {});
-      //   } else {
-      //     Alerts.showMessageForResponse(context, responseGet);
-      //   }
-      // } else {
-      //   _progressDlg.hide();
-      //   Alerts.showMessageForResponse(context, responsePatch);
-      // }
-      print('Uploaded');
+      User user = User.fromJson(responseUpload.jsonBody);
+      setState(() {
+        _user = user;
+      });
+
     } else {
       Alerts.showMessageForResponse(context, responseUpload);
     }
