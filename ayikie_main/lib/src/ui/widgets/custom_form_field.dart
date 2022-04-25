@@ -16,7 +16,7 @@ class CustomFormField extends StatelessWidget {
   final bool pickFromContactEnable;
   final bool suffixEnable;
   final String? prefixText;
-  final String? suffixUrl;
+  final Icon? suffixIcon;
   final int? maxLength;
   final String? regX;
   final EdgeInsetsGeometry? margin;
@@ -45,7 +45,7 @@ class CustomFormField extends StatelessWidget {
     this.pickFromContactEnable = false,
     this.isObsucure = false,
     this.hintText,
-    this.suffixUrl,
+    this.suffixIcon,
     this.inputType,
     this.suffixCallback,
     this.maxLength,
@@ -134,7 +134,9 @@ class CustomFormField extends StatelessWidget {
                           child: Container(
                               width: 7.5,
                               height: 7.5,
-                              child: Image.asset(suffixUrl!)),
+                              child: suffixIcon!,
+                              // Image.asset(suffixUrl!),
+                               ),
                         ),
                       )
                     : null,
@@ -150,6 +152,7 @@ class CustomFormField extends StatelessWidget {
                         ),
                         child: Expanded(
                           child: CountryCodePicker(
+                            
                             onChanged: (CountryCode countryCode) {
                               // this.phoneNumber = countryCode.toString();
                               print("New Country selected: " +

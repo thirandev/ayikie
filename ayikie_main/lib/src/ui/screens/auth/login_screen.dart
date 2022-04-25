@@ -26,6 +26,9 @@ class _LoginScreenState extends State<LoginScreen> {
   int _value = 1;
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _phoneNoController = TextEditingController();
+  bool hidePassword = true;
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   style: TextStyle(
                                       color: Colors.grey[800],
                                       fontSize: 16,
-                                      fontWeight: FontWeight.w600),
+                                      fontWeight: FontWeight.w700),
                                 ),
                               ),
                               SizedBox(height: 10),
@@ -193,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           Row(
                                             children: [
                                               Text(
-                                                'SELLER',
+                                                'PROFESSIONAL',
                                                 style: TextStyle(
                                                     fontWeight:
                                                         FontWeight.w700),
@@ -312,7 +315,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  
+
                   CustomFormField(
                     controller: _phoneNoController,
                     hintText: 'enter your phone no',
@@ -334,7 +337,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: _passwordController,
                     hintText: 'enter your password',
                     inputType: TextInputType.text,
-                    isObsucure: true,
+                    suffixEnable: true,
+                    suffixIcon: hidePassword
+                        ? Icon(Icons.visibility_off)
+                        : Icon(Icons.visibility),
+                    suffixCallback: () {
+                      setState(() {
+                        hidePassword = !hidePassword;
+                      });
+                    },
+                    isObsucure: hidePassword,
                   ),
 
                   Padding(
@@ -361,6 +373,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               'Reset',
                               style: TextStyle(
                                   fontSize: 14,
+                                  decoration: TextDecoration.underline,
                                   color: AppColors.primaryButtonColor),
                             ),
                           ),
@@ -445,6 +458,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Text(
                               'Sign Up',
                               style: TextStyle(
+                                decoration: TextDecoration.underline,
                                   fontSize: 14,
                                   color: AppColors.primaryButtonColor),
                             ),

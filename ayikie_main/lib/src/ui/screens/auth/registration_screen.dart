@@ -25,7 +25,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   TextEditingController _confirmPasswordController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _phoneNoController = TextEditingController();
-
+  int _value = 1;
+  bool hideConfirmPassword = true;
+  bool hidePassword = true;
   bool _isUser = true;
 
   @override
@@ -40,35 +42,292 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         backgroundColor: AppColors.white,
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 50),
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 40),
             child: Column(
               children: [
                 Container(
-                  alignment: Alignment.center,
-                  height: 150,
-                  child: SvgPicture.asset(
-                      'asserts/images/registration_logo.svg'),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Registration',
-                      style: TextStyle(
-                          fontSize: 26, fontWeight: FontWeight.w900),
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Country/Region :',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 14,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      SizedBox(
+                          width: 30,
+                          height: 20,
+                          child: Image.asset(
+                            'asserts/images/flag.png',
+                            fit: BoxFit.contain,
+                          )),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Ghana',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      )
+                    ],
                   ),
+                ),
+                SizedBox(
+                  height: 30,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: Container(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text(
-                      'Full Name',
-                      style: TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.w700),
+                      'Join as a Buyer or Professional',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                     ),
+                  ),
+                ),
+                Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Container(
+                      height: 140,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: AppColors.greyLightColor),
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.only(top: 10.0, left: 4, right: 4),
+                        child: Column(
+                          children: [
+                            Container(
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.only(left: 10, top: 5),
+                              child: Text(
+                                'Please select trade role',
+                                style: TextStyle(
+                                    color: Colors.grey[800],
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  height: 80,
+                                  width:
+                                      (MediaQuery.of(context).size.width - 80) /
+                                          2,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[400],
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'BUYER',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w700),
+                                            ),
+                                            Spacer(),
+                                            SizedBox(
+                                              height: 20,
+                                              width: 20,
+                                              child: Radio<int>(
+                                                value: 1,
+                                                activeColor: Colors.white,
+                                                groupValue: _value,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    _value = value!;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                            'I am abuying a \n product or service'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  height: 80,
+                                  width:
+                                      (MediaQuery.of(context).size.width - 80) /
+                                          2,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[400],
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'PROFESSIONAL',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w700),
+                                            ),
+                                            Spacer(),
+                                            SizedBox(
+                                              height: 20,
+                                              width: 20,
+                                              child: Radio<int>(
+                                                value: 2,
+                                                activeColor: Colors.white,
+                                                groupValue: _value,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    _value = value!;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                            'I am selling a \n product or service'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                    // child: Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //   children: <Widget>[
+                    //     GestureDetector(
+                    //       onTap: () => setState(() {
+                    //         _value = 1;
+                    //       }),
+                    //       child: Column(
+                    //         children: [
+                    //           Container(
+                    //             decoration: BoxDecoration(
+                    //               borderRadius:
+                    //                   BorderRadius.all(Radius.circular(20)),
+                    //               color: _value == 1
+                    //                   ? AppColors.selectedTextColor
+                    //                   : Colors.transparent,
+                    //               border: Border.all(
+                    //                   width: 1.2, color: AppColors.black),
+                    //             ),
+                    //             height: 150,
+                    //             width: 120,
+                    //             child:
+                    //                Text('data'),
+                    //           ),
+                    //           Padding(
+                    //             padding: const EdgeInsets.only(top: 8.0),
+                    //             child: Text(
+                    //               'User',
+                    //               style: TextStyle(
+                    //                   fontSize: 14,
+                    //                   fontWeight: FontWeight.w700),
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //     GestureDetector(
+                    //       onTap: () => setState(() {
+                    //         _value = 2;
+                    //       }),
+                    //       child: Column(
+                    //         children: [
+                    //           Container(
+                    //             decoration: BoxDecoration(
+                    //                 borderRadius:
+                    //                     BorderRadius.all(Radius.circular(20)),
+                    //                 color: _value == 2
+                    //                     ? AppColors.selectedTextColor
+                    //                     : Colors.transparent,
+                    //                 border: Border.all(
+                    //                     width: 1.2, color: AppColors.black)),
+                    //             height: 150,
+                    //             width: 120,
+                    //             child: SvgPicture.asset(
+                    //                 'asserts/images/professional.svg'),
+                    //           ),
+                    //           Padding(
+                    //             padding: const EdgeInsets.only(top: 8.0),
+                    //             child: Text(
+                    //               'Professional',
+                    //               style: TextStyle(
+                    //                   fontSize: 14,
+                    //                   fontWeight: FontWeight.w700),
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    ),
+
+                // Padding(
+                //   padding: const EdgeInsets.only(bottom: 10),
+                //   child: Container(
+                //     alignment: Alignment.centerLeft,
+                //     child: Text(
+                //       'Registration',
+                //       style: TextStyle(
+                //           fontSize: 26, fontWeight: FontWeight.w900),
+                //     ),
+                //   ),
+                // ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: Row(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Full Name',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      Spacer(),
+                      Container(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'Required',
+                          style: TextStyle(
+                            fontSize: 10,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 CustomFormField(
@@ -77,92 +336,154 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   inputType: TextInputType.text,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 20, bottom: 20),
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Phone No',
-                      style: TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.w700),
-                    ),
+                  padding: const EdgeInsets.only(top: 20, bottom: 5),
+                  child: Row(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Phone No',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      Spacer(),
+                      Container(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'Required',
+                          style: TextStyle(
+                            fontSize: 10,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 CustomFormField(
                   controller: _phoneNoController,
-                  hintText: 'phone no',
+                  hintText: 'enter your phone no',
                   inputType: TextInputType.number,
+                  
+                  prefixEnable: true,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 20, top: 20),
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Password',
-                      style: TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.w700),
-                    ),
+                  padding: const EdgeInsets.only(bottom: 5, top: 20),
+                  child: Row(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Password',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      Spacer(),
+                      Container(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'Required',
+                          style: TextStyle(
+                            fontSize: 10,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 CustomFormField(
                   controller: _passwordController,
-                  hintText: 'password',
+                  hintText: 'enter your password',
                   inputType: TextInputType.text,
-                  isObsucure: true,
+                  suffixEnable: true,
+                  suffixIcon: hidePassword
+                      ? Icon(Icons.visibility_off)
+                      : Icon(Icons.visibility),
+                  suffixCallback: () {
+                    setState(() {
+                      hidePassword = !hidePassword;
+                    });
+                  },
+                  isObsucure: hidePassword,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 20, top: 20),
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Confirm Password',
-                      style: TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.w700),
-                    ),
+                  padding: const EdgeInsets.only(bottom: 5, top: 20),
+                  child: Row(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Confirm Password',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      Spacer(),
+                      Container(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'Required',
+                          style: TextStyle(
+                            fontSize: 10,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 CustomFormField(
                   controller: _confirmPasswordController,
-                  hintText: 'confirm password',
+                  hintText: 'enter your password again',
                   inputType: TextInputType.text,
-                  isObsucure: true,
-                ),
-                SizedBox(height: 20),
-                Row(
-                  children: [
-                    Radio<bool>(
-                      value: true,
-                      groupValue: _isUser,
-                      onChanged: (value) {
-                        setState(() {
-                          _isUser = value!;
-                        });
-                      },
-                    ),
-                    Text(
-                      "User",
-                      style: TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.w500),
-                    ),
-                    SizedBox(width: 20),
-                    Radio<bool>(
-                      value: false,
-                      groupValue: _isUser,
-                      onChanged: (value) {
-                        setState(() {
-                          _isUser = value!;
-                        });
-                      },
-                    ),
-                    Text(
-                      "Professionals",
-                      style: TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.w500),
-                    ),
-                  ],
+                  suffixEnable: true,
+                  suffixIcon: hideConfirmPassword
+                      ? Icon(Icons.visibility_off)
+                      : Icon(Icons.visibility),
+                  suffixCallback: () {
+                    setState(() {
+                      hideConfirmPassword = !hideConfirmPassword;
+                    });
+                  },
+                  isObsucure: hideConfirmPassword,
                 ),
                 SizedBox(height: 40),
+                // Row(
+                //   children: [
+                //     Radio<bool>(
+                //       value: true,
+                //       groupValue: _isUser,
+                //       onChanged: (value) {
+                //         setState(() {
+                //           _isUser = value!;
+                //         });
+                //       },
+                //     ),
+                //     Text(
+                //       "User",
+                //       style:
+                //           TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                //     ),
+                //     SizedBox(width: 20),
+                //     Radio<bool>(
+                //       value: false,
+                //       groupValue: _isUser,
+                //       onChanged: (value) {
+                //         setState(() {
+                //           _isUser = value!;
+                //         });
+                //       },
+                //     ),
+                //     Text(
+                //       "Professionals",
+                //       style:
+                //           TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                //     ),
+                //   ],
+                // ),
+
                 PrimaryButton(
-                    text: 'Register',
+                    text: 'CREATE MY ACCOUNT',
                     fontSize: 12,
                     clickCallback: onRegisterPress),
                 SizedBox(height: 10),
@@ -175,7 +496,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     children: [
                       Container(
                         child: Text(
-                          'Don\'t have an account?  ',
+                          'already have an account?  ',
                           style: TextStyle(
                             fontSize: 12,
                           ),
@@ -188,9 +509,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             Navigator.pushNamed(context, '/LoginScreen');
                           },
                           child: Text(
-                            'Sign Up',
+                            'Log In',
                             style: TextStyle(
                                 fontSize: 12,
+                                decoration: TextDecoration.underline,
                                 color: AppColors.primaryButtonColor),
                           ),
                         ),
