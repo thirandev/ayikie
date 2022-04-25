@@ -9,7 +9,6 @@ import 'package:ayikie_users/src/ui/widget/progress_view.dart';
 import 'package:ayikie_users/src/utils/alerts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({Key? key}) : super(key: key);
