@@ -36,9 +36,9 @@ class _CartScreenState extends State<CartScreen> {
         cartItems.clear();
         totalPrice = 0.0;
         for (var item in data) {
-         CartItem cartItem = CartItem.fromJson(item);
-         cartItems.add(cartItem);
-         totalPrice = totalPrice + cartItem.quantity*cartItem.product.price;
+          CartItem cartItem = CartItem.fromJson(item);
+          cartItems.add(cartItem);
+          totalPrice = totalPrice + cartItem.quantity * cartItem.product.price;
         }
       } else {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
@@ -72,14 +72,17 @@ class _CartScreenState extends State<CartScreen> {
                             scrollDirection: Axis.vertical,
                             itemCount: cartItems.length,
                             itemBuilder: (BuildContext context, int index) =>
-                                SubCategoryWidget(item: cartItems[index],
-                                  deleteProduct: (){deleteItem(cartItems[index].cartItemId);},
-                                quantityCallback: (bool value){
-                                  if(value){
-                                    increaseQuantity(cartItems[index]);
-                                  }else{
-                                    decreaseQuantity(cartItems[index]);
-                                  }
+                                SubCategoryWidget(
+                                  item: cartItems[index],
+                                  deleteProduct: () {
+                                    deleteItem(cartItems[index].cartItemId);
+                                  },
+                                  quantityCallback: (bool value) {
+                                    if (value) {
+                                      increaseQuantity(cartItems[index]);
+                                    } else {
+                                      decreaseQuantity(cartItems[index]);
+                                    }
                                   },
                                 )),
                       ),
@@ -140,7 +143,7 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  void deleteItem(int itemId) async{
+  void deleteItem(int itemId) async {
     setState(() {
       _isLoading = true;
     });
@@ -160,12 +163,12 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
-  void increaseQuantity(CartItem item) async{
-    int quantity = item.quantity+1;
+  void increaseQuantity(CartItem item) async {
+    int quantity = item.quantity + 1;
     setState(() {
       _isLoading = true;
     });
-    await ApiCalls.updateCartItem(item.cartItemId,quantity).then((response) {
+    await ApiCalls.updateCartItem(item.cartItemId, quantity).then((response) {
       if (!mounted) {
         return;
       }
@@ -181,12 +184,12 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
-  void decreaseQuantity(CartItem item) async{
-    int quantity = item.quantity-1;
+  void decreaseQuantity(CartItem item) async {
+    int quantity = item.quantity - 1;
     setState(() {
       _isLoading = true;
     });
-    await ApiCalls.updateCartItem(item.cartItemId,quantity).then((response) {
+    await ApiCalls.updateCartItem(item.cartItemId, quantity).then((response) {
       if (!mounted) {
         return;
       }
@@ -201,7 +204,6 @@ class _CartScreenState extends State<CartScreen> {
       }
     });
   }
-
 }
 
 class SubCategoryWidget extends StatefulWidget {
@@ -220,12 +222,10 @@ class SubCategoryWidget extends StatefulWidget {
 }
 
 class _SubCategoryWidgetState extends State<SubCategoryWidget> {
-
   @override
   void initState() {
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -243,27 +243,25 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> {
               height: 150,
               width: (MediaQuery.of(context).size.width - 40) / 3,
               child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(8),
-                    topLeft: Radius.circular(8),
-                  ),
-                  child: CachedNetworkImage(
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.scaleDown,
-                            alignment: AlignmentDirectional.center),
-                      ),
-                    ),
-                    imageUrl: widget.item.product.image!.getBannerUrl(),
-                    errorWidget: (context, url, error) => Image.asset(
-                      'asserts/images/ayikie_logo.png',
-                      fit: BoxFit.fitHeight,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(8),
+                  topLeft: Radius.circular(8),
+                ),
+                child: CachedNetworkImage(
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                          alignment: AlignmentDirectional.center),
                     ),
                   ),
-
+                  imageUrl: widget.item.product.image!.getBannerUrl(),
+                  errorWidget: (context, url, error) => Image.asset(
+                    'asserts/images/ayikie_logo.png',
+                    fit: BoxFit.fitHeight,
+                  ),
+                ),
               ),
             ),
             Padding(
@@ -280,7 +278,7 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> {
                     ),
                     Text(widget.item.product.introduction),
                     Text(
-                      '\$${widget.item.product.price*widget.item.quantity}',
+                      '\$${widget.item.product.price * widget.item.quantity}',
                       style: TextStyle(fontWeight: FontWeight.w900),
                     ),
                     Row(
@@ -294,9 +292,11 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> {
                               Icons.remove,
                               size: 16,
                             ),
-                            onPressed:widget.item.quantity != 1
-                                ? (){widget.quantityCallback(false);}:
-                            null,
+                            onPressed: widget.item.quantity != 1
+                                ? () {
+                                    widget.quantityCallback(false);
+                                  }
+                                : null,
                             color: AppColors.black,
                           ),
                         ),
@@ -316,7 +316,9 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> {
                               Icons.add,
                               size: 16,
                             ),
-                            onPressed: (){widget.quantityCallback(true);},
+                            onPressed: () {
+                              widget.quantityCallback(true);
+                            },
                             color: AppColors.black,
                           ),
                         ),

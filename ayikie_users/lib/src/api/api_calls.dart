@@ -5,7 +5,6 @@ import 'package:http/http.dart';
 
 import 'api_caller.dart';
 import 'api_response.dart';
-import 'package:http_parser/http_parser.dart';
 
 class ApiCalls {
   static const String baseUrl = "https://ayikie.cyberelysium.app";
@@ -296,16 +295,17 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> updateUserProfile(
-      File _profilePicture
-      ) async {
+  static Future<ApiResponse> updateUserProfile(File _profilePicture) async {
     try {
       List<MultipartFile> image = [];
-      var multipartFile = await MultipartFile.fromPath('images', _profilePicture.path);
+      var multipartFile =
+          await MultipartFile.fromPath('images', _profilePicture.path);
       image.add(multipartFile);
       return ApiCaller.multiPartRequestAuth(
-          baseUrl + '/api/user/profile/picture/update', await _getEmptyHeaders(),
-          requestType: 'POST', files: image);
+          baseUrl + '/api/user/profile/picture/update',
+          _getEmptyHeaders(),
+          requestType: 'POST',
+          files: image);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -317,8 +317,7 @@ class ApiCalls {
   static Future<ApiResponse> getAllCartItems() async {
     try {
       return ApiCaller.getRequestAuth(
-          baseUrl + '/api/customer/carts',
-          _getEmptyHeaders());
+          baseUrl + '/api/customer/carts', _getEmptyHeaders());
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -349,9 +348,7 @@ class ApiCalls {
   static Future<ApiResponse> removeCartItem(int productId) async {
     try {
       return ApiCaller.requestAuth(
-          baseUrl +
-              "/api/customer/carts/$productId",
-          _getEmptyHeaders(),
+          baseUrl + "/api/customer/carts/$productId", _getEmptyHeaders(),
           requestType: "DELETE");
     } catch (e) {
       ApiResponse response = ApiResponse();
@@ -361,15 +358,14 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> updateCartItem(
-      int productId, int quantity) async {
+  static Future<ApiResponse> updateCartItem(int productId, int quantity) async {
     try {
       var payload = new Map<String, dynamic>();
       payload['quantity'] = quantity;
       return ApiCaller.jsonRequestAuth(
-          baseUrl +
-              "/api/customer/carts/$productId",
-          _getEmptyHeaders(), jsonEncode(payload),
+          baseUrl + "/api/customer/carts/$productId",
+          _getEmptyHeaders(),
+          jsonEncode(payload),
           requestType: "PUT");
     } catch (e) {
       ApiResponse response = ApiResponse();
@@ -378,7 +374,6 @@ class ApiCalls {
       return response;
     }
   }
-
 
   static Future<ApiResponse> createServiceOrder({
     required int serviceId,
@@ -404,6 +399,84 @@ class ApiCalls {
       return response;
     }
   }
+
+  static Future<ApiResponse> getAllServiceOrders() async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/customer/order/service', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getServiceOrder(int orderId) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/customer/order/service/$orderId', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> deleteServiceOrder(int orderId) async {
+    try {
+      return ApiCaller.requestAuth(
+          baseUrl + "/api/customer/order/service/$orderId", _getEmptyHeaders(),
+          requestType: "DELETE");
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> cancelServiceOrder(int orderId) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/customer/order/service/cancel/$orderId', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> reviewServiceOrder({
+    required int serviceId,
+    required double rate,
+    required String comment,
+    required File picture
+  }) async {
+    try {
+      List<MultipartFile> image = [];
+      var multipartFile =
+      await MultipartFile.fromPath('images', picture.path);
+      image.add(multipartFile);
+      var payload = new Map<String, String>();
+      payload['service_order_id'] = serviceId.toString();
+      payload['rate'] = rate.toString();
+      payload['comment'] = comment;
+
+      return ApiCaller.multiPartRequestAuth(baseUrl + '/api/customer/order/service/add/review',
+          _getEmptyHeaders(),
+          fields: payload,
+          files: image);
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
 
 
 }

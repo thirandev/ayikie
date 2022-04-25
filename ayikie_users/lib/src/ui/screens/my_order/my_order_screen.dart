@@ -1,11 +1,12 @@
-import 'dart:io';
-
+import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
-import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
-import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
+import 'package:ayikie_users/src/models/order.dart';
 import 'package:ayikie_users/src/ui/screens/my_order/product_order_details.dart';
 import 'package:ayikie_users/src/ui/screens/my_order/service_order_details.dart';
 import 'package:ayikie_users/src/ui/widget/progress_view.dart';
+import 'package:ayikie_users/src/utils/alerts.dart';
+import 'package:ayikie_users/src/utils/common.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class MyOrderScreen extends StatefulWidget {
@@ -17,6 +18,34 @@ class MyOrderScreen extends StatefulWidget {
 
 class _MyOrderScreenState extends State<MyOrderScreen> {
   bool _isLoading = true;
+  List<Order> serviceOrders = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _getServices();
+  }
+
+  void _getServices() async {
+    await ApiCalls.getAllServiceOrders().then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        var data = response.jsonBody;
+        for (var item in data) {
+          Order order = Order.fromJson(item);
+          serviceOrders.add(order);
+        }
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,58 +53,67 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
       length: 2,
       child: Scaffold(
         backgroundColor: AppColors.white,
-        
-        body:SizedBox(
+        body: SizedBox(
           height: MediaQuery.of(context).size.height - 200,
           child: Column(
-            
             children: [
               TabBar(
-                    labelColor: AppColors.black,
-                    indicatorColor: AppColors.primaryButtonColor,
-                    indicatorWeight: 2.5,
-                    labelStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
-                    tabs: [
-                      Tab(
-                        text: ('Service'),
-                      ),
-                      Tab(
-                        text: ('Product'),
-                      ),
-                    ]),
-              Expanded(
-                child: TabBarView(
-                      children: [
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height,
-                          child: Container(
-                            padding: EdgeInsets.only(left: 16, right: 16, top: 20),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                ServiceOrderTileWidget(),
-                                ServiceOrderTileWidget(),
-                                ServiceOrderTileWidget()
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height,
-                          child: Container(
-                            padding: EdgeInsets.only(left: 16, right: 16, top: 20),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                ProductOrderTileWidget(),
-                                ProductOrderTileWidget(),
-                                ProductOrderTileWidget()
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                  labelColor: AppColors.black,
+                  indicatorColor: AppColors.primaryButtonColor,
+                  indicatorWeight: 2.5,
+                  labelStyle:
+                      TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
+                  tabs: [
+                    Tab(
+                      text: ('Service'),
                     ),
+                    Tab(
+                      text: ('Product'),
+                    ),
+                  ]),
+              Expanded(
+                child: _isLoading
+                    ? Center(
+                        child: ProgressView(),
+                      )
+                    : TabBarView(
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height,
+                            child: Container(
+                              padding:
+                                  EdgeInsets.only(left: 16, right: 16, top: 20),
+                              child: SizedBox(
+                                height: 300,
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.vertical,
+                                    itemCount: serviceOrders.length,
+                                    itemBuilder: (BuildContext context,
+                                            int index) =>
+                                        ServiceOrderTileWidget(
+                                          serviceOrder: serviceOrders[index],
+                                        )),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height,
+                            child: Container(
+                              padding:
+                                  EdgeInsets.only(left: 16, right: 16, top: 20),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  ProductOrderTileWidget(),
+                                  // ProductOrderTileWidget(),
+                                  // ProductOrderTileWidget()
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
               ),
             ],
           ),
@@ -85,22 +123,23 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
   }
 }
 
-
 class ServiceOrderTileWidget extends StatelessWidget {
-  const ServiceOrderTileWidget({
-    Key? key,
-  }) : super(key: key);
+  final Order serviceOrder;
+
+  ServiceOrderTileWidget({Key? key, required this.serviceOrder})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) {
-            return ServiceOrderDetails();
-          }),
-        );
+        if(serviceOrder.status!=4)
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return ServiceOrderDetails(serviceOrder: serviceOrder);
+            }),
+          );
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
@@ -120,9 +159,21 @@ class ServiceOrderTileWidget extends StatelessWidget {
                       bottomLeft: Radius.circular(8),
                       topLeft: Radius.circular(8),
                     ),
-                    child: Image.asset(
-                      'asserts/images/worker.jpg',
-                      fit: BoxFit.cover,
+                    child: CachedNetworkImage(
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          
+                          image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                              alignment: AlignmentDirectional.center),
+                        ),
+                      ),
+                      imageUrl: serviceOrder.service.image!.getBannerUrl(),
+                      errorWidget: (context, url, error) => Image.asset(
+                        'asserts/images/ayikie_logo.png',
+                        fit: BoxFit.fitHeight,
+                      ),
                     )),
               ),
               Padding(
@@ -133,7 +184,7 @@ class ServiceOrderTileWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Praneeth Rajapaksha',
+                        serviceOrder.service.name,
                         style: TextStyle(fontWeight: FontWeight.w900),
                       ),
                       SizedBox(
@@ -144,7 +195,7 @@ class ServiceOrderTileWidget extends StatelessWidget {
                           Text('Order Amount :'),
                           Spacer(),
                           Text(
-                            '\$25',
+                            '\$${serviceOrder.price}',
                             style: TextStyle(fontWeight: FontWeight.w900),
                           ),
                         ],
@@ -157,7 +208,8 @@ class ServiceOrderTileWidget extends StatelessWidget {
                           Text('Order Date : '),
                           Spacer(),
                           Text(
-                            '2022-02-35',
+                            Common.dateFormator(
+                                ios8601: serviceOrder.createdAt),
                             style: TextStyle(fontWeight: FontWeight.w900),
                           ),
                         ],
@@ -166,7 +218,10 @@ class ServiceOrderTileWidget extends StatelessWidget {
                         height: 10,
                       ),
                       Row(
-                        children: [Spacer(), Text('pending order')],
+                        children: [
+                          Spacer(),
+                          Text(Common.getStatus(status: serviceOrder.status))
+                        ],
                       )
                     ],
                   ),
@@ -273,4 +328,3 @@ class ProductOrderTileWidget extends StatelessWidget {
     );
   }
 }
-

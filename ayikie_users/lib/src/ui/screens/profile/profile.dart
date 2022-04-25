@@ -97,6 +97,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           imageBuilder: (context, imageProvider) =>
                               Container(
                                 decoration: BoxDecoration(
+                                  border: Border.all(color: AppColors.primaryButtonColor),
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
                                       image: imageProvider,
