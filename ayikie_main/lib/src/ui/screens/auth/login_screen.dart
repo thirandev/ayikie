@@ -149,6 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                               Text(
                                                 'BUYER',
                                                 style: TextStyle(
+                                                  fontSize :13,
                                                     fontWeight:
                                                         FontWeight.w700),
                                               ),
@@ -198,6 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                               Text(
                                                 'PROFESSIONAL',
                                                 style: TextStyle(
+                                                  fontSize:13,
                                                     fontWeight:
                                                         FontWeight.w700),
                                               ),

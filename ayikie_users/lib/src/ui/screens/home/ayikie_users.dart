@@ -257,73 +257,80 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             height: 20,
                           ),
                           SizedBox(
-                            height: 100,
+                            height: 120,
                             child: ListView.builder(
                               shrinkWrap: true,
                               scrollDirection: Axis.horizontal,
-                              itemCount: categories.length > 8
-                                  ? 8
-                                  : categories.length,
+                              itemCount:
+                                  categories.length > 8 ? 8 : categories.length,
                               itemBuilder: (BuildContext context, int index) =>
                                   GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) {
-                                          return SubSeriveScreen(categoryId: categories[index].id);
-                                        }),
-                                      );
-                                    },
-                                    child: Column(
-                                children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Container(
-                                        height: 60,
-                                        width: 60,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.primaryButtonColor,
-                                          borderRadius:
-                                              BorderRadius.circular(100),
-                                        ),
-                                        child: CachedNetworkImage(
-                                          imageBuilder:
-                                              (context, imageProvider) =>
-                                                  Container(
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              image: DecorationImage(
-                                                  image: imageProvider,
-                                                  fit: BoxFit.scaleDown,
-                                                  alignment: AlignmentDirectional
-                                                      .center),
-                                            ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) {
+                                      return SubSeriveScreen(
+                                          categoryId: categories[index].id);
+                                    }),
+                                  );
+                                },
+                                child: Container(
+                                  width: 90,
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Container(
+                                          height: 60,
+                                          width: 60,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primaryButtonColor,
+                                            borderRadius:
+                                                BorderRadius.circular(100),
                                           ),
-                                          imageUrl: categories[index]
-                                              .image!
-                                              .getBannerUrl(),
-                                          errorWidget: (context, url, error) =>
-                                              Image.asset(
-                                            'asserts/images/ayikie_logo.png',
-                                            fit: BoxFit.fitHeight,
+                                          child: CachedNetworkImage(
+                                            imageBuilder:
+                                                (context, imageProvider) =>
+                                                    Container(
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.cover,
+                                                    alignment:
+                                                        AlignmentDirectional
+                                                            .center),
+                                              ),
+                                            ),
+                                            imageUrl: categories[index]
+                                                .image!
+                                                .getBannerUrl(),
+                                            errorWidget: (context, url, error) =>
+                                                Image.asset(
+                                              'asserts/images/ayikie_logo.png',
+                                              fit: BoxFit.fitHeight,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    Text(
-                                      categories[index].name,
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: AppColors.primaryButtonColor),
-                                    )
-                                ],
-                              ),
+                                      Text(
+                                        categories[index].name,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        softWrap: true,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColors.black),
+                                      )
+                                    ],
                                   ),
+                                ),
+                              ),
                             ),
                           ),
-                          SizedBox(
-                            height: 20,
-                          ),
+                          
                           Row(
                             children: [
                               Text(
@@ -367,12 +374,14 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) {
-                                      return ServiceScreen(serviceId: recommandedServices[index].id);
+                                      return ServiceScreen(
+                                          serviceId:
+                                              recommandedServices[index].id);
                                     }),
                                   );
                                 },
-                                    child: Column(
-                                children: [
+                                child: Column(
+                                  children: [
                                     Padding(
                                       padding: const EdgeInsets.only(
                                         left: 8.0,
@@ -383,7 +392,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                         width: 150,
                                         decoration: BoxDecoration(
                                           color: AppColors.white,
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.only(
@@ -397,7 +407,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                                 shape: BoxShape.rectangle,
                                                 image: DecorationImage(
                                                     image: imageProvider,
-                                                    fit: BoxFit.scaleDown,
+                                                    fit: BoxFit.cover,
                                                     alignment:
                                                         AlignmentDirectional
                                                             .center),
@@ -406,8 +416,10 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                             imageUrl: recommandedServices[index]
                                                 .image!
                                                 .getBannerUrl(),
-                                            errorWidget: (context, url, error) =>
-                                                Image.asset(
+                                            fit: BoxFit.cover,
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Image.asset(
                                               'asserts/images/ayikie_logo.png',
                                               fit: BoxFit.fitHeight,
                                             ),
@@ -449,9 +461,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                         ),
                                       ),
                                     )
-                                ],
+                                  ],
+                                ),
                               ),
-                                  ),
                             ),
                           ),
                           Row(
@@ -498,7 +510,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(builder: (context) {
-                                            return ServiceScreen(serviceId: popularServices[index].id);
+                                            return ServiceScreen(
+                                                serviceId:
+                                                    popularServices[index].id);
                                           }),
                                         );
                                       },
@@ -524,7 +538,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                                         40) /
                                                     3,
                                                 child: ClipRRect(
-                                                  borderRadius: BorderRadius.only(
+                                                  borderRadius:
+                                                      BorderRadius.only(
                                                     bottomLeft:
                                                         Radius.circular(8),
                                                     topLeft: Radius.circular(8),
@@ -534,10 +549,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                                             imageProvider) =>
                                                         Container(
                                                       decoration: BoxDecoration(
-                                                        shape: BoxShape.rectangle,
+                                                        shape:
+                                                            BoxShape.rectangle,
                                                         image: DecorationImage(
-                                                            image: imageProvider,
-                                                            fit: BoxFit.scaleDown,
+                                                            image:
+                                                                imageProvider,
+                                                            fit: BoxFit.cover,
                                                             alignment:
                                                                 AlignmentDirectional
                                                                     .center),
@@ -568,7 +585,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                                       3,
                                                   child: Column(
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment.start,
+                                                        CrossAxisAlignment
+                                                            .start,
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
                                                             .spaceEvenly,
@@ -578,15 +596,18 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                                             .name,
                                                         style: TextStyle(
                                                             fontWeight:
-                                                                FontWeight.w900),
+                                                                FontWeight
+                                                                    .w900),
                                                       ),
-                                                      Text(popularServices[index]
-                                                          .introduction),
+                                                      Text(
+                                                          popularServices[index]
+                                                              .introduction),
                                                       Text(
                                                         '\$${popularServices[index].price}',
                                                         style: TextStyle(
                                                             fontWeight:
-                                                                FontWeight.w900),
+                                                                FontWeight
+                                                                    .w900),
                                                       ),
                                                     ],
                                                   ),

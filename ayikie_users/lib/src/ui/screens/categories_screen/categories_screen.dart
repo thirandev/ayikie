@@ -275,28 +275,30 @@ class CategoryService extends StatelessWidget {
               child:CachedNetworkImage(
                 imageBuilder: (context, imageProvider) => Container(
                   decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
+                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
                         image: imageProvider,
-                        fit: BoxFit.scaleDown,
+                        fit: BoxFit.cover,
                         alignment: AlignmentDirectional.center),
                   ),
                 ),
                 imageUrl: serviceCategories[index].image!.getBannerUrl(),
                 errorWidget: (context, url, error) => Image.asset(
                   'asserts/images/ayikie_logo.png',
-                  fit: BoxFit.fitHeight,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
             Spacer(),
             Text(
             serviceCategories[index].name,
+           overflow: TextOverflow.ellipsis,
               style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
             ),
             SizedBox(
               height: 20,
-            )
+            ),
+            
           ],
         ),
       ),

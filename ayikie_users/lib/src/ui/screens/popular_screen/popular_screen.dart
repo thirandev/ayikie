@@ -238,17 +238,17 @@ class PopularProductWidget extends StatelessWidget {
                   child: CachedNetworkImage(
                     imageBuilder: (context, imageProvider) => Container(
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
+                       
                         image: DecorationImage(
                             image: imageProvider,
-                            fit: BoxFit.scaleDown,
+                            fit: BoxFit.cover,
                             alignment: AlignmentDirectional.center),
                       ),
                     ),
                     imageUrl: popularProduct.image!.getBannerUrl(),
                     errorWidget: (context, url, error) => Image.asset(
                       'asserts/images/ayikie_logo.png',
-                      fit: BoxFit.fitHeight,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
@@ -322,17 +322,17 @@ class PopularServiceWidget extends StatelessWidget {
                   child: CachedNetworkImage(
                     imageBuilder: (context, imageProvider) => Container(
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
+                        
                         image: DecorationImage(
                             image: imageProvider,
-                            fit: BoxFit.scaleDown,
+                            fit: BoxFit.cover,
                             alignment: AlignmentDirectional.center),
                       ),
                     ),
                     imageUrl: popularService.image!.getBannerUrl(),
                     errorWidget: (context, url, error) => Image.asset(
                       'asserts/images/ayikie_logo.png',
-                      fit: BoxFit.fitHeight,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),

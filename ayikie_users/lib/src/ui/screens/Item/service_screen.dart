@@ -163,7 +163,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                                   shape: BoxShape.rectangle,
                                   image: DecorationImage(
                                       image: imageProvider,
-                                      fit: BoxFit.scaleDown,
+                                      fit: BoxFit.cover,
                                       alignment: AlignmentDirectional.center),
                                 ),
                               ),

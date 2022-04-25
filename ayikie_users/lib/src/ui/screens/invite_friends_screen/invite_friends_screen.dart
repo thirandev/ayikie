@@ -4,6 +4,7 @@ import 'package:ayikie_users/src/ui/screens/notification_screen/notification_scr
 import 'package:ayikie_users/src/ui/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class InviteFriendsScreen extends StatefulWidget {
   const InviteFriendsScreen({Key? key}) : super(key: key);
@@ -13,6 +14,17 @@ class InviteFriendsScreen extends StatefulWidget {
 }
 
 class _InviteFriendsScreenState extends State<InviteFriendsScreen> {
+
+  String url = '';
+
+  launchURL(url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not Launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -85,52 +97,56 @@ class _InviteFriendsScreenState extends State<InviteFriendsScreen> {
           ],
         ),
         endDrawer: DrawerScreen(),
-        body: 
-             SizedBox(
-               height: MediaQuery.of(context).size.height ,
-               child: Container(
-                 padding: EdgeInsets.only(left: 16, right: 16, top: 40),
-                 child: Column(
-                   mainAxisSize: MainAxisSize.max,
-                   children: [
-                     AspectRatio(
-                       aspectRatio: 1.75,
-                       child: SvgPicture.asset(
-                         
-                         'asserts/images/share_link.svg',
-                         height: 250,
-                       ),
-                     ),
-                     SizedBox(height: 40,),
-                     Text(
-                       'Share with Friends',
-                       style:
-                           TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
-                       textAlign: TextAlign.center,
-                     ),
-                     SizedBox(height: 20,),
-                     Text(
-                       'Cos your friends deserve to live life better',
-                       style: TextStyle(
-                         fontSize: 14,
-                       ),
-                       textAlign: TextAlign.center,
-                     ),
-                     SizedBox(height: 20,),
-                      Spacer(),
-                     PrimaryButton(
-                     text: 'Invite Now',
-                     fontSize: 12,
-                     clickCallback: () {
-                       Navigator.pushNamed(context, '/SendOtpScreen');
-                     }),
-                     
-                     SizedBox(height: 40,),
-                   ],
-                 ),
-               ),
-             ),
-          
+        body: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: Container(
+            padding: EdgeInsets.only(left: 16, right: 16, top: 40),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                AspectRatio(
+                  aspectRatio: 1.75,
+                  child: SvgPicture.asset(
+                    'asserts/images/share_link.svg',
+                    height: 250,
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+                Text(
+                  'Share with Friends',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  'Cos your friends deserve to live life better',
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Spacer(),
+                PrimaryButton(
+                    text: 'Invite Now',
+                    fontSize: 12,
+                    clickCallback: () {
+                      launchURL(url = 'https://play.google.com/store');
+                      // Navigator.pushNamed(context, '/SendOtpScreen');
+                    }),
+                SizedBox(
+                  height: 40,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
