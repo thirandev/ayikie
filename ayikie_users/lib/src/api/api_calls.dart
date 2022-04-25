@@ -460,12 +460,12 @@ class ApiCalls {
       var multipartFile =
       await MultipartFile.fromPath('images', picture.path);
       image.add(multipartFile);
-      var payload = new Map<String, String>();
+      Map<String, String> payload = new Map<String, String>();
       payload['service_order_id'] = serviceId.toString();
       payload['rate'] = rate.toString();
       payload['comment'] = comment;
 
-      return ApiCaller.multiPartRequestAuth(baseUrl + '/api/customer/order/service/add/review',
+      return ApiCaller.multiPartRequestAuth(baseUrl + '/api/customer/order/products/add/review',
           _getEmptyHeaders(),
           fields: payload,
           files: image);
@@ -477,6 +477,38 @@ class ApiCalls {
     }
   }
 
+  static Future<ApiResponse> createProductOrder({
+    required int method,
+    required String location,
+    required String note,
+  }) async {
+    try {
+      var payload = new Map<String, dynamic>();
+      payload['method'] = method;
+      payload['location'] = location;
+      payload['note'] = note;
+
+      return ApiCaller.jsonRequestAuth(baseUrl + '/api/customer/order/products',
+          _getEmptyHeaders(), jsonEncode(payload));
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getAllProductOrders() async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/customer/order/products', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
 
 
 }
