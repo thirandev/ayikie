@@ -1,6 +1,7 @@
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/models/order.dart';
+import 'package:ayikie_users/src/models/productOrder.dart';
 import 'package:ayikie_users/src/ui/screens/my_order/product_order_details.dart';
 import 'package:ayikie_users/src/ui/screens/my_order/service_order_details.dart';
 import 'package:ayikie_users/src/ui/widget/progress_view.dart';
@@ -19,6 +20,7 @@ class MyOrderScreen extends StatefulWidget {
 class _MyOrderScreenState extends State<MyOrderScreen> {
   bool _isLoading = true;
   List<Order> serviceOrders = [];
+  List<ProductOrder> productOrders = [];
 
   @override
   void initState() {
@@ -41,11 +43,32 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
             title: "Oops!");
       }
+      _getProducts();
+    });
+  }
+
+  void _getProducts() async {
+    await ApiCalls.getAllProductOrders().then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        var data = response.jsonBody;
+        for (var item in data) {
+          ProductOrder order = ProductOrder.fromJson(item);
+          productOrders.add(order);
+        }
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
       setState(() {
         _isLoading = false;
       });
     });
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -102,13 +125,17 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                             child: Container(
                               padding:
                                   EdgeInsets.only(left: 16, right: 16, top: 20),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  ProductOrderTileWidget(),
-                                  ProductOrderTileWidget(),
-                                  ProductOrderTileWidget()
-                                ],
+                              child: SizedBox(
+                                height: 300,
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.vertical,
+                                    itemCount: productOrders.length,
+                                    itemBuilder: (BuildContext context,
+                                        int index) =>
+                                        ProductOrderTileWidget(
+                                          productOrder: productOrders[index],
+                                        )),
                               ),
                             ),
                           ),
@@ -162,10 +189,10 @@ class ServiceOrderTileWidget extends StatelessWidget {
                     child: CachedNetworkImage(
                       imageBuilder: (context, imageProvider) => Container(
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
+                          shape: BoxShape.rectangle,
                           image: DecorationImage(
                               image: imageProvider,
-                              fit: BoxFit.scaleDown,
+                              fit: BoxFit.cover,
                               alignment: AlignmentDirectional.center),
                         ),
                       ),
@@ -174,7 +201,8 @@ class ServiceOrderTileWidget extends StatelessWidget {
                         'asserts/images/ayikie_logo.png',
                         fit: BoxFit.fitHeight,
                       ),
-                    )),
+                    )
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -236,8 +264,10 @@ class ServiceOrderTileWidget extends StatelessWidget {
 }
 
 class ProductOrderTileWidget extends StatelessWidget {
+  final ProductOrder productOrder;
   const ProductOrderTileWidget({
     Key? key,
+    required this.productOrder
   }) : super(key: key);
 
   @override
@@ -269,10 +299,23 @@ class ProductOrderTileWidget extends StatelessWidget {
                       bottomLeft: Radius.circular(8),
                       topLeft: Radius.circular(8),
                     ),
-                    child: Image.asset(
-                      'asserts/images/worker.jpg',
-                      fit: BoxFit.cover,
-                    )),
+                    child: CachedNetworkImage(
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                              alignment: AlignmentDirectional.center),
+                        ),
+                      ),
+                      imageUrl: productOrder.product.image!.getBannerUrl(),
+                      errorWidget: (context, url, error) => Image.asset(
+                        'asserts/images/ayikie_logo.png',
+                        fit: BoxFit.fitHeight,
+                      ),
+                    )
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -282,7 +325,7 @@ class ProductOrderTileWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Praneeth Rajapaksha',
+                        productOrder.product.name,
                         style: TextStyle(fontWeight: FontWeight.w900),
                       ),
                       SizedBox(
@@ -293,7 +336,7 @@ class ProductOrderTileWidget extends StatelessWidget {
                           Text('Order Amount :'),
                           Spacer(),
                           Text(
-                            '\$25',
+                            '\$${productOrder.price}',
                             style: TextStyle(fontWeight: FontWeight.w900),
                           ),
                         ],
@@ -306,7 +349,7 @@ class ProductOrderTileWidget extends StatelessWidget {
                           Text('Order Date : '),
                           Spacer(),
                           Text(
-                            '2022-02-35',
+                            Common.dateFormator(ios8601: productOrder.createdAt),
                             style: TextStyle(fontWeight: FontWeight.w900),
                           ),
                         ],
@@ -315,7 +358,7 @@ class ProductOrderTileWidget extends StatelessWidget {
                         height: 10,
                       ),
                       Row(
-                        children: [Spacer(), Text('pending order')],
+                        children: [Spacer(), Text(Common.getStatus(status: productOrder.status))],
                       )
                     ],
                   ),

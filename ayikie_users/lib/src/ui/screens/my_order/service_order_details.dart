@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/models/order.dart';
@@ -39,7 +38,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
   @override
   void initState() {
     super.initState();
-    _currentStep = widget.serviceOrder.status;
+    _currentStep = 2;
   }
 
   tapped(int step) {
@@ -60,7 +59,6 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _messageController.dispose();
   }
@@ -585,7 +583,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
 
   void onCommonButtonPress() {
     // _currentStep < 3 ? setState(() => _currentStep += 1) : null;
-    switch(widget.serviceOrder.status){
+    switch(_currentStep){
       case 0:
         deleteOrder();
         break;
