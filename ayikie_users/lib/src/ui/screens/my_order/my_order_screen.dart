@@ -277,7 +277,7 @@ class ProductOrderTileWidget extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) {
-            return ProductOrderDetails();
+            return ProductOrderDetails(product: productOrder,);
           }),
         );
       },

@@ -515,7 +515,9 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                         color: Colors.amber,
                                       ),
                                       onRatingUpdate: (rating) {
-                                        print(rating);
+                                        setState(() {
+                                          rate = rating.round();
+                                        });
                                       },
                                     ),
                                   ),

@@ -519,5 +519,53 @@ class ApiCalls {
     }
   }
 
+  static Future<ApiResponse> getFullOrderDetails({
+  required int orderId
+}) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/customer/order/products/$orderId', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> deleteProductOrder(int orderId) async {
+    try {
+      return ApiCaller.requestAuth(
+          baseUrl + "/api/customer/order/products/$orderId", _getEmptyHeaders(),
+          requestType: "DELETE");
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> reviewProductOrder({
+    required int productOrderId,
+    required int rate,
+    required String comment,
+  }) async {
+    try {
+      var payload = new Map<String, dynamic>();
+      payload['product_order_item_id'] = productOrderId;
+      payload['rate'] = rate;
+      payload['comment'] = comment;
+
+      return ApiCaller.jsonRequestAuth(baseUrl + '/api/customer/order/products/add/review',
+          _getEmptyHeaders(), jsonEncode(payload));
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
 
 }
