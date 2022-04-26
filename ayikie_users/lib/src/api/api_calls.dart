@@ -208,8 +208,11 @@ class ApiCalls {
 
   static Future<ApiResponse> getAllServiceCategory({required int page}) async {
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
+
       return ApiCaller.getRequest(
-          baseUrl + '/api/services/categories?page=$page', _getEmptyHeaders());
+          baseUrl + '/api/services/categories', _getEmptyHeaders(),query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -451,24 +454,33 @@ class ApiCalls {
 
   static Future<ApiResponse> reviewServiceOrder({
     required int serviceId,
-    required double rate,
+    required int rate,
     required String comment,
     required File picture
   }) async {
     try {
+      var fields = new Map<String, String>();
+      print('KK${rate} ${serviceId} $comment');
+      fields['service_order_id'] = serviceId.toString();
+      fields['rate'] = rate.toString();
+      fields['comment'] = "ratebghre";
+
+      // print('Hereee');
       List<MultipartFile> image = [];
       var multipartFile =
       await MultipartFile.fromPath('images', picture.path);
       image.add(multipartFile);
-      Map<String, String> payload = new Map<String, String>();
-      payload['service_order_id'] = serviceId.toString();
-      payload['rate'] = rate.toString();
-      payload['comment'] = comment;
+      // Map<String, String> payload = new Map<String, String>();
+      // payload['service_order_id'] = serviceId.toString();
+      // payload['rate'] = rate.toString();
+      // payload['comment'] = comment;
 
-      return ApiCaller.multiPartRequestAuth(baseUrl + '/api/customer/order/products/add/review',
+      return ApiCaller.multiPartRequestAuth(baseUrl +'/api/customer/order/service/add/review',
           _getEmptyHeaders(),
-          fields: payload,
-          files: image);
+          requestType: 'POST',
+          fields: fields,
+          files: image
+      );
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -502,6 +514,54 @@ class ApiCalls {
     try {
       return ApiCaller.getRequestAuth(
           baseUrl + '/api/customer/order/products', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getFullOrderDetails({
+  required int orderId
+}) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/customer/order/products/$orderId', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> deleteProductOrder(int orderId) async {
+    try {
+      return ApiCaller.requestAuth(
+          baseUrl + "/api/customer/order/products/$orderId", _getEmptyHeaders(),
+          requestType: "DELETE");
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> reviewProductOrder({
+    required int productOrderId,
+    required int rate,
+    required String comment,
+  }) async {
+    try {
+      var payload = new Map<String, dynamic>();
+      payload['product_order_item_id'] = productOrderId;
+      payload['rate'] = rate;
+      payload['comment'] = comment;
+
+      return ApiCaller.jsonRequestAuth(baseUrl + '/api/customer/order/products/add/review',
+          _getEmptyHeaders(), jsonEncode(payload));
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;

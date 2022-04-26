@@ -31,14 +31,14 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
   TextEditingController _messageController = TextEditingController();
 
   bool _isLoading = false;
-  double rate = 1.0;
+  int rate = 1;
   late File _reviewPhoto;
   bool isUploaded = false;
 
   @override
   void initState() {
     super.initState();
-    _currentStep = 2;
+    _currentStep = widget.serviceOrder.status;
   }
 
   tapped(int step) {
@@ -392,7 +392,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                       onRatingUpdate: (rating) {
                                         print(rating);
                                         setState(() {
-                                          rate = rating;
+                                          rate = rating.round();
                                         });
                                       },
                                     ),
@@ -515,7 +515,9 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                         color: Colors.amber,
                                       ),
                                       onRatingUpdate: (rating) {
-                                        print(rating);
+                                        setState(() {
+                                          rate = rating.round();
+                                        });
                                       },
                                     ),
                                   ),
@@ -538,6 +540,20 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
               ),
       ),
     );
+  }
+
+  void onCommonButtonPress() {
+    // _currentStep < 3 ? setState(() => _currentStep += 1) : null;
+    switch(_currentStep){
+      case 0:
+        deleteOrder();
+        break;
+      case 1:
+        cancelOrder();
+        break;
+      case 2:
+        reviewOrder();
+    }
   }
 
   void _updatePicture() {
@@ -581,20 +597,6 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
     }
   }
 
-  void onCommonButtonPress() {
-    // _currentStep < 3 ? setState(() => _currentStep += 1) : null;
-    switch(_currentStep){
-      case 0:
-        deleteOrder();
-        break;
-      case 1:
-        cancelOrder();
-        break;
-      case 2:
-        reviewOrder();
-    }
-  }
-
   void deleteOrder() async{
     setState(() {
       _isLoading = true;
@@ -634,10 +636,10 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                 context, '/UserScreen', (route) => false));
       } else {
         Alerts.showMessageForResponse(context, response);
-        setState(() {
-          _isLoading = false;
-        });
       }
+      setState(() {
+        _isLoading = false;
+      });
     });
   }
 
@@ -653,7 +655,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
     setState(() {
       _isLoading = true;
     });
-    ApiCalls.reviewServiceOrder(serviceId: 1,comment: message,rate: rate,picture:_reviewPhoto)
+    ApiCalls.reviewServiceOrder(serviceId: widget.serviceOrder.orderId,comment: message,rate: rate,picture:_reviewPhoto)
         .then((response) async {
       if (!mounted) {
         return;
@@ -664,6 +666,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                 context, '/UserScreen', (route) => false)
             );
       } else {
+
         Alerts.showMessageForResponse(context, response);
         setState(() {
           _isLoading = false;

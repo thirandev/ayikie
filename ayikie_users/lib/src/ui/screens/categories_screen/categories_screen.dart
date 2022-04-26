@@ -1,6 +1,7 @@
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/models/Item.dart';
+import 'package:ayikie_users/src/models/meta.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_users/src/ui/screens/sub_categories_screen/sub_product_screen.dart';
@@ -23,32 +24,50 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   List<Item> productCategories = [];
   List<Item> serviceCategories = [];
 
+  late ScrollController _controller;
+  bool isLastPage = false;
 
+  late Meta _meta;
 
   @override
   void initState() {
     super.initState();
     _getServiceCategories();
+    _controller = new ScrollController()..addListener(loadMore);
   }
 
-  void _getServiceCategories({bool isRefresh = false}) async {
-
-    if(isRefresh){
+  void loadMore(){
+    if(_controller.position.extentAfter<250 &&
+        !isLastPage && !_isLoading
+    ){
       setState(() {
         currentIndex++;
+        _isLoading=true;
       });
+      _getServiceCategories(loadData:true);
     }
 
+  }
+
+  void _getServiceCategories({bool? loadData}) async {
     await ApiCalls.getAllServiceCategory(page: currentIndex).then((response) {
       if (!mounted) {
         return;
       }
       if (response.isSuccess) {
-        print(response.jsonBody);
+        var meta = response.metaBody;
+        _meta = Meta.fromJson(meta);
+        isLastPage = _meta.lastPage == currentIndex;
         var data = response.jsonBody;
         for (var item in data) {
           Item category = Item.fromJson(item);
           serviceCategories.add(category);
+        }
+        if(loadData!=null && loadData){
+          setState(() {
+            _isLoading = false;
+          });
+          return;
         }
         _getProductCategories();
       } else {
@@ -183,6 +202,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                           children: [
                             Expanded(
                               child: GridView.builder(
+                                controller: _controller,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 2,
