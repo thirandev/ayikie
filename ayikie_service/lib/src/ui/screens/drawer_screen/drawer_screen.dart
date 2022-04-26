@@ -163,10 +163,6 @@ class _DrawerScreenState extends State<DrawerScreen> {
             title: 'Log Out',
             imagePath: 'asserts/icons/logout.png',
             onPress: () async {
-              if(isGuest){
-                Alerts.showGuestMessage(context);
-                return;
-              }
               final response = await ApiCalls.userLogOut();
               if (response.isSuccess) {
                 await Settings.setAccessToken("");
