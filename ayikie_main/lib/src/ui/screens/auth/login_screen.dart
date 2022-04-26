@@ -28,8 +28,6 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _phoneNoController = TextEditingController();
   bool hidePassword = true;
 
-  
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -149,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                               Text(
                                                 'BUYER',
                                                 style: TextStyle(
-                                                  fontSize :13,
+                                                    fontSize: 13,
                                                     fontWeight:
                                                         FontWeight.w700),
                                               ),
@@ -199,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                               Text(
                                                 'PROFESSIONAL',
                                                 style: TextStyle(
-                                                  fontSize:13,
+                                                    fontSize: 13,
                                                     fontWeight:
                                                         FontWeight.w700),
                                               ),
@@ -423,7 +421,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         shape: CircleBorder(),
                       ),
                       MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, '/ServiceScreen', (route) => false);
+                        },
                         textColor: Colors.white,
                         child: Container(
                             height: 40,
@@ -460,7 +461,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Text(
                               'Sign Up',
                               style: TextStyle(
-                                decoration: TextDecoration.underline,
+                                  decoration: TextDecoration.underline,
                                   fontSize: 14,
                                   color: AppColors.primaryButtonColor),
                             ),

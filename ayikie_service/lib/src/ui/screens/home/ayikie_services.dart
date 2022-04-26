@@ -4,7 +4,7 @@ import 'package:ayikie_service/src/models/Item.dart';
 import 'package:ayikie_service/src/models/banner.dart';
 import 'package:ayikie_service/src/models/images.dart';
 import 'package:ayikie_service/src/models/service.dart';
-import 'package:ayikie_service/src/ui/screens/cart/cart_screen.dart';
+import 'package:ayikie_service/src/ui/screens/cart/add_item_screen.dart';
 import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_service/src/ui/screens/my_order/my_order_screen.dart';
 import 'package:ayikie_service/src/ui/screens/notification_screen/notification_screen.dart';
@@ -30,30 +30,37 @@ class _ServicesHomeScreenState extends State<ServicesHomeScreen> {
   List<Service> recommandedServices = [];
   List<Service> popularServices = [];
 
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
-    // _getBanners();
+    _getBanners();
   }
 
-  // void _getBanners() async {
-  //   await ApiCalls.getBanners().then((response) {
-  //     if (!mounted) {
-  //       return;
-  //     }
-  //     if (response.isSuccess) {
-  //       var imageList = response.jsonBody;
-  //       for (var img in imageList) {
-  //         Images banner = Banners.fromJson(img);
-  //         banners.add(banner);
-  //       }
-  //     } else {
-  //       Alerts.showMessage(context, "Something went wrong. Please try again.",
-  //           title: "Oops!");
-  //     }
-  //     _getCategories();
-  //   });
-  // }
+  void _getBanners() async {
+    await ApiCalls.getBanners().then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        setState(() {
+            _isLoading = false;
+          });
+        var imageList = response.jsonBody;
+        for (var img in imageList) {
+          Images banner = Banners.fromJson(img);
+          banners.add(banner);
+          
+        }
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+
+      // _getCategories();
+    });
+  }
 
   // void _getCategories() async {
   //   await ApiCalls.getAllServiceCategory().then((response) {
@@ -131,239 +138,244 @@ class _ServicesHomeScreenState extends State<ServicesHomeScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        
         backgroundColor: AppColors.white,
-        body:
-            // _isLoading
-            //     ? Center(
-            //         child: ProgressView(),
-            //       )
-            //     :
-            SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(
-              left: 20,
-              right: 20,
-            ),
-            child: Stack(
-              children: [
-                Column(
-                  children: [
-                    Container(
-                      height: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: AppColors.textFieldBackground,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        body: _isLoading
+            ? Center(
+                child: ProgressView(),
+              )
+            : SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 20,
+                    right: 20,
+                  ),
+                  child: Stack(
+                    children: [
+                      Column(
                         children: [
-                          Padding(
-                              padding: EdgeInsets.only(left: 20),
-                              child: Text(
-                                'Search here',
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: AppColors.primaryButtonColor),
-                              )),
-                          IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.search,
-                                color: AppColors.primaryButtonColor,
-                              ))
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: SizedBox(
-                        height: 175,
-                        child: PageView.builder(
-                          controller: controller,
-                          itemCount: banners.length,
-                          itemBuilder: (context, index) {
-                            return ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: CachedNetworkImage(
-                                imageBuilder: (context, imageProvider) =>
-                                    Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.rectangle,
-                                    image: DecorationImage(
-                                        image: imageProvider,
-                                        fit: BoxFit.cover,
-                                        alignment: AlignmentDirectional.center),
-                                  ),
-                                ),
-                                imageUrl: banners[index].getBannerUrl(),
-                                errorWidget: (context, url, error) =>
-                                    Image.asset(
-                                  'asserts/images/ayikie_logo.png',
-                                  fit: BoxFit.fitHeight,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 8),
-                      child: SmoothPageIndicator(
-                        controller: controller,
-                        count: 4, //banners.length,
-                        effect: const WormEffect(
-                          dotWidth: 5,
-                          dotHeight: 5,
-                          dotColor: AppColors.black,
-                          activeDotColor: AppColors.primaryButtonColor,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          'My Products',
-                          style: TextStyle(
-                              fontSize: 26, fontWeight: FontWeight.w900),
-                        ),
-                        Spacer(),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) {
-                                return PopularScreen();
-                              }),
-                            );
-                          },
-                          child: Text(
-                            'See all',
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: AppColors.primaryButtonColor),
+                          Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: AppColors.textFieldBackground,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                    padding: EdgeInsets.only(left: 20),
+                                    child: Text(
+                                      'Search here',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: AppColors.primaryButtonColor),
+                                    )),
+                                IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.search,
+                                      color: AppColors.primaryButtonColor,
+                                    ))
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                      height: 300,
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          itemCount: popularServices.length > 10
-                              ? 10
-                              : popularServices.length,
-                          itemBuilder: (BuildContext context, int index) =>
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 8.0, bottom: 8.0),
-                                child: Container(
-                                  height: 120,
-                                  decoration: BoxDecoration(
-                                      color: AppColors.textFieldBackground,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(8))),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        height: 120,
-                                        width:
-                                            (MediaQuery.of(context).size.width -
-                                                    40) /
-                                                3,
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(8),
-                                            topLeft: Radius.circular(8),
-                                          ),
-                                          child: CachedNetworkImage(
-                                            imageBuilder:
-                                                (context, imageProvider) =>
-                                                    Container(
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.rectangle,
-                                                image: DecorationImage(
-                                                    image: imageProvider,
-                                                    fit: BoxFit.scaleDown,
-                                                    alignment:
-                                                        AlignmentDirectional
-                                                            .center),
-                                              ),
-                                            ),
-                                            imageUrl: popularServices[index]
-                                                .image!
-                                                .getBannerUrl(),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    Image.asset(
-                                              'asserts/images/ayikie_logo.png',
-                                              fit: BoxFit.fitHeight,
-                                            ),
-                                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: SizedBox(
+                              height: 175,
+                              child: PageView.builder(
+                                controller: controller,
+                                itemCount: banners.length,
+                                itemBuilder: (context, index) {
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: CachedNetworkImage(
+                                      imageBuilder: (context, imageProvider) =>
+                                          Container(
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                              alignment:
+                                                  AlignmentDirectional.center),
                                         ),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Container(
-                                          width: (MediaQuery.of(context)
-                                                      .size
-                                                      .width -
-                                                  56) *
-                                              1.8 /
-                                              3,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              Text(
-                                                popularServices[index].name,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.w900),
-                                              ),
-                                              Text(popularServices[index]
-                                                  .introduction),
-                                              Text(
-                                                '\$${popularServices[index].price}',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.w900),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                      imageUrl: banners[index].getBannerUrl(),
+                                      errorWidget: (context, url, error) =>
+                                          Image.asset(
+                                        'asserts/images/ayikie_logo.png',
+                                        fit: BoxFit.fitHeight,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(top: 8),
+                            child: SmoothPageIndicator(
+                              controller: controller,
+                              count: 4, //banners.length,
+                              effect: const WormEffect(
+                                dotWidth: 5,
+                                dotHeight: 5,
+                                dotColor: AppColors.black,
+                                activeDotColor: AppColors.primaryButtonColor,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                'My Products',
+                                style: TextStyle(
+                                    fontSize: 26, fontWeight: FontWeight.w900),
+                              ),
+                              Spacer(),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) {
+                                      return PopularScreen();
+                                    }),
+                                  );
+                                },
+                                child: Text(
+                                  'See all',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.primaryButtonColor),
                                 ),
-                              )),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    )
-                  ],
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          SizedBox(
+                            height: 300,
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                itemCount: popularServices.length > 10
+                                    ? 10
+                                    : popularServices.length,
+                                itemBuilder: (BuildContext context,
+                                        int index) =>
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 8.0, bottom: 8.0),
+                                      child: Container(
+                                        height: 120,
+                                        decoration: BoxDecoration(
+                                            color:
+                                                AppColors.textFieldBackground,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(8))),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              height: 120,
+                                              width: (MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      40) /
+                                                  3,
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.only(
+                                                  bottomLeft:
+                                                      Radius.circular(8),
+                                                  topLeft: Radius.circular(8),
+                                                ),
+                                                child: CachedNetworkImage(
+                                                  imageBuilder: (context,
+                                                          imageProvider) =>
+                                                      Container(
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.rectangle,
+                                                      image: DecorationImage(
+                                                          image: imageProvider,
+                                                          fit: BoxFit.scaleDown,
+                                                          alignment:
+                                                              AlignmentDirectional
+                                                                  .center),
+                                                    ),
+                                                  ),
+                                                  imageUrl:
+                                                      popularServices[index]
+                                                          .image!
+                                                          .getBannerUrl(),
+                                                  errorWidget:
+                                                      (context, url, error) =>
+                                                          Image.asset(
+                                                    'asserts/images/ayikie_logo.png',
+                                                    fit: BoxFit.fitHeight,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Container(
+                                                width: (MediaQuery.of(context)
+                                                            .size
+                                                            .width -
+                                                        56) *
+                                                    1.8 /
+                                                    3,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    Text(
+                                                      popularServices[index]
+                                                          .name,
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w900),
+                                                    ),
+                                                    Text(popularServices[index]
+                                                        .introduction),
+                                                    Text(
+                                                      '\$${popularServices[index].price}',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w900),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ),
+              ),
       ),
     );
   }

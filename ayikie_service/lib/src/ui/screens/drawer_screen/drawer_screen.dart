@@ -1,5 +1,6 @@
 import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/ui/screens/invite_friends_screen/invite_friends_screen.dart';
+import 'package:ayikie_service/src/ui/screens/my_reviews/my_reviews.dart';
 
 import 'package:ayikie_service/src/ui/screens/privacy_policies_screen/privacy_policies_screen.dart';
 import 'package:ayikie_service/src/ui/screens/settings_screen/settings_screen.dart';
@@ -23,12 +24,12 @@ class _DrawerScreenState extends State<DrawerScreen> {
   @override
   void initState() {
     super.initState();
-    _checkIsGuest();
+  // _checkIsGuest();
   }
 
-  _checkIsGuest() async {
-    isGuest = await Settings.getIsGuest()??false;
-  }
+  // _checkIsGuest() async {
+  //   isGuest = await Settings.getIsGuest()??false;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -58,10 +59,10 @@ class _DrawerScreenState extends State<DrawerScreen> {
             title: 'Verification Center',
             imagePath: 'asserts/icons/verification_center.png',
             onPress: () {
-              if(isGuest){
-                Alerts.showGuestMessage(context);
-                return;
-              }
+              // if(isGuest){
+              //   Alerts.showGuestMessage(context);
+              //   return;
+              // }
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
@@ -86,11 +87,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             title: 'Settings',
             imagePath: 'asserts/icons/settings.png',
             onPress: () {
-              if(isGuest){
-                Alerts.showGuestMessage(context);
-                return;
-              }
-              Navigator.push(
+               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
                   return SettingsScreen();
@@ -130,12 +127,12 @@ class _DrawerScreenState extends State<DrawerScreen> {
             title: 'My Reviews',
             imagePath: 'asserts/icons/review.png',
             onPress: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) {
-              //     return InviteFriendsScreen();
-              //   }),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) {
+                  return MyReviewsScreen();
+                }),
+              );
             },
           ),
           DrawerWidget(

@@ -14,6 +14,7 @@ class AppColors {
   static const selectedTextColor = Color(0xFFD3B9E3);
   static const redButtonColor = Color(0xFFEF001D);
   static const primaryPinkColor = Color(0xFFC4C4C4);
+  static const greyLightColor = Color(0xFFE5E6E8);
 
   //enter the colors before this
 /*

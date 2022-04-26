@@ -22,4 +22,15 @@ class ApiCalls {
       return response;
     }
   }
+
+  static Future<ApiResponse> getBanners() async {
+    try {
+      return ApiCaller.getRequest(baseUrl + '/api/banners', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
 }
