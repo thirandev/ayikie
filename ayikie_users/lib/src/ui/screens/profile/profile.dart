@@ -101,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
                                       image: imageProvider,
-                                      fit: BoxFit.scaleDown,
+                                      fit: BoxFit.cover,
                                       alignment:
                                       AlignmentDirectional.topCenter),
                                 ),
@@ -180,6 +180,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       controller: _phoneNumberController,
                       hintText: 'Enter your phone number',
                       inputType: TextInputType.phone,
+                      prefixEnable: true,
                     ),
                     SizedBox(
                       height: 30,

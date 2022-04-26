@@ -364,8 +364,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   controller: _phoneNoController,
                   hintText: 'enter your phone no',
                   inputType: TextInputType.number,
-                  
-                 // prefixEnable: true,
+                 prefixEnable: true,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 5, top: 20),
