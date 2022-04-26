@@ -76,7 +76,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   }
 
   void _getRecommandations() async {
-    await ApiCalls.getRecommendedServices().then((response) {
+    await ApiCalls.getRecommendedServices(page: 1).then((response) {
       if (!mounted) {
         return;
       }
@@ -96,7 +96,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   }
 
   void _getPopularItems() async {
-    await ApiCalls.getPopularServices().then((response) {
+    await ApiCalls.getPopularServices(page: 1).then((response) {
       if (!mounted) {
         return;
       }

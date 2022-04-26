@@ -39,27 +39,27 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     _controllerProduct = new ScrollController()..addListener(loadMoreProduct);
   }
 
-  void loadMoreService(){
-    if(_controllerService.position.extentAfter<250 &&
-        !isLastPage && !_isLoading
-    ){
+  void loadMoreService() {
+    if (_controllerService.position.extentAfter < 250 &&
+        !isLastPage &&
+        !_isLoading) {
       setState(() {
         currentIndex++;
-        _isLoading=true;
+        _isLoading = true;
       });
-      _getServiceCategories(loadData:true);
+      _getServiceCategories(loadData: true);
     }
   }
 
-  void loadMoreProduct(){
-    if(_controllerProduct.position.extentAfter<250 &&
-        !isLastPageProduct && !_isLoading
-    ){
+  void loadMoreProduct() {
+    if (_controllerProduct.position.extentAfter < 250 &&
+        !isLastPageProduct &&
+        !_isLoading) {
       setState(() {
         currentIndexProduct++;
-        _isLoading=true;
+        _isLoading = true;
       });
-      _getServiceCategories(loadData:true);
+      _getProductCategories();
     }
   }
 
@@ -77,7 +77,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           Item category = Item.fromJson(item);
           serviceCategories.add(category);
         }
-        if(loadData!=null && loadData){
+        if (loadData != null && loadData) {
           setState(() {
             _isLoading = false;
           });
@@ -91,15 +91,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _controllerProduct.dispose();
-    _controllerService.dispose();
-  }
-
   void _getProductCategories() async {
-    await ApiCalls.getAllProductCategory(page: 1).then((response) {
+    await ApiCalls.getAllProductCategory(page: currentIndexProduct)
+        .then((response) {
       if (!mounted) {
         return;
       }
@@ -118,11 +112,17 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       }
       setState(() {
         _isLoading = false;
-        isFirstLoad=false;
+        isFirstLoad = false;
       });
     });
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _controllerProduct.dispose();
+    _controllerService.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -221,7 +221,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height,
                       child: Container(
-                        padding: EdgeInsets.only(left: 16, right: 16, top: 20,bottom: 20),
+                        padding: EdgeInsets.only(
+                            left: 16, right: 16, top: 20, bottom: 20),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
@@ -234,16 +235,18 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                         crossAxisSpacing: 10.0,
                                         mainAxisSpacing: 10.0),
                                 itemBuilder: (ctx, index) {
-                                  return CategoryService(index: index,serviceCategories: serviceCategories);
+                                  return CategoryService(
+                                      index: index,
+                                      serviceCategories: serviceCategories);
                                 },
                                 itemCount: serviceCategories.length,
                               ),
                             ),
-                            _isLoading ?
-                                Center(
-                                  child: CircularProgressIndicator(),
-                                ):
-                                Container()
+                            _isLoading
+                                ? Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : Container()
                           ],
                         ),
                       ),
@@ -251,29 +254,32 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height,
                       child: Container(
-                        padding: EdgeInsets.only(left: 16, right: 16, top: 20,bottom: 20),
+                        padding: EdgeInsets.only(
+                            left: 16, right: 16, top: 20, bottom: 20),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Expanded(
                               child: GridView.builder(
-                                controller:_controllerProduct,
+                                controller: _controllerProduct,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 2,
                                         crossAxisSpacing: 10.0,
                                         mainAxisSpacing: 10.0),
                                 itemBuilder: (ctx, index) {
-                                  return CategoryProduct(index: index,productCategories: productCategories);
+                                  return CategoryProduct(
+                                      index: index,
+                                      productCategories: productCategories);
                                 },
                                 itemCount: productCategories.length,
                               ),
                             ),
-                            _isLoading ?
-                            Center(
-                              child: CircularProgressIndicator(),
-                            ):
-                            Container()
+                            _isLoading
+                                ? Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : Container()
                           ],
                         ),
                       ),
@@ -287,7 +293,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 }
 
 class CategoryService extends StatelessWidget {
-
   final int index;
   final List<Item> serviceCategories;
 
@@ -327,7 +332,7 @@ class CategoryService extends StatelessWidget {
                 color: AppColors.white,
               ),
               height: 100,
-              child:CachedNetworkImage(
+              child: CachedNetworkImage(
                 imageBuilder: (context, imageProvider) => Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.rectangle,
@@ -346,7 +351,7 @@ class CategoryService extends StatelessWidget {
             ),
             Spacer(),
             Text(
-            serviceCategories[index].name,
+              serviceCategories[index].name,
               style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
             ),
             SizedBox(
@@ -360,15 +365,12 @@ class CategoryService extends StatelessWidget {
 }
 
 class CategoryProduct extends StatelessWidget {
-
   final int index;
   final List<Item> productCategories;
 
-  const CategoryProduct({
-    Key? key,
-    required this.index,
-    required this.productCategories
-  }) : super(key: key);
+  const CategoryProduct(
+      {Key? key, required this.index, required this.productCategories})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -400,7 +402,7 @@ class CategoryProduct extends StatelessWidget {
                 color: AppColors.white,
               ),
               height: 100,
-              child:CachedNetworkImage(
+              child: CachedNetworkImage(
                 imageBuilder: (context, imageProvider) => Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.rectangle,

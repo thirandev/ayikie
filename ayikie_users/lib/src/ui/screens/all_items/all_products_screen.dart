@@ -1,5 +1,6 @@
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
+import 'package:ayikie_users/src/models/meta.dart';
 import 'package:ayikie_users/src/models/product.dart';
 import 'package:ayikie_users/src/ui/screens/Item/product_screen.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
@@ -23,20 +24,39 @@ class _AllProductcreenState extends State<AllProductcreen> {
   bool _isLoading = true;
   List<Product> products = [];
 
+  int currentIndex = 1;
+  late ScrollController _controller;
+  bool isLastPage = false;
+  bool isFirstLoad = true;
+
   @override
   void initState() {
     super.initState();
+    _controller = new ScrollController()..addListener(loadMore);
     _getSubProducts();
   }
 
+  void loadMore() {
+    if (_controller.position.extentAfter < 250 && !isLastPage && !_isLoading) {
+      setState(() {
+        currentIndex++;
+        _isLoading = true;
+      });
+      _getSubProducts();
+    }
+  }
+
   void _getSubProducts() async {
-    await ApiCalls.getProductsInSubCategory(categoryId: widget.subCategoryId)
+    await ApiCalls.getProductsInSubCategory(
+            categoryId: widget.subCategoryId, page: currentIndex)
         .then((response) {
       if (!mounted) {
         return;
       }
       if (response.isSuccess) {
-        print(response.jsonBody);
+        var meta = response.metaBody;
+        Meta _meta = Meta.fromJson(meta);
+        isLastPage = _meta.lastPage == currentIndex;
         var data = response.jsonBody;
         for (var item in data) {
           Product subProduct = Product.fromJson(item);
@@ -48,6 +68,7 @@ class _AllProductcreenState extends State<AllProductcreen> {
       }
       setState(() {
         _isLoading = false;
+        isFirstLoad = false;
       });
     });
   }
@@ -123,7 +144,7 @@ class _AllProductcreenState extends State<AllProductcreen> {
         ],
       ),
       endDrawer: DrawerScreen(),
-      body: _isLoading
+      body: _isLoading && isFirstLoad
           ? Center(
               child: ProgressView(),
             )
@@ -139,9 +160,12 @@ class _AllProductcreenState extends State<AllProductcreen> {
                       child: ListView.builder(
                           shrinkWrap: true,
                           scrollDirection: Axis.vertical,
+                          controller: _controller,
                           itemCount: products.length,
                           itemBuilder: (BuildContext context, int index) =>
-                              SubCategoryWidget(product: products[index],)),
+                              SubCategoryWidget(
+                                product: products[index],
+                              )),
                     ),
                   ],
                 ),
@@ -153,10 +177,8 @@ class _AllProductcreenState extends State<AllProductcreen> {
 
 class SubCategoryWidget extends StatelessWidget {
   final Product product;
-  SubCategoryWidget({
-    Key? key,
-    required this.product
-  }) : super(key: key);
+
+  SubCategoryWidget({Key? key, required this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -183,26 +205,26 @@ class SubCategoryWidget extends StatelessWidget {
                 height: 120,
                 width: (MediaQuery.of(context).size.width - 40) / 3,
                 child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(8),
-                      topLeft: Radius.circular(8),
-                    ),
-                    child: CachedNetworkImage(
-                      imageBuilder: (context, imageProvider) => Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.scaleDown,
-                              alignment: AlignmentDirectional.center),
-                        ),
-                      ),
-                      imageUrl: product.image!.getBannerUrl(),
-                      errorWidget: (context, url, error) => Image.asset(
-                        'asserts/images/ayikie_logo.png',
-                        fit: BoxFit.fitHeight,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(8),
+                    topLeft: Radius.circular(8),
+                  ),
+                  child: CachedNetworkImage(
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.scaleDown,
+                            alignment: AlignmentDirectional.center),
                       ),
                     ),
+                    imageUrl: product.image!.getBannerUrl(),
+                    errorWidget: (context, url, error) => Image.asset(
+                      'asserts/images/ayikie_logo.png',
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
                 ),
               ),
               Padding(
@@ -213,7 +235,8 @@ class SubCategoryWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text(product.name,
+                      Text(
+                        product.name,
                         style: TextStyle(fontWeight: FontWeight.w900),
                       ),
                       Text(product.introduction),

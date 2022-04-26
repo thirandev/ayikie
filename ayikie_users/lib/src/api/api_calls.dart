@@ -119,11 +119,13 @@ class ApiCalls {
   }
 
   static Future<ApiResponse> getAllSubProductCategory(
-      {required int categoryId}) async {
+      {required int categoryId, required int page}) async {
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
       return ApiCaller.getRequest(
           baseUrl + '/api/products/$categoryId/sub-categories',
-          _getEmptyHeaders());
+          _getEmptyHeaders(),query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -132,10 +134,12 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> getRecommendedProducts() async {
+  static Future<ApiResponse> getRecommendedProducts({required int page}) async {
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
       return ApiCaller.getRequest(
-          baseUrl + '/api/products/recommended', _getEmptyHeaders());
+          baseUrl + '/api/products/recommended', _getEmptyHeaders(),query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -144,10 +148,12 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> getPopularProducts() async {
+  static Future<ApiResponse> getPopularProducts({required int page}) async {
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
       return ApiCaller.getRequest(
-          baseUrl + '/api/products/popular', _getEmptyHeaders());
+          baseUrl + '/api/products/popular', _getEmptyHeaders(),query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -171,11 +177,13 @@ class ApiCalls {
   }
 
   static Future<ApiResponse> getProductsInSubCategory(
-      {required int categoryId}) async {
+      {required int categoryId, required int page}) async {
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
       return ApiCaller.getRequest(
           baseUrl + '/api/products/$categoryId/sub-category/products',
-          _getEmptyHeaders());
+          _getEmptyHeaders(),query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -223,10 +231,12 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> getRecommendedServices() async {
+  static Future<ApiResponse> getRecommendedServices({required int page}) async {
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
       return ApiCaller.getRequest(
-          baseUrl + '/api/services/recommended', _getEmptyHeaders());
+          baseUrl + '/api/services/recommended', _getEmptyHeaders(),query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -236,11 +246,14 @@ class ApiCalls {
   }
 
   static Future<ApiResponse> getAllSubServiceCategory(
-      {required int categoryId}) async {
+      {required int categoryId,required int page}) async {
+
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
       return ApiCaller.getRequest(
           baseUrl + '/api/services/$categoryId/sub-categories',
-          _getEmptyHeaders());
+          _getEmptyHeaders(),query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -249,10 +262,14 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> getPopularServices() async {
+  static Future<ApiResponse> getPopularServices({
+  required int page
+}) async {
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
       return ApiCaller.getRequest(
-          baseUrl + '/api/services/popular', _getEmptyHeaders());
+          baseUrl + '/api/services/popular', _getEmptyHeaders(),query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -276,11 +293,13 @@ class ApiCalls {
   }
 
   static Future<ApiResponse> getServicesInSubCategory(
-      {required int categoryId}) async {
+      {required int categoryId, required int page}) async {
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
       return ApiCaller.getRequest(
           baseUrl + '/api/services/$categoryId/sub-category/services',
-          _getEmptyHeaders());
+          _getEmptyHeaders(),query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
