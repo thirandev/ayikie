@@ -1,5 +1,6 @@
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
+import 'package:ayikie_users/src/models/meta.dart';
 import 'package:ayikie_users/src/models/product.dart';
 import 'package:ayikie_users/src/models/service.dart';
 import 'package:ayikie_users/src/ui/screens/Item/product_screen.dart';
@@ -20,22 +21,59 @@ class PopularScreen extends StatefulWidget {
 
 class _PopularScreenState extends State<PopularScreen> {
   bool _isLoading = true;
+  int currentIndex = 1;
+  int currentIndexProduct = 1;
 
   List<Service> popularServices = [];
   List<Product> popularProducts = [];
+
+  late ScrollController _controllerService;
+  late ScrollController _controllerProduct;
+  bool isLastPage = false;
+  bool isLastPageProduct = false;
+  bool isFirstLoad = true;
 
   @override
   void initState() {
     super.initState();
     _getServices();
+    _controllerService = new ScrollController()..addListener(loadMoreService);
+    _controllerProduct = new ScrollController()..addListener(loadMoreProduct);
   }
 
-  void _getServices() async {
-    await ApiCalls.getPopularServices().then((response) {
+  void loadMoreService() {
+    if (_controllerService.position.extentAfter < 250 &&
+        !isLastPage &&
+        !_isLoading) {
+      setState(() {
+        currentIndex++;
+        _isLoading = true;
+      });
+      _getServices(loadData: true);
+    }
+  }
+
+  void loadMoreProduct() {
+    if (_controllerProduct.position.extentAfter < 250 &&
+        !isLastPageProduct &&
+        !_isLoading) {
+      setState(() {
+        currentIndexProduct++;
+        _isLoading = true;
+      });
+      _getProducts();
+    }
+  }
+
+  void _getServices({bool? loadData}) async {
+    await ApiCalls.getPopularServices(page: currentIndex).then((response) {
       if (!mounted) {
         return;
       }
       if (response.isSuccess) {
+        var meta = response.metaBody;
+        Meta _meta = Meta.fromJson(meta);
+        isLastPage = _meta.lastPage == currentIndex;
         var data = response.jsonBody;
         for (var item in data) {
           Service popular = Service.fromJson(item);
@@ -45,16 +83,25 @@ class _PopularScreenState extends State<PopularScreen> {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
             title: "Oops!");
       }
+      if (loadData != null && loadData) {
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
       _getProducts();
     });
   }
 
   void _getProducts() async {
-    await ApiCalls.getPopularProducts().then((response) {
+    await ApiCalls.getPopularProducts(page: currentIndexProduct).then((response) {
       if (!mounted) {
         return;
       }
       if (response.isSuccess) {
+        var meta = response.metaBody;
+        Meta metaProduct = Meta.fromJson(meta);
+        isLastPageProduct = metaProduct.lastPage == currentIndexProduct;
         var data = response.jsonBody;
         for (var item in data) {
           Product popular = Product.fromJson(item);
@@ -66,8 +113,16 @@ class _PopularScreenState extends State<PopularScreen> {
       }
       setState(() {
         _isLoading = false;
+        isFirstLoad = false;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controllerProduct.dispose();
+    _controllerService.dispose();
   }
 
   @override
@@ -160,7 +215,7 @@ class _PopularScreenState extends State<PopularScreen> {
                 ]),
           ),
           endDrawer: DrawerScreen(),
-          body: _isLoading
+          body: _isLoading && isFirstLoad
               ? Center(
                   child: ProgressView(),
                 )
@@ -172,6 +227,7 @@ class _PopularScreenState extends State<PopularScreen> {
                         height: 300,
                         child: ListView.builder(
                             shrinkWrap: true,
+                            controller: _controllerService,
                             scrollDirection: Axis.vertical,
                             itemCount: popularServices.length,
                             itemBuilder: (BuildContext context, int index) =>
@@ -184,6 +240,7 @@ class _PopularScreenState extends State<PopularScreen> {
                       child: SizedBox(
                         height: 300,
                         child: ListView.builder(
+                            controller: _controllerProduct,
                             shrinkWrap: true,
                             scrollDirection: Axis.vertical,
                             itemCount: popularProducts.length,

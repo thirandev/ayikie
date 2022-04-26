@@ -1,6 +1,7 @@
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/models/Item.dart';
+import 'package:ayikie_users/src/models/meta.dart';
 import 'package:ayikie_users/src/ui/screens/all_items/all_services_sreen.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
@@ -22,23 +23,42 @@ class _SubSeriveScreenState extends State<SubSeriveScreen> {
   bool _isLoading = true;
   List<Item> subServices = [];
 
+  int currentIndex = 1;
+  late ScrollController _controller;
+  bool isLastPage = false;
+  bool isFirstLoad = true;
+
   @override
   void initState() {
     super.initState();
+    _controller = new ScrollController()..addListener(loadMore);
     _getSubServices();
   }
 
+  void loadMore() {
+    if (_controller.position.extentAfter < 250 && !isLastPage && !_isLoading) {
+      setState(() {
+        currentIndex++;
+        _isLoading = true;
+      });
+      _getSubServices();
+    }
+  }
+
   void _getSubServices() async {
-    await ApiCalls.getAllSubServiceCategory(categoryId: widget.categoryId)
+    await ApiCalls.getAllSubServiceCategory(
+            categoryId: widget.categoryId, page: currentIndex)
         .then((response) {
       if (!mounted) {
         return;
       }
       if (response.isSuccess) {
-        print(response.jsonBody);
+        var meta = response.metaBody;
+        Meta _meta = Meta.fromJson(meta);
+        isLastPage = _meta.lastPage == currentIndex;
         var data = response.jsonBody;
         for (var item in data) {
-          Item subService  = Item.fromJson(item);
+          Item subService = Item.fromJson(item);
           subServices.add(subService);
         }
       } else {
@@ -47,6 +67,7 @@ class _SubSeriveScreenState extends State<SubSeriveScreen> {
       }
       setState(() {
         _isLoading = false;
+        isFirstLoad = false;
       });
     });
   }
@@ -122,7 +143,7 @@ class _SubSeriveScreenState extends State<SubSeriveScreen> {
         ],
       ),
       endDrawer: DrawerScreen(),
-      body: _isLoading
+      body: _isLoading && isFirstLoad
           ? Center(
               child: ProgressView(),
             )
@@ -137,10 +158,12 @@ class _SubSeriveScreenState extends State<SubSeriveScreen> {
                       height: MediaQuery.of(context).size.height - 100,
                       child: ListView.builder(
                           shrinkWrap: true,
+                          controller: _controller,
                           scrollDirection: Axis.vertical,
                           itemCount: subServices.length,
                           itemBuilder: (BuildContext context, int index) =>
-                              SubCategoryWidget(subService: subServices[index])),
+                              SubCategoryWidget(
+                                  subService: subServices[index])),
                     ),
                   ],
                 ),
@@ -152,6 +175,7 @@ class _SubSeriveScreenState extends State<SubSeriveScreen> {
 
 class SubCategoryWidget extends StatelessWidget {
   final Item subService;
+
   const SubCategoryWidget({
     Key? key,
     required this.subService,
@@ -182,26 +206,26 @@ class SubCategoryWidget extends StatelessWidget {
                 height: 120,
                 width: (MediaQuery.of(context).size.width - 40) / 3,
                 child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(8),
-                      topLeft: Radius.circular(8),
-                    ),
-                    child:CachedNetworkImage(
-                      imageBuilder: (context, imageProvider) => Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.scaleDown,
-                              alignment: AlignmentDirectional.center),
-                        ),
-                      ),
-                      imageUrl: subService.image!.getBannerUrl(),
-                      errorWidget: (context, url, error) => Image.asset(
-                        'asserts/images/ayikie_logo.png',
-                        fit: BoxFit.fitHeight,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(8),
+                    topLeft: Radius.circular(8),
+                  ),
+                  child: CachedNetworkImage(
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.scaleDown,
+                            alignment: AlignmentDirectional.center),
                       ),
                     ),
+                    imageUrl: subService.image!.getBannerUrl(),
+                    errorWidget: (context, url, error) => Image.asset(
+                      'asserts/images/ayikie_logo.png',
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
                 ),
               ),
               Padding(
@@ -213,10 +237,10 @@ class SubCategoryWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                      subService.name,
+                        subService.name,
                         style: TextStyle(fontWeight: FontWeight.w900),
                       ),
-                      Text(subService.description??""),
+                      Text(subService.description ?? ""),
                       SizedBox(height: 5)
                     ],
                   ),

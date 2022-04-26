@@ -21,32 +21,46 @@ class CategoriesScreen extends StatefulWidget {
 class _CategoriesScreenState extends State<CategoriesScreen> {
   bool _isLoading = true;
   int currentIndex = 1;
+  int currentIndexProduct = 1;
   List<Item> productCategories = [];
   List<Item> serviceCategories = [];
 
-  late ScrollController _controller;
+  late ScrollController _controllerService;
+  late ScrollController _controllerProduct;
   bool isLastPage = false;
-
-  late Meta _meta;
+  bool isLastPageProduct = false;
+  bool isFirstLoad = true;
 
   @override
   void initState() {
     super.initState();
     _getServiceCategories();
-    _controller = new ScrollController()..addListener(loadMore);
+    _controllerService = new ScrollController()..addListener(loadMoreService);
+    _controllerProduct = new ScrollController()..addListener(loadMoreProduct);
   }
 
-  void loadMore(){
-    if(_controller.position.extentAfter<250 &&
-        !isLastPage && !_isLoading
-    ){
+  void loadMoreService() {
+    if (_controllerService.position.extentAfter < 250 &&
+        !isLastPage &&
+        !_isLoading) {
       setState(() {
         currentIndex++;
-        _isLoading=true;
+        _isLoading = true;
       });
-      _getServiceCategories(loadData:true);
+      _getServiceCategories(loadData: true);
     }
+  }
 
+  void loadMoreProduct() {
+    if (_controllerProduct.position.extentAfter < 250 &&
+        !isLastPageProduct &&
+        !_isLoading) {
+      setState(() {
+        currentIndexProduct++;
+        _isLoading = true;
+      });
+      _getProductCategories();
+    }
   }
 
   void _getServiceCategories({bool? loadData}) async {
@@ -56,14 +70,14 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       }
       if (response.isSuccess) {
         var meta = response.metaBody;
-        _meta = Meta.fromJson(meta);
+        Meta _meta = Meta.fromJson(meta);
         isLastPage = _meta.lastPage == currentIndex;
         var data = response.jsonBody;
         for (var item in data) {
           Item category = Item.fromJson(item);
           serviceCategories.add(category);
         }
-        if(loadData!=null && loadData){
+        if (loadData != null && loadData) {
           setState(() {
             _isLoading = false;
           });
@@ -78,12 +92,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 
   void _getProductCategories() async {
-    await ApiCalls.getAllProductCategory().then((response) {
+    await ApiCalls.getAllProductCategory(page: currentIndexProduct)
+        .then((response) {
       if (!mounted) {
         return;
       }
       if (response.isSuccess) {
-        print(response.jsonBody);
+        var meta = response.metaBody;
+        Meta metaProduct = Meta.fromJson(meta);
+        isLastPageProduct = metaProduct.lastPage == currentIndexProduct;
         var data = response.jsonBody;
         for (var item in data) {
           Item category = Item.fromJson(item);
@@ -95,8 +112,16 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       }
       setState(() {
         _isLoading = false;
+        isFirstLoad = false;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controllerProduct.dispose();
+    _controllerService.dispose();
   }
 
   @override
@@ -187,7 +212,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 ]),
           ),
           endDrawer: DrawerScreen(),
-          body: _isLoading
+          body: _isLoading && isFirstLoad
               ? Center(
                   child: ProgressView(),
                 )
@@ -196,24 +221,32 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height,
                       child: Container(
-                        padding: EdgeInsets.only(left: 16, right: 16, top: 20,bottom: 20),
+                        padding: EdgeInsets.only(
+                            left: 16, right: 16, top: 20, bottom: 20),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Expanded(
                               child: GridView.builder(
-                                controller: _controller,
+                                controller: _controllerService,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 2,
                                         crossAxisSpacing: 10.0,
                                         mainAxisSpacing: 10.0),
                                 itemBuilder: (ctx, index) {
-                                  return CategoryService(index: index,serviceCategories: serviceCategories);
+                                  return CategoryService(
+                                      index: index,
+                                      serviceCategories: serviceCategories);
                                 },
                                 itemCount: serviceCategories.length,
                               ),
-                            )
+                            ),
+                            _isLoading
+                                ? Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : Container()
                           ],
                         ),
                       ),
@@ -221,23 +254,32 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height,
                       child: Container(
-                        padding: EdgeInsets.only(left: 16, right: 16, top: 20,bottom: 20),
+                        padding: EdgeInsets.only(
+                            left: 16, right: 16, top: 20, bottom: 20),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Expanded(
                               child: GridView.builder(
+                                controller: _controllerProduct,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 2,
                                         crossAxisSpacing: 10.0,
                                         mainAxisSpacing: 10.0),
                                 itemBuilder: (ctx, index) {
-                                  return CategoryProduct(index: index,productCategories: productCategories);
+                                  return CategoryProduct(
+                                      index: index,
+                                      productCategories: productCategories);
                                 },
                                 itemCount: productCategories.length,
                               ),
-                            )
+                            ),
+                            _isLoading
+                                ? Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : Container()
                           ],
                         ),
                       ),
@@ -251,7 +293,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 }
 
 class CategoryService extends StatelessWidget {
-
   final int index;
   final List<Item> serviceCategories;
 
@@ -291,7 +332,7 @@ class CategoryService extends StatelessWidget {
                 color: AppColors.white,
               ),
               height: 100,
-              child:CachedNetworkImage(
+              child: CachedNetworkImage(
                 imageBuilder: (context, imageProvider) => Container(
                   decoration: BoxDecoration(
                      borderRadius: BorderRadius.circular(10),
@@ -310,8 +351,7 @@ class CategoryService extends StatelessWidget {
             ),
             Spacer(),
             Text(
-            serviceCategories[index].name,
-           overflow: TextOverflow.ellipsis,
+              serviceCategories[index].name,
               style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
             ),
             SizedBox(
@@ -326,15 +366,12 @@ class CategoryService extends StatelessWidget {
 }
 
 class CategoryProduct extends StatelessWidget {
-
   final int index;
   final List<Item> productCategories;
 
-  const CategoryProduct({
-    Key? key,
-    required this.index,
-    required this.productCategories
-  }) : super(key: key);
+  const CategoryProduct(
+      {Key? key, required this.index, required this.productCategories})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -366,7 +403,7 @@ class CategoryProduct extends StatelessWidget {
                 color: AppColors.white,
               ),
               height: 100,
-              child:CachedNetworkImage(
+              child: CachedNetworkImage(
                 imageBuilder: (context, imageProvider) => Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.rectangle,
