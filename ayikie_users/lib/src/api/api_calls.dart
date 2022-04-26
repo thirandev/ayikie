@@ -104,10 +104,12 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> getAllProductCategory() async {
+  static Future<ApiResponse> getAllProductCategory({required int page}) async {
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
       return ApiCaller.getRequest(
-          baseUrl + '/api/products/categories', _getEmptyHeaders());
+          baseUrl + '/api/products/categories', _getEmptyHeaders(),query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;

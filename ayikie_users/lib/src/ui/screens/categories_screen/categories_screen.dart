@@ -21,23 +21,26 @@ class CategoriesScreen extends StatefulWidget {
 class _CategoriesScreenState extends State<CategoriesScreen> {
   bool _isLoading = true;
   int currentIndex = 1;
+  int currentIndexProduct = 1;
   List<Item> productCategories = [];
   List<Item> serviceCategories = [];
 
-  late ScrollController _controller;
+  late ScrollController _controllerService;
+  late ScrollController _controllerProduct;
   bool isLastPage = false;
-
-  late Meta _meta;
+  bool isLastPageProduct = false;
+  bool isFirstLoad = true;
 
   @override
   void initState() {
     super.initState();
     _getServiceCategories();
-    _controller = new ScrollController()..addListener(loadMore);
+    _controllerService = new ScrollController()..addListener(loadMoreService);
+    _controllerProduct = new ScrollController()..addListener(loadMoreProduct);
   }
 
-  void loadMore(){
-    if(_controller.position.extentAfter<250 &&
+  void loadMoreService(){
+    if(_controllerService.position.extentAfter<250 &&
         !isLastPage && !_isLoading
     ){
       setState(() {
@@ -46,7 +49,18 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       });
       _getServiceCategories(loadData:true);
     }
+  }
 
+  void loadMoreProduct(){
+    if(_controllerProduct.position.extentAfter<250 &&
+        !isLastPageProduct && !_isLoading
+    ){
+      setState(() {
+        currentIndexProduct++;
+        _isLoading=true;
+      });
+      _getServiceCategories(loadData:true);
+    }
   }
 
   void _getServiceCategories({bool? loadData}) async {
@@ -56,7 +70,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       }
       if (response.isSuccess) {
         var meta = response.metaBody;
-        _meta = Meta.fromJson(meta);
+        Meta _meta = Meta.fromJson(meta);
         isLastPage = _meta.lastPage == currentIndex;
         var data = response.jsonBody;
         for (var item in data) {
@@ -77,13 +91,22 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _controllerProduct.dispose();
+    _controllerService.dispose();
+  }
+
   void _getProductCategories() async {
-    await ApiCalls.getAllProductCategory().then((response) {
+    await ApiCalls.getAllProductCategory(page: 1).then((response) {
       if (!mounted) {
         return;
       }
       if (response.isSuccess) {
-        print(response.jsonBody);
+        var meta = response.metaBody;
+        Meta metaProduct = Meta.fromJson(meta);
+        isLastPageProduct = metaProduct.lastPage == currentIndexProduct;
         var data = response.jsonBody;
         for (var item in data) {
           Item category = Item.fromJson(item);
@@ -95,9 +118,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       }
       setState(() {
         _isLoading = false;
+        isFirstLoad=false;
       });
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +212,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 ]),
           ),
           endDrawer: DrawerScreen(),
-          body: _isLoading
+          body: _isLoading && isFirstLoad
               ? Center(
                   child: ProgressView(),
                 )
@@ -202,7 +227,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                           children: [
                             Expanded(
                               child: GridView.builder(
-                                controller: _controller,
+                                controller: _controllerService,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 2,
@@ -213,7 +238,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                 },
                                 itemCount: serviceCategories.length,
                               ),
-                            )
+                            ),
+                            _isLoading ?
+                                Center(
+                                  child: CircularProgressIndicator(),
+                                ):
+                                Container()
                           ],
                         ),
                       ),
@@ -227,6 +257,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                           children: [
                             Expanded(
                               child: GridView.builder(
+                                controller:_controllerProduct,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 2,
@@ -237,7 +268,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                 },
                                 itemCount: productCategories.length,
                               ),
-                            )
+                            ),
+                            _isLoading ?
+                            Center(
+                              child: CircularProgressIndicator(),
+                            ):
+                            Container()
                           ],
                         ),
                       ),
