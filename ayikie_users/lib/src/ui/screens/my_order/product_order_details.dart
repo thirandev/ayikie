@@ -653,7 +653,7 @@ class OrderDetails extends StatelessWidget {
             ),
             Spacer(),
             Text(
-              "-",
+              order.trackingNo,
               style: TextStyle(
                 fontSize: 12,
               ),

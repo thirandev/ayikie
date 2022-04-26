@@ -208,8 +208,11 @@ class ApiCalls {
 
   static Future<ApiResponse> getAllServiceCategory({required int page}) async {
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
+
       return ApiCaller.getRequest(
-          baseUrl + '/api/services/categories?page=$page', _getEmptyHeaders());
+          baseUrl + '/api/services/categories', _getEmptyHeaders(),query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;

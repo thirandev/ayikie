@@ -1,4 +1,5 @@
 import 'package:ayikie_users/src/models/images.dart';
+import 'package:ayikie_users/src/models/meta.dart';
 
 class Item {
   int id;
@@ -13,7 +14,7 @@ class Item {
       id: json['id'],
       name: json['name'],
       description: json['description'] == null ? "" : json['description'],
-      image: json['images'] != null ? Images.fromJson(json['images']):Images(id: 1, imageName: "89b1e72d4027670d20c73440d5da3041.jpg"),
+      image: json['images'] != null ? Images.fromJson(json['images']):Images(id: 1, imageName: "https://ayikie.cyberelysium.app/img/logo/logo.png"),
     );
   }
 }
