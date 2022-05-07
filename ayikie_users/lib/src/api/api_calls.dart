@@ -590,6 +590,4 @@ class ApiCalls {
       return response;
     }
   }
-
-
 }

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart';
 
@@ -71,6 +70,22 @@ class ApiCalls {
     }
   }
 
+  static Future<ApiResponse> getPopularServices({
+    required int page
+  }) async {
+    try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
+      return ApiCaller.getRequest(
+          baseUrl + '/api/services/popular', _getEmptyHeaders(),query: query);
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
   static Future<ApiResponse> updateUserProfile(File _profilePicture) async {
     try {
       List<MultipartFile> image = [];
@@ -82,6 +97,34 @@ class ApiCalls {
           _getEmptyHeaders(),
           requestType: 'POST',
           files: image);
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getSellerSerivces({required int page}) async {
+    try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/services', _getEmptyHeaders(),query: query);
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getSellerProducts({required int page}) async {
+    try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/products', _getEmptyHeaders(),query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
