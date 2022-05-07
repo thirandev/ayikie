@@ -132,7 +132,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                     type: stepperType,
                     physics: ScrollPhysics(),
                     currentStep: _currentStep,
-                   // onStepTapped: (step) => tapped(step),
+                    // onStepTapped: (step) => tapped(step),
                     controlsBuilder: (BuildContext context,
                         {VoidCallback? onStepContinue,
                         VoidCallback? onStepCancel}) {
@@ -154,9 +154,9 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                 },
                                 child: Text(
                                     _currentStep == 0
-                                        ? 'Delete Order'
+                                        ? 'Cancel Offer'
                                         : _currentStep == 1
-                                            ? 'Cancel Order'
+                                            ? 'Delete Order'
                                             : 'Submit',
                                     style: TextStyle(
                                       color: AppColors.white,
@@ -279,7 +279,9 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                             ),
                             SizedBox(
                               height: 20,
-                            )
+                            ),
+                            PrimaryButton(text: 'Accept Offer',fontSize: 14, clickCallback: () {}),
+                            SizedBox(height: 10,),
                           ],
                         ),
                         isActive: _currentStep >= 0,
@@ -398,7 +400,11 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                             ),
                             SizedBox(
                               height: 20,
-                            )
+                            ),
+                            PrimaryButton(text: 'Extend Order',fontSize: 14, clickCallback: () {}),
+                            SizedBox(height: 10,),
+                            PrimaryButton(text: 'Deliver Order',fontSize: 14, clickCallback: () {}),
+                            SizedBox(height: 10,),
                           ],
                         ),
                         isActive: _currentStep >= 0,
@@ -518,97 +524,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                             SizedBox(
                               height: 10,
                             ),
-                            Text(
-                              'Upload Photos',
-                              style: TextStyle(fontWeight: FontWeight.w900),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: AppColors.textFieldBackground,
-                              ),
-                              width: double.infinity,
-                              height: 75,
-                              child: Center(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.camera_alt_outlined),
-                                    Text('Photos'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Order Review',
-                              style: TextStyle(fontWeight: FontWeight.w900),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              height: 150,
-                              child: TextField(
-                                maxLines: 9,
-                                controller: _messageController,
-                                decoration: InputDecoration(
-                                    hintText: "Enter a message",
-                                    fillColor: AppColors.textFieldBackground,
-                                    filled: true,
-                                    hintStyle: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    contentPadding: const EdgeInsets.only(
-                                      left: 15,
-                                      top: 30,
-                                    )),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Order Rating',
-                              style: TextStyle(fontWeight: FontWeight.w900),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              child: RatingBar.builder(
-                                wrapAlignment: WrapAlignment.start,
-                                initialRating: 3,
-                                minRating: 1,
-                                direction: Axis.horizontal,
-                                itemSize: 25,
-                                allowHalfRating: true,
-                                itemCount: 5,
-                                itemPadding:
-                                    EdgeInsets.symmetric(horizontal: 4.0),
-                                itemBuilder: (context, _) => Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                ),
-                                onRatingUpdate: (rating) {
-                                  print(rating);
-                                },
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            )
+                            
                           ],
                         ),
                         isActive: _currentStep >= 0,

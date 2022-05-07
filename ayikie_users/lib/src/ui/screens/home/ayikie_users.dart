@@ -13,6 +13,7 @@ import 'package:ayikie_users/src/ui/screens/sub_categories_screen/sub_service_sc
 import 'package:ayikie_users/src/ui/widget/progress_view.dart';
 import 'package:ayikie_users/src/utils/alerts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -24,6 +25,8 @@ class UserHomeScreen extends StatefulWidget {
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
   bool _isLoading = true;
+//   Position _currentPosition;
+// String _currentAddress;
 
   List<Images> banners = [];
   List<Item> categories = [];
@@ -176,7 +179,26 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             ),
                           ),
                           SizedBox(
-                            height: 20,
+                            height: 10,
+                          ),
+                          Container(
+                            width: double.infinity,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(0),
+                              color: Colors.blue,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: Row(children: [
+                                Icon(Icons.location_on_outlined,color: Colors.white,),
+                                SizedBox(width: 5,),
+                                Text('Horana , Sri Lanka',style: TextStyle(color: Colors.white),)
+                              ],),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
                           ),
                           Container(
                             decoration: BoxDecoration(
