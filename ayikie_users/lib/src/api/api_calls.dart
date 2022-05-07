@@ -109,7 +109,8 @@ class ApiCalls {
       var query = new Map<String, String>();
       query['page'] = page.toString();
       return ApiCaller.getRequest(
-          baseUrl + '/api/products/categories', _getEmptyHeaders(),query: query);
+          baseUrl + '/api/products/categories', _getEmptyHeaders(),
+          query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -125,7 +126,8 @@ class ApiCalls {
       query['page'] = page.toString();
       return ApiCaller.getRequest(
           baseUrl + '/api/products/$categoryId/sub-categories',
-          _getEmptyHeaders(),query: query);
+          _getEmptyHeaders(),
+          query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -139,7 +141,8 @@ class ApiCalls {
       var query = new Map<String, String>();
       query['page'] = page.toString();
       return ApiCaller.getRequest(
-          baseUrl + '/api/products/recommended', _getEmptyHeaders(),query: query);
+          baseUrl + '/api/products/recommended', _getEmptyHeaders(),
+          query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -153,7 +156,8 @@ class ApiCalls {
       var query = new Map<String, String>();
       query['page'] = page.toString();
       return ApiCaller.getRequest(
-          baseUrl + '/api/products/popular', _getEmptyHeaders(),query: query);
+          baseUrl + '/api/products/popular', _getEmptyHeaders(),
+          query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -183,7 +187,8 @@ class ApiCalls {
       query['page'] = page.toString();
       return ApiCaller.getRequest(
           baseUrl + '/api/products/$categoryId/sub-category/products',
-          _getEmptyHeaders(),query: query);
+          _getEmptyHeaders(),
+          query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -222,7 +227,8 @@ class ApiCalls {
       query['page'] = page.toString();
 
       return ApiCaller.getRequest(
-          baseUrl + '/api/services/categories', _getEmptyHeaders(),query: query);
+          baseUrl + '/api/services/categories', _getEmptyHeaders(),
+          query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -236,7 +242,8 @@ class ApiCalls {
       var query = new Map<String, String>();
       query['page'] = page.toString();
       return ApiCaller.getRequest(
-          baseUrl + '/api/services/recommended', _getEmptyHeaders(),query: query);
+          baseUrl + '/api/services/recommended', _getEmptyHeaders(),
+          query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -246,14 +253,14 @@ class ApiCalls {
   }
 
   static Future<ApiResponse> getAllSubServiceCategory(
-      {required int categoryId,required int page}) async {
-
+      {required int categoryId, required int page}) async {
     try {
       var query = new Map<String, String>();
       query['page'] = page.toString();
       return ApiCaller.getRequest(
           baseUrl + '/api/services/$categoryId/sub-categories',
-          _getEmptyHeaders(),query: query);
+          _getEmptyHeaders(),
+          query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -262,14 +269,13 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> getPopularServices({
-  required int page
-}) async {
+  static Future<ApiResponse> getPopularServices({required int page}) async {
     try {
       var query = new Map<String, String>();
       query['page'] = page.toString();
       return ApiCaller.getRequest(
-          baseUrl + '/api/services/popular', _getEmptyHeaders(),query: query);
+          baseUrl + '/api/services/popular', _getEmptyHeaders(),
+          query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -299,7 +305,8 @@ class ApiCalls {
       query['page'] = page.toString();
       return ApiCaller.getRequest(
           baseUrl + '/api/services/$categoryId/sub-category/services',
-          _getEmptyHeaders(),query: query);
+          _getEmptyHeaders(),
+          query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -310,7 +317,8 @@ class ApiCalls {
 
   static Future<ApiResponse> getBanners() async {
     try {
-      return ApiCaller.getRequest(baseUrl + '/api/banners/customers', _getEmptyHeaders());
+      return ApiCaller.getRequest(
+          baseUrl + '/api/banners/customers', _getEmptyHeaders());
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -326,10 +334,8 @@ class ApiCalls {
           await MultipartFile.fromPath('images', _profilePicture.path);
       image.add(multipartFile);
       return ApiCaller.multiPartRequestAuth(
-          baseUrl + '/api/user/profile/picture/update',
-          _getEmptyHeaders(),
-          requestType: 'POST',
-          files: image);
+          baseUrl + '/api/user/profile/picture/update', _getEmptyHeaders(),
+          requestType: 'POST', files: image);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -464,7 +470,8 @@ class ApiCalls {
   static Future<ApiResponse> cancelServiceOrder(int orderId) async {
     try {
       return ApiCaller.getRequestAuth(
-          baseUrl + '/api/customer/order/service/cancel/$orderId', _getEmptyHeaders());
+          baseUrl + '/api/customer/order/service/cancel/$orderId',
+          _getEmptyHeaders());
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -473,12 +480,11 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> reviewServiceOrder({
-    required int serviceId,
-    required int rate,
-    required String comment,
-    required File picture
-  }) async {
+  static Future<ApiResponse> reviewServiceOrder(
+      {required int serviceId,
+      required int rate,
+      required String comment,
+      required File picture}) async {
     try {
       var fields = new Map<String, String>();
       print('KK${rate} ${serviceId} $comment');
@@ -488,20 +494,19 @@ class ApiCalls {
 
       // print('Hereee');
       List<MultipartFile> image = [];
-      var multipartFile =
-      await MultipartFile.fromPath('images', picture.path);
+      var multipartFile = await MultipartFile.fromPath('images', picture.path);
       image.add(multipartFile);
       // Map<String, String> payload = new Map<String, String>();
       // payload['service_order_id'] = serviceId.toString();
       // payload['rate'] = rate.toString();
       // payload['comment'] = comment;
 
-      return ApiCaller.multiPartRequestAuth(baseUrl +'/api/customer/order/service/add/review',
+      return ApiCaller.multiPartRequestAuth(
+          baseUrl + '/api/customer/order/service/add/review',
           _getEmptyHeaders(),
           requestType: 'POST',
           fields: fields,
-          files: image
-      );
+          files: image);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -543,12 +548,11 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> getFullOrderDetails({
-  required int orderId
-}) async {
+  static Future<ApiResponse> getFullOrderDetails({required int orderId}) async {
     try {
       return ApiCaller.getRequestAuth(
-          baseUrl + '/api/customer/order/products/$orderId', _getEmptyHeaders());
+          baseUrl + '/api/customer/order/products/$orderId',
+          _getEmptyHeaders());
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -581,7 +585,26 @@ class ApiCalls {
       payload['rate'] = rate;
       payload['comment'] = comment;
 
-      return ApiCaller.jsonRequestAuth(baseUrl + '/api/customer/order/products/add/review',
+      return ApiCaller.jsonRequestAuth(
+          baseUrl + '/api/customer/order/products/add/review',
+          _getEmptyHeaders(),
+          jsonEncode(payload));
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> verifyEmail({
+    required String email,
+  }) async {
+    try {
+      var payload = new Map<String, dynamic>();
+      payload['email'] = email;
+
+      return ApiCaller.jsonRequestAuth(baseUrl + '/api/user/verification/email',
           _getEmptyHeaders(), jsonEncode(payload));
     } catch (e) {
       ApiResponse response = ApiResponse();
@@ -591,5 +614,71 @@ class ApiCalls {
     }
   }
 
+  static Future<ApiResponse> verifyFacebook({
+    required String facebook,
+  }) async {
+    try {
+      var payload = new Map<String, dynamic>();
+      payload['facebook_url'] = facebook;
 
+      return ApiCaller.jsonRequestAuth(
+          baseUrl + '/api/user/verification/facebook',
+          _getEmptyHeaders(),
+          jsonEncode(payload));
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  
+  static Future<ApiResponse> verifyLinkedIn({
+    required String linkedIn,
+  }) async {
+    try {
+      var payload = new Map<String, dynamic>();
+      payload['linkedin_url'] = linkedIn;
+
+      return ApiCaller.jsonRequestAuth(
+          baseUrl + '/api/user/verification/linkedin',
+          _getEmptyHeaders(),
+          jsonEncode(payload));
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> verifyNic({required File picture, required File picture2}) async {
+    try {
+      var fields = new Map<String, String>();
+
+      // print('Hereee');
+      List<MultipartFile> image = [];
+      var multipartFile = await MultipartFile.fromPath('front_image', picture.path);
+      var multipartFile2 = await MultipartFile.fromPath('back_image', picture2.path);
+      image.add(multipartFile);
+      image.add(multipartFile2);
+      // Map<String, String> payload = new Map<String, String>();
+      // payload['service_order_id'] = serviceId.toString();
+      // payload['rate'] = rate.toString();
+      // payload['comment'] = comment;
+
+      return ApiCaller.multiPartRequestAuth(
+          baseUrl + '/api/user/verification/nic',
+          _getEmptyHeaders(),
+          requestType: 'POST',
+          fields: fields,
+          files: image);
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
 }
