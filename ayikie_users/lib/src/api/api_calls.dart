@@ -310,7 +310,7 @@ class ApiCalls {
 
   static Future<ApiResponse> getBanners() async {
     try {
-      return ApiCaller.getRequest(baseUrl + '/api/banners', _getEmptyHeaders());
+      return ApiCaller.getRequest(baseUrl + '/api/banners/customers', _getEmptyHeaders());
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;

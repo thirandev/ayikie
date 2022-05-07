@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:ayikie_main/src/api/api_calls.dart';
 import 'package:ayikie_main/src/app_colors.dart';
+import 'package:ayikie_main/src/models/user.dart';
 import 'package:ayikie_main/src/ui/widgets/custom_form_field.dart';
 import 'package:ayikie_main/src/ui/widgets/primary_button.dart';
 import 'package:ayikie_main/src/utils/alerts.dart';
@@ -21,10 +22,12 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  TextEditingController _nameController = TextEditingController();
+  TextEditingController _lastNameController = TextEditingController();
+  TextEditingController _firstNameController = TextEditingController();
   TextEditingController _confirmPasswordController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _phoneNoController = TextEditingController();
+  TextEditingController _emailAddressController = TextEditingController();
   int _value = 1;
   bool hideConfirmPassword = true;
   bool hidePassword = true;
@@ -312,7 +315,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       Container(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Full Name',
+                          'First Name',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      Spacer(),
+                      Container(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'Required',
+                          style: TextStyle(
+                            fontSize: 10,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Last Name',
                           style: TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w700),
                         ),
@@ -330,11 +354,30 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ],
                   ),
                 ),
-                CustomFormField(
-                  controller: _nameController,
-                  hintText: 'full name',
-                  inputType: TextInputType.text,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: CustomFormField(
+                        controller: _firstNameController,
+                        hintText: 'enter first name',
+                      ),
+                    ),
+                    SizedBox(width: 10.0),
+                    Expanded(
+                        flex: 1,
+                        child: CustomFormField(
+                            hintText: 'enter last name',
+                            controller: _lastNameController)),
+                  ],
                 ),
+
+                // CustomFormField(
+                //   controller: _nameController,
+                //   hintText: 'full name',
+                //   inputType: TextInputType.text,
+                // ),
                 Padding(
                   padding: const EdgeInsets.only(top: 20, bottom: 5),
                   child: Row(
@@ -364,8 +407,40 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   controller: _phoneNoController,
                   hintText: 'enter your phone no',
                   inputType: TextInputType.number,
-                  
-                 // prefixEnable: true,
+
+                  prefixEnable: true,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20, bottom: 5),
+                  child: Row(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Email',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      Spacer(),
+                      Container(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'Required',
+                          style: TextStyle(
+                            fontSize: 10,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                CustomFormField(
+                  controller: _emailAddressController,
+                  hintText: 'enter your email address',
+                  inputType: TextInputType.emailAddress,
+
+                  // prefixEnable: true,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 5, top: 20),
@@ -528,15 +603,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void onRegisterPress() {
-    String username = _nameController.text.trim();
+    String firstName = _firstNameController.text.trim();
+    String lastName = _lastNameController.text.trim();
+    String email = _emailAddressController.text.trim();
     String phone = _phoneNoController.text.trim();
     String password = _passwordController.text.trim();
     String confirmPassword = _confirmPasswordController.text.trim();
     String deviceName = Platform.isAndroid ? "android" : "ios";
     int role = _isUser ? 1 : 2;
 
-    if (!Validations.validateString(username)) {
-      Alerts.showMessage(context, "Enter your name");
+    if (!Validations.validateString(firstName)) {
+      Alerts.showMessage(context, "Enter your first name");
+      return;
+    }
+
+     if (!Validations.validateString(lastName)) {
+      Alerts.showMessage(context, "Enter your last name");
+      return;
+    }
+
+     if (!Validations.validateEmail(email)) {
+      Alerts.showMessage(context, "Enter your email here");
       return;
     }
 
@@ -556,7 +643,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
 
     ApiCalls.register(
-            username: username,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
             phone: phone,
             password: password,
             userRole: role,
@@ -566,7 +655,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         return;
       }
       if (response.isSuccess) {
-        await Settings.setAccessToken(response.jsonBody);
+       // await Settings.setAccessToken(response.jsonBody);
+       var token = response.jsonBody['token'];
+        await Settings.setAccessToken(token);
+        User user = User.fromJson(response.jsonBody['user']);
+        await Settings.setUserRole(user.role);
         Navigator.pushNamed(context, '/SendOtpScreen');
       } else {
         Alerts.showMessageForResponse(context, response);

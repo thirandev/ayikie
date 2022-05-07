@@ -25,7 +25,7 @@ class ApiCalls {
 
   static Future<ApiResponse> getBanners() async {
     try {
-      return ApiCaller.getRequest(baseUrl + '/api/banners', _getEmptyHeaders());
+      return ApiCaller.getRequest(baseUrl + '/api/banners/professionals', _getEmptyHeaders());
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;

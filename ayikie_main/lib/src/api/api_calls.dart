@@ -52,7 +52,9 @@ class ApiCalls {
 
   static Future<ApiResponse> register(
       {
-        required String username,
+        required String firstName,
+        required String lastName,
+        required String email,
         required String phone,
         required String password,
         required int userRole,
@@ -60,7 +62,9 @@ class ApiCalls {
       }) async{
     try{
       var payload = new Map<String, dynamic>();
-      payload['name'] = username;
+      payload['first_name'] = firstName;
+      payload['last_name'] = lastName;
+      payload['email'] = email;
       payload['phone'] = phone;
       payload['password'] = password;
       payload['password_confirmation'] = password;

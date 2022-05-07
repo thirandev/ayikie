@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/app_colors.dart';
 import 'package:ayikie_service/src/models/Item.dart';
@@ -45,13 +47,13 @@ class _ServicesHomeScreenState extends State<ServicesHomeScreen> {
       }
       if (response.isSuccess) {
         setState(() {
-            _isLoading = false;
-          });
+          _isLoading = false;
+        });
         var imageList = response.jsonBody;
+        print('********************************');
         for (var img in imageList) {
           Images banner = Banners.fromJson(img);
           banners.add(banner);
-          
         }
       } else {
         Alerts.showMessage(context, "Something went wrong. Please try again.",

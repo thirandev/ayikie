@@ -43,8 +43,11 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       }
       if (response.isSuccess) {
         var imageList = response.jsonBody;
+
         for (var img in imageList) {
           Images banner = Banners.fromJson(img);
+
+          print(img);
           banners.add(banner);
         }
       } else {
@@ -305,8 +308,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                             imageUrl: categories[index]
                                                 .image!
                                                 .getBannerUrl(),
-                                            errorWidget: (context, url, error) =>
-                                                Image.asset(
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Image.asset(
                                               'asserts/images/ayikie_logo.png',
                                               fit: BoxFit.fitHeight,
                                             ),
@@ -330,7 +334,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                               ),
                             ),
                           ),
-                          
                           Row(
                             children: [
                               Text(
