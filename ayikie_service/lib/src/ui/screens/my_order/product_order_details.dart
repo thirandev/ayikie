@@ -132,7 +132,7 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
                     type: stepperType,
                     physics: ScrollPhysics(),
                     currentStep: _currentStep,
-                   // onStepTapped: (step) => tapped(step),
+                    // onStepTapped: (step) => tapped(step),
                     controlsBuilder: (BuildContext context,
                         {VoidCallback? onStepContinue,
                         VoidCallback? onStepCancel}) {
@@ -154,9 +154,9 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
                                 },
                                 child: Text(
                                     _currentStep == 0
-                                        ? 'Delete Order'
+                                        ? 'Cancel Order'
                                         : _currentStep == 1
-                                            ? 'Cancel Order'
+                                            ? 'Delete Order'
                                             : 'Submit',
                                     style: TextStyle(
                                       color: AppColors.white,
@@ -318,26 +318,33 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
                             SizedBox(
                               height: 10,
                             ),
-                            Row(
-                              children: [
-                                Text(
-                                  'Order Tracking no :',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900),
-                                ),
-                                Spacer(),
-                                Text(
-                                  'EN5869523547856',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
+                            // Row(
+                            //   children: [
+                            //     Text(
+                            //       'Order Tracking no :',
+                            //       style: TextStyle(
+                            //           fontSize: 12,
+                            //           fontWeight: FontWeight.w900),
+                            //     ),
+                            //     Spacer(),
+                            //     Text(
+                            //       'EN5869523547856',
+                            //       style: TextStyle(
+                            //         fontSize: 12,
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
                             SizedBox(
                               height: 20,
-                            )
+                            ),
+                            PrimaryButton(
+                                text: 'Accept Order',
+                                fontSize: 14,
+                                clickCallback: () {}),
+                            SizedBox(
+                              height: 10,
+                            ),
                           ],
                         ),
                         isActive: _currentStep >= 0,
@@ -503,18 +510,35 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
                                       fontSize: 12,
                                       fontWeight: FontWeight.w900),
                                 ),
-                                Spacer(),
-                                Text(
-                                  'EN5869523547856',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                  ),
-                                ),
+                                SizedBox(width: 10,),
+                                Flexible(
+                                    child: CustomFormField(
+                                  controller: _priceController,
+                                  height: 35,
+                                  hintText: '',
+                                )),
                               ],
                             ),
+                            // Row(
+                            //   children: [
+                            //     Text(
+                            //       'Order Tracking no :',
+                            //       style: TextStyle(
+                            //           fontSize: 12,
+                            //           fontWeight: FontWeight.w900),
+                            //     ),
+                            //     Spacer(),
+                            //    // CustomFormField(controller: _durationController),
+                            //   ],
+                            // ),
                             SizedBox(
                               height: 20,
-                            )
+                            ),
+                            PrimaryButton(
+                                text: 'Deliver Order',
+                                fontSize: 14,
+                                clickCallback: () {}),
+                                SizedBox(height: 10,),
                           ],
                         ),
                         isActive: _currentStep >= 0,
@@ -531,7 +555,7 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
                         title: Row(
                           children: [
                             Text(
-                              'Order Delivered',
+                              'Order Ongoing',
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 18,
@@ -540,7 +564,7 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
                             SizedBox(
                               width: 10,
                             ),
-                            new Image.asset('asserts/images/on_the_way.png',
+                            new Image.asset('asserts/images/order_ongoing.png',
                                 height: 65, width: 100),
                           ],
                         ),
@@ -688,71 +712,9 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
                               ],
                             ),
                             SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Order Review',
-                              style: TextStyle(fontWeight: FontWeight.w900),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              height: 150,
-                              child: TextField(
-                                maxLines: 9,
-                                controller: _messageController,
-                                decoration: InputDecoration(
-                                    hintText: "Enter a message",
-                                    fillColor: AppColors.textFieldBackground,
-                                    filled: true,
-                                    hintStyle: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    contentPadding: const EdgeInsets.only(
-                                      left: 15,
-                                      top: 30,
-                                    )),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Order Rating',
-                              style: TextStyle(fontWeight: FontWeight.w900),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              child: RatingBar.builder(
-                                wrapAlignment: WrapAlignment.start,
-                                initialRating: 3,
-                                minRating: 1,
-                                direction: Axis.horizontal,
-                                itemSize: 25,
-                                allowHalfRating: true,
-                                itemCount: 5,
-                                itemPadding:
-                                    EdgeInsets.symmetric(horizontal: 4.0),
-                                itemBuilder: (context, _) => Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                ),
-                                onRatingUpdate: (rating) {
-                                  print(rating);
-                                },
-                              ),
-                            ),
-                            SizedBox(
                               height: 20,
-                            )
+                            ),
+                            
                           ],
                         ),
                         isActive: _currentStep >= 0,
@@ -769,14 +731,14 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
                         title: Row(
                           children: [
                             new Image.asset(
-                                'asserts/images/package_arrived.png',
+                                'asserts/images/order_completed.png',
                                 height: 65,
                                 width: 65),
                             SizedBox(
                               width: 10,
                             ),
                             Text(
-                              'Order Arrived',
+                              'Order Completed',
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 18,

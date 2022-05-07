@@ -1,5 +1,6 @@
 import 'package:ayikie_service/src/app_colors.dart';
-import 'package:ayikie_service/src/ui/screens/cart/add_item_screen.dart';
+import 'package:ayikie_service/src/ui/screens/add_item/add_item_screen.dart';
+
 import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_service/src/ui/screens/home/ayikie_services.dart';
 import 'package:ayikie_service/src/ui/screens/my_order/my_order_screen.dart';

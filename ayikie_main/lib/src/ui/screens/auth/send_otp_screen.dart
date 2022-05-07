@@ -1,5 +1,6 @@
 import 'package:ayikie_main/src/api/api_calls.dart';
 import 'package:ayikie_main/src/app_colors.dart';
+import 'package:ayikie_main/src/models/user.dart';
 import 'package:ayikie_main/src/ui/widgets/primary_button.dart';
 import 'package:ayikie_main/src/utils/alerts.dart';
 import 'package:ayikie_main/src/utils/validations.dart';
@@ -191,6 +192,12 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
         print("Here"+response.jsonBody);
         //await Settings.setAccessToken(response.jsonBody);
         //Navigator.pushNamed(context, '/SendOtpScreen');
+        User user = User.fromJson(response.jsonBody['user']);
+         user.role == 1
+            ? Navigator.pushNamedAndRemoveUntil(
+                context, '/UserScreen', (route) => false)
+            : Navigator.pushNamedAndRemoveUntil(
+                context, '/ServiceScreen', (route) => false);
       } else {
         Alerts.showMessageForResponse(context, response);
       }

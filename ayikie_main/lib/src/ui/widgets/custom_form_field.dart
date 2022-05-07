@@ -150,28 +150,22 @@ class CustomFormField extends StatelessWidget {
                           borderRadius:
                               BorderRadius.horizontal(left: Radius.circular(8)),
                         ),
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: CountryCodePicker(
-
-                                onChanged: (CountryCode countryCode) {
-                                  // this.phoneNumber = countryCode.toString();
-                                  print("New Country selected: " +
-                                      countryCode.toString());
-                                },
-                                // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-                                initialSelection: 'GH',
-                               // favorite: ['+39', 'FR'],
-                                // optional. Shows only country name and flag
-                                showCountryOnly: false,
-                                // optional. Shows only country name and flag when popup is closed.
-                                showOnlyCountryWhenClosed: false,
-                                // optional. aligns the flag and the Text left
-                                alignLeft: false,
-                              ),
-                            ),
-                          ],
+                        child: CountryCodePicker(
+                          
+                          onChanged: (CountryCode countryCode) {
+                            // this.phoneNumber = countryCode.toString();
+                            print("New Country selected: " +
+                                countryCode.toString());
+                          },
+                          // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+                          initialSelection: 'GH',
+                         // favorite: ['+39', 'FR'],
+                          // optional. Shows only country name and flag
+                          showCountryOnly: false,
+                          // optional. Shows only country name and flag when popup is closed.
+                          showOnlyCountryWhenClosed: false,
+                          // optional. aligns the flag and the Text left
+                          alignLeft: false,
                         ))
                     : null,
                 contentPadding: (prefixEnable)

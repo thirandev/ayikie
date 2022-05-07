@@ -9,14 +9,14 @@ import 'package:ayikie_service/src/utils/alerts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-class PopularScreen extends StatefulWidget {
-  const PopularScreen({Key? key}) : super(key: key);
+class MyItemsScreen extends StatefulWidget {
+  const MyItemsScreen({Key? key}) : super(key: key);
 
   @override
-  _PopularScreenState createState() => _PopularScreenState();
+  _MyItemsScreenState createState() => _MyItemsScreenState();
 }
 
-class _PopularScreenState extends State<PopularScreen> {
+class _MyItemsScreenState extends State<MyItemsScreen> {
   bool _isLoading = true;
 
   List<Service> popularServices = [];
@@ -80,7 +80,7 @@ class _PopularScreenState extends State<PopularScreen> {
             backgroundColor: AppColors.white,
             elevation: 0,
             title: Text(
-              'Popular',
+              'My Items',
               style: TextStyle(
                 color: Colors.black,
               ),

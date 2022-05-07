@@ -1,4 +1,5 @@
 import 'package:ayikie_service/src/api/api_calls.dart';
+import 'package:ayikie_service/src/ui/screens/buyer_request/buyer_request.dart';
 import 'package:ayikie_service/src/ui/screens/invite_friends_screen/invite_friends_screen.dart';
 import 'package:ayikie_service/src/ui/screens/my_reviews/my_reviews.dart';
 
@@ -99,16 +100,13 @@ class _DrawerScreenState extends State<DrawerScreen> {
             title: 'Buyer Requests',
             imagePath: 'asserts/icons/post_a_request.png',
             onPress: () {
-              if(isGuest){
-                Alerts.showGuestMessage(context);
-                return;
-              }
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) {
-              //     return PostRequestScreen();
-              //   }),
-              // );
+             
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) {
+                  return BuyerRequestScreen();
+                }),
+              );
             },
           ),
           DrawerWidget(
@@ -163,6 +161,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             title: 'Log Out',
             imagePath: 'asserts/icons/logout.png',
             onPress: () async {
+              
               final response = await ApiCalls.userLogOut();
               if (response.isSuccess) {
                 await Settings.setAccessToken("");

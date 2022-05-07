@@ -1,14 +1,17 @@
+import 'dart:convert';
+
 import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/app_colors.dart';
 import 'package:ayikie_service/src/models/Item.dart';
 import 'package:ayikie_service/src/models/banner.dart';
 import 'package:ayikie_service/src/models/images.dart';
 import 'package:ayikie_service/src/models/service.dart';
-import 'package:ayikie_service/src/ui/screens/cart/add_item_screen.dart';
+
 import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
+import 'package:ayikie_service/src/ui/screens/my_items/my_items_screen.dart';
 import 'package:ayikie_service/src/ui/screens/my_order/my_order_screen.dart';
 import 'package:ayikie_service/src/ui/screens/notification_screen/notification_screen.dart';
-import 'package:ayikie_service/src/ui/screens/popular_screen/popular_screen.dart';
+
 import 'package:ayikie_service/src/ui/screens/profile/profile.dart';
 import 'package:ayikie_service/src/ui/widget/custom_app_bar.dart';
 
@@ -45,13 +48,13 @@ class _ServicesHomeScreenState extends State<ServicesHomeScreen> {
       }
       if (response.isSuccess) {
         setState(() {
-            _isLoading = false;
-          });
+          _isLoading = false;
+        });
         var imageList = response.jsonBody;
+        print('********************************');
         for (var img in imageList) {
           Images banner = Banners.fromJson(img);
           banners.add(banner);
-          
         }
       } else {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
@@ -153,32 +156,6 @@ class _ServicesHomeScreenState extends State<ServicesHomeScreen> {
                     children: [
                       Column(
                         children: [
-                          Container(
-                            height: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: AppColors.textFieldBackground,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Padding(
-                                    padding: EdgeInsets.only(left: 20),
-                                    child: Text(
-                                      'Search here',
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: AppColors.primaryButtonColor),
-                                    )),
-                                IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      Icons.search,
-                                      color: AppColors.primaryButtonColor,
-                                    ))
-                              ],
-                            ),
-                          ),
                           SizedBox(
                             height: 20,
                           ),
@@ -236,9 +213,9 @@ class _ServicesHomeScreenState extends State<ServicesHomeScreen> {
                           Row(
                             children: [
                               Text(
-                                'My Products',
+                                'My Items',
                                 style: TextStyle(
-                                    fontSize: 26, fontWeight: FontWeight.w900),
+                                    fontSize: 22, fontWeight: FontWeight.w900),
                               ),
                               Spacer(),
                               InkWell(
@@ -246,7 +223,7 @@ class _ServicesHomeScreenState extends State<ServicesHomeScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) {
-                                      return PopularScreen();
+                                      return MyItemsScreen();
                                     }),
                                   );
                                 },
