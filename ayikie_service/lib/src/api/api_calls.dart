@@ -70,22 +70,6 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> getPopularServices({
-    required int page
-  }) async {
-    try {
-      var query = new Map<String, String>();
-      query['page'] = page.toString();
-      return ApiCaller.getRequest(
-          baseUrl + '/api/services/popular', _getEmptyHeaders(),query: query);
-    } catch (e) {
-      ApiResponse response = ApiResponse();
-      response.isSuccess = false;
-      response.statusMessage = e.toString();
-      return response;
-    }
-  }
-
   static Future<ApiResponse> updateUserProfile(File _profilePicture) async {
     try {
       List<MultipartFile> image = [];
@@ -125,6 +109,134 @@ class ApiCalls {
       query['page'] = page.toString();
       return ApiCaller.getRequestAuth(
           baseUrl + '/api/seller/products', _getEmptyHeaders(),query: query);
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getServicesDropdown() async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/services/categories/dropdown', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getSubServicesDropdown({required int categoryId}) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/services/$categoryId/sub-categories/dropdown', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getProductsDropdown() async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/products/categories/dropdown', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getSubProductsDropdown({required int categoryId}) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/products/$categoryId/sub-categories/dropdown', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> addService({
+    required String title,
+    required String introduction,
+    required String description,
+    required String location,
+    required String price,
+    required int catId,
+    required int subCatId,
+    required File picture
+  }) async {
+    try {
+      var fields = new Map<String, String>();
+      fields['name'] = title;
+      fields['introduction'] = introduction;
+      fields['description'] = description;
+      fields['location'] = location;
+      fields['price'] = price;
+      fields['category_id'] = catId.toString();
+      fields['sub_category_id'] = subCatId.toString();
+
+      List<MultipartFile> image = [];
+      var multipartFile =
+      await MultipartFile.fromPath('images', picture.path);
+      image.add(multipartFile);
+
+      return ApiCaller.multiPartRequestAuth(baseUrl +'/api/seller/services',
+          _getEmptyHeaders(),
+          requestType: 'POST',
+          fields: fields,
+          files: image
+      );
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> addProduct({
+    required String title,
+    required String introduction,
+    required String description,
+    required String location,
+    required String price,
+    required String stock,
+    required int catId,
+    required int subCatId,
+    required File picture
+  }) async {
+    try {
+      var fields = new Map<String, String>();
+      fields['name'] = title;
+      fields['introduction'] = introduction;
+      fields['description'] = description;
+      fields['location'] = location;
+      fields['price'] = price;
+      fields['stock'] = stock;
+      fields['category_id'] = catId.toString();
+      fields['sub_category_id'] = subCatId.toString();
+
+      List<MultipartFile> image = [];
+      var multipartFile =
+      await MultipartFile.fromPath('images', picture.path);
+      image.add(multipartFile);
+
+      return ApiCaller.multiPartRequestAuth(baseUrl +'/api/seller/products',
+          _getEmptyHeaders(),
+          requestType: 'POST',
+          fields: fields,
+          files: image
+      );
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;

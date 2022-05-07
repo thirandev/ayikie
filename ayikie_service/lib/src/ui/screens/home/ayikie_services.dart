@@ -28,6 +28,8 @@ class _ServicesHomeScreenState extends State<ServicesHomeScreen> {
   bool _isLoading = true;
   bool _isNoProduct = true;
 
+
+
   @override
   void initState() {
     super.initState();
@@ -223,7 +225,7 @@ class _ServicesHomeScreenState extends State<ServicesHomeScreen> {
                           ),
                           _isNoProduct
                               ? SizedBox(
-                                  height: 300,
+                                  height: MediaQuery.of(context).size.height,
                                   child: ListView.builder(
                                       shrinkWrap: true,
                                       scrollDirection: Axis.vertical,

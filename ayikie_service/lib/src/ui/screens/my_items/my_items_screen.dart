@@ -12,7 +12,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ayikie_service/src/models/meta.dart';
 
-
 class MyItemsScreen extends StatefulWidget {
   const MyItemsScreen({Key? key}) : super(key: key);
 
