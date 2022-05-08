@@ -68,8 +68,6 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(

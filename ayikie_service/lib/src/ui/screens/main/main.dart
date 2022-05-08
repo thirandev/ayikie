@@ -41,35 +41,33 @@ class _ServiceMainScreenState extends State<ServiceMainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: _buildScreens.values.elementAt(_currentIndex),
-        appBar:
-            CustomAppBar(title: _buildScreens.keys.elementAt(_currentIndex)),
-        endDrawer: DrawerScreen(),
-        bottomNavigationBar: 
-              BottomNavigationBar(
-          selectedFontSize: 0,
-          unselectedFontSize: 0,
-          backgroundColor: AppColors.white,
-          type: BottomNavigationBarType.fixed,
-          onTap: onTap,
-          currentIndex: _currentIndex,
-          selectedItemColor: AppColors.primaryButtonColor,
-          iconSize: 25,
-          unselectedItemColor: AppColors.gray,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          elevation: 1,
-          items: [
-            BottomNavigationBarItem(label: "Home", icon: Icon(Icons.home)),
-            BottomNavigationBarItem(
-                label: "Orders", icon: Icon(Icons.receipt_long)),
-            BottomNavigationBarItem(
-                label: "Add Items", icon: Icon(Icons.add_to_photos_rounded)),
-            BottomNavigationBarItem(label: "Profile", icon: Icon(Icons.person))
-          ],
-        ),
+    return Scaffold(
+      body: _buildScreens.values.elementAt(_currentIndex),
+      appBar:
+          CustomAppBar(title: _buildScreens.keys.elementAt(_currentIndex)),
+      endDrawer: DrawerScreen(),
+      bottomNavigationBar:
+            BottomNavigationBar(
+        selectedFontSize: 0,
+        unselectedFontSize: 0,
+        backgroundColor: AppColors.white,
+        type: BottomNavigationBarType.fixed,
+        onTap: onTap,
+        currentIndex: _currentIndex,
+        selectedItemColor: AppColors.primaryButtonColor,
+        iconSize: 25,
+        unselectedItemColor: AppColors.gray,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        elevation: 1,
+        items: [
+          BottomNavigationBarItem(label: "Home", icon: Icon(Icons.home)),
+          BottomNavigationBarItem(
+              label: "Orders", icon: Icon(Icons.receipt_long)),
+          BottomNavigationBarItem(
+              label: "Add Items", icon: Icon(Icons.add_to_photos_rounded)),
+          BottomNavigationBarItem(label: "Profile", icon: Icon(Icons.person))
+        ],
       ),
     );
   }
