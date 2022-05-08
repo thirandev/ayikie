@@ -67,24 +67,55 @@ class _CartScreenState extends State<CartScreen> {
                     children: [
                       SizedBox(
                         height: MediaQuery.of(context).size.height - 220,
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.vertical,
-                            itemCount: cartItems.length,
-                            itemBuilder: (BuildContext context, int index) =>
-                                SubCategoryWidget(
-                                  item: cartItems[index],
-                                  deleteProduct: () {
-                                    deleteItem(cartItems[index].cartItemId);
-                                  },
-                                  quantityCallback: (bool value) {
-                                    if (value) {
-                                      increaseQuantity(cartItems[index]);
-                                    } else {
-                                      decreaseQuantity(cartItems[index]);
-                                    }
-                                  },
-                                )),
+                        child: cartItems.length == 0
+                            ? Center(
+                                child: Container(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                          height: 200,
+                                          child: Image.asset(
+                                              'asserts/images/empty_cart.png')),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        'Empty Cart',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      SizedBox(height: 10,),
+                                      Text(
+                                        'Look like you haven\'t made your choice yet',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                itemCount: cartItems.length,
+                                itemBuilder: (BuildContext context,
+                                        int index) =>
+                                    SubCategoryWidget(
+                                      item: cartItems[index],
+                                      deleteProduct: () {
+                                        deleteItem(cartItems[index].cartItemId);
+                                      },
+                                      quantityCallback: (bool value) {
+                                        if (value) {
+                                          increaseQuantity(cartItems[index]);
+                                        } else {
+                                          decreaseQuantity(cartItems[index]);
+                                        }
+                                      },
+                                    )),
                       ),
                       SizedBox(
                         height: 10,
@@ -92,52 +123,55 @@ class _CartScreenState extends State<CartScreen> {
                     ],
                   ),
                 ),
-                Container(
-                  height: 60,
-                  color: AppColors.primaryPinkColor,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16, right: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '\$$totalPrice',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w900),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) {
-                                return CheckoutScreen(totalPrice: totalPrice);
-                              }),
-                            );
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            width: 100,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: AppColors.redButtonColor,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Text(
-                                'Proceed',
+                cartItems.length == 0
+                    ? Container()
+                    : Container(
+                        height: 60,
+                        color: Colors.blue[200],
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16, right: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '\$$totalPrice',
                                 style: TextStyle(
-                                    color: AppColors.white,
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 16),
+                                    fontSize: 20, fontWeight: FontWeight.w900),
                               ),
-                            ),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) {
+                                      return CheckoutScreen(
+                                          totalPrice: totalPrice);
+                                    }),
+                                  );
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  width: 100,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: AppColors.white,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text(
+                                      'Proceed',
+                                      style: TextStyle(
+                                          color: AppColors.primaryButtonColor,
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
+                        ),
+                      ),
               ],
             ),
     );

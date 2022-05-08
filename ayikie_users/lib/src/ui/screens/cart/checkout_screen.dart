@@ -10,6 +10,7 @@ import 'package:ayikie_users/src/ui/widget/progress_view.dart';
 import 'package:ayikie_users/src/utils/alerts.dart';
 import 'package:ayikie_users/src/utils/validations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_paystack/flutter_paystack.dart';
 //import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:intl/intl.dart';
 
@@ -26,11 +27,62 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   int _locationDetails = 1;
   int _paymentsDetails = 0;
   bool _isLoading = false;
+  int? _lastFourDigits;
+  String? _referenceId;
 
   StepperType stepperType = StepperType.vertical;
 
   TextEditingController _addressController = TextEditingController();
   TextEditingController _messageController = TextEditingController();
+
+  String publicKeyTest = 'pk_test_6e9d10c9cae9aadd7735a89c91ee6c0c01103ecb';
+  final plugin = PaystackPlugin();
+
+  @override
+  void initState() {
+    plugin.initialize(publicKey: publicKeyTest);
+    super.initState();
+  }
+
+  void _showMessage(String message) {
+    final snackBar = SnackBar(content: Text(message));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  String _getReference() {
+    var platform = (Platform.isIOS) ? 'iOS' : 'Android';
+    final thisDate = DateTime.now().millisecondsSinceEpoch;
+    return 'ChargedFrom${platform}_$thisDate';
+  }
+
+  chargeCard() async {
+    var charge = Charge()
+      ..amount = widget.totalPrice.toInt() *
+          100 //the money should be in kobo hence the need to multiply the value by 100
+      ..reference = _getReference()
+      ..putCustomField('custom_id',
+          '846gey6w') //to pass extra parameters to be retrieved on the response from Paystack
+      ..currency = 'GHS'
+      ..email = 'Ayikie2.0@gmail.com';
+
+    CheckoutResponse response = await plugin.checkout(
+      context,
+      method: CheckoutMethod.card,
+      charge: charge,
+    );
+
+    _lastFourDigits = int.parse(response.card!.last4Digits.toString());
+    _referenceId = response.reference;
+    if (response.status == true) {
+    // _showMessage('Payment was successful!!!');
+     Alerts.showMessage(context, "Checkout is sucessfully.",
+            title: "Success!",
+            onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
+                context, '/UserScreen', (route) => false));
+    } else {
+      _showMessage('Payment Failed!!!');
+    }
+  }
   // String publicKeyTest = 'pk_test_6e9d10c9cae9aadd7735a89c91ee6c0c01103ecb';
   // final plugin = PaystackPlugin();
 
@@ -177,10 +229,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   ),
                   child: Column(
                     children: [
-                      PrimaryButton(
-                          text: 'Paynow', clickCallback:(){}
-                           //chargeCard()
-                           ),
                       Expanded(
                         child: Stepper(
                           type: stepperType,
@@ -479,26 +527,26 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                             SizedBox(
                                               height: 20,
                                             ),
-                                            Container(
-                                                height: 45,
-                                                width: double.infinity,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            25),
-                                                    color: AppColors
-                                                        .redButtonColor),
-                                                child: FlatButton(
-                                                  onPressed: () {},
-                                                  child: Text('Add Your Card',
-                                                      style: TextStyle(
-                                                        color: AppColors.white,
-                                                      )),
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              50)),
-                                                )),
+                                            // Container(
+                                            //     height: 45,
+                                            //     width: double.infinity,
+                                            //     decoration: BoxDecoration(
+                                            //         borderRadius:
+                                            //             BorderRadius.circular(
+                                            //                 25),
+                                            //         color: AppColors
+                                            //             .redButtonColor),
+                                            //     child: FlatButton(
+                                            //       onPressed: () {},
+                                            //       child: Text('Add Your Card',
+                                            //           style: TextStyle(
+                                            //             color: AppColors.white,
+                                            //           )),
+                                            //       shape: RoundedRectangleBorder(
+                                            //           borderRadius:
+                                            //               BorderRadius.circular(
+                                            //                   50)),
+                                            //     )),
                                             SizedBox(
                                               height: 30,
                                             )
@@ -751,36 +799,77 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  void checkout() async {
-    // String address = _addressController.text.trim();
-    // String message = _messageController.text.trim();
+  void payout() async {
+    String address = _addressController.text.trim();
+    String message = _messageController.text.trim();
 
-    // if (!Validations.validateString(address)) {
-    //   Alerts.showMessage(context, "Enter your address");
-    //   return;
-    // }
+    if (!Validations.validateString(address)) {
+      Alerts.showMessage(context, "Enter your address");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    await ApiCalls.createProductOrder(
+            location: address, method: _paymentsDetails, note: message)
+        .then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        Alerts.showMessage(context, "Checkout is sucessfully.",
+            title: "Success!",
+            onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
+                context, '/UserScreen', (route) => false));
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+    });
+  }
+
+  void checkout() async {
+    if (_paymentsDetails == 1) {
+      chargeCard();
+       String address = _addressController.text.trim();
+    String message = _messageController.text.trim();
+
+    if (!Validations.validateString(address)) {
+      Alerts.showMessage(context, "Enter your address");
+      return;
+    }
 
     // setState(() {
     //   _isLoading = true;
     // });
-    
 
-    // await ApiCalls.createProductOrder(location: address,method: _paymentsDetails,note: message).then((response) {
-    //   if (!mounted) {
-    //     return;
-    //   }
-    //   if (response.isSuccess) {
-    //     Alerts.showMessage(context, "Checkout is sucessfully.",
-    //         title: "Success!",onCloseCallback: ()=>    Navigator.pushNamedAndRemoveUntil(
-    //             context, '/UserScreen', (route) => false)
-    //     );
-    //   } else {
-    //     setState(() {
-    //       _isLoading = false;
-    //     });
-    //     Alerts.showMessage(context, "Something went wrong. Please try again.",
-    //         title: "Oops!");
-    //   }
-    // });
+    await ApiCalls.createProductOrder(
+            location: address, method: _paymentsDetails, note: message)
+        .then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        // Alerts.showMessage(context, "Checkout is sucessfully.",
+        //     title: "Success!",
+        //     onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
+        //         context, '/UserScreen', (route) => false));
+        chargeCard();
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+    });
+    } else {
+      payout();
+    }
   }
 }

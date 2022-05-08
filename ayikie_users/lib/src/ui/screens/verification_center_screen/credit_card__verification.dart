@@ -60,7 +60,8 @@ class _CreditCardVerificationState extends State<CreditCardVerification> {
       method: CheckoutMethod.card,
       charge: charge,
     );
-    print(response);
+    print(response.reference);
+    print(response.card!.last4Digits);
     if (response.status == true) {
       _showMessage('Payment was successful!!!');
     } else {

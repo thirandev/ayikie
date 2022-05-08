@@ -1,19 +1,54 @@
+import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
+import 'package:ayikie_users/src/models/buyerRequest.dart';
+import 'package:ayikie_users/src/models/offer.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
-import 'package:ayikie_users/src/ui/screens/post_request_screen/create_request.dart';
-import 'package:ayikie_users/src/ui/widget/primary_button.dart';
+import 'package:ayikie_users/src/ui/screens/post_request_screen/post_request_screen.dart';
+import 'package:ayikie_users/src/ui/widget/progress_view.dart';
+import 'package:ayikie_users/src/utils/alerts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyOffersScreen extends StatefulWidget {
-  const MyOffersScreen({Key? key}) : super(key: key);
+  final int requestId;
+  const MyOffersScreen({Key? key,required this.requestId}) : super(key: key);
 
   @override
   _MyOffersScreenState createState() => _MyOffersScreenState();
 }
 
 class _MyOffersScreenState extends State<MyOffersScreen> {
+
+  late BuyerRequest buyerRequest;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _getRequest();
+  }
+
+  void _getRequest() async {
+    await ApiCalls.getBuyerRequest(widget.requestId.toString()).then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        var data = response.jsonBody;
+        buyerRequest = BuyerRequest.fromJson(data);
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,7 +119,11 @@ class _MyOffersScreenState extends State<MyOffersScreen> {
       ),
       endDrawer: DrawerScreen(),
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: _isLoading
+            ? Center(
+          child: ProgressView(),
+        )
+            :SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.only(left: 16, right: 16, top: 10),
             child: Column(
@@ -95,9 +134,12 @@ class _MyOffersScreenState extends State<MyOffersScreen> {
                   child: ListView.builder(
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
-                      itemCount: 3,
+                      itemCount: buyerRequest.offers.length,
                       itemBuilder: (BuildContext context, int index) =>
-                          CommentWidget()),
+                          CommentWidget(offer: buyerRequest.offers[index],
+                            onCancelOffer: (){cancelOrder(buyerRequest.offers[index].id);},
+                            onAcceptOffer: (){acceptOffer(buyerRequest.offers[index].id);},
+                          )),
                 ),
               ],
             ),
@@ -106,11 +148,68 @@ class _MyOffersScreenState extends State<MyOffersScreen> {
       ),
     );
   }
+
+  void cancelOrder(int requestId) async{
+    setState(() {
+      _isLoading = true;
+    });
+    ApiCalls.cancelBuyerRequest(requestId.toString())
+        .then((response) async {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        Alerts.showMessage(context, "Offer Cancelled successfully.",
+            title: "Success!", onCloseCallback:()=> Navigator.pop(context));
+        _getRequest();
+      } else {
+        Alerts.showMessageForResponse(context, response);
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    });
+  }
+
+  void acceptOffer(int requestId) async{
+    setState(() {
+      _isLoading = true;
+    });
+    ApiCalls.acceptBuyerRequest(requestId.toString())
+        .then((response) async {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        Alerts.showMessage(context, "Offer Accepted successfully.",
+            title: "Success!", onCloseCallback:()=> {
+          Navigator.pop(context),
+          Navigator.push(context, MaterialPageRoute(builder: (context) => PostRequestScreen())).then((value) {
+            setState(() {
+            });
+            })
+        });
+      } else {
+        Alerts.showMessageForResponse(context, response);
+        setState(() {
+          _isLoading = false;
+        });
+      }
+
+    });
+  }
+
 }
 
 class CommentWidget extends StatelessWidget {
-  const CommentWidget({
+  Offer offer;
+  VoidCallback onAcceptOffer;
+  VoidCallback onCancelOffer;
+  CommentWidget({
     Key? key,
+    required this.offer,
+    required this.onAcceptOffer,
+    required this.onCancelOffer
   }) : super(key: key);
 
   @override
@@ -135,9 +234,21 @@ class CommentWidget extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(100),
-                      child: SvgPicture.asset(
-                        'asserts/images/profile.svg',
-                        fit: BoxFit.cover,
+                      child:CachedNetworkImage(
+                        imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                                alignment: AlignmentDirectional.center),
+                          ),
+                        ),
+                        imageUrl: offer.user!.imgUrl.imageName,
+                        errorWidget: (context, url, error) => Image.asset(
+                          'asserts/images/ayikie_logo.png',
+                          fit: BoxFit.fitHeight,
+                        ),
                       ),
                     ),
                   ),
@@ -145,26 +256,30 @@ class CommentWidget extends StatelessWidget {
                     width: 10,
                   ),
                   Text(
-                    'Jane Perera',
+                    offer.user!.name,
                     style: TextStyle(fontWeight: FontWeight.w900),
                   ),
                   Spacer(),
                   SizedBox(
                     width: 10,
                   ),
-                  Icon(
-                    Icons.close,
-                    color: Colors.black.withOpacity(0.8),
+                  GestureDetector(
+                    onTap: onCancelOffer,
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.black.withOpacity(0.8),
+                    ),
                   ),
                 ],
               ),
               SizedBox(
-                height: 5,
+                height: 10,
               ),
-              Text(
-                  'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout'),
+              Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(offer.description)),
               SizedBox(
-                height: 5,
+                height: 10,
               ),
               Row(
                 children: [
@@ -174,7 +289,7 @@ class CommentWidget extends StatelessWidget {
                   ),
                   Spacer(),
                   Text(
-                    '\$25',
+                    '\$${offer.price}',
                     style: TextStyle(
                       fontSize: 12,
                     ),
@@ -192,7 +307,7 @@ class CommentWidget extends StatelessWidget {
                   ),
                   Spacer(),
                   Text(
-                    '2 days',
+                    '${offer.duration} days',
                     style: TextStyle(
                       fontSize: 12,
                     ),
@@ -201,21 +316,6 @@ class CommentWidget extends StatelessWidget {
               ),
               SizedBox(
                 height: 10,
-              ),
-              Row(
-                children: [
-                  Text(
-                    'Order Location :',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
-                  ),
-                  Spacer(),
-                  Text(
-                    'Colombo',
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
               ),
               SizedBox(
                 height: 10,
@@ -227,7 +327,9 @@ class CommentWidget extends StatelessWidget {
                       Icons.call_outlined,
                       color: AppColors.black,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      _makePhoneCall(offer.user!.phone);
+                    },
                   ),
                   new IconButton(
                     icon: new Icon(
@@ -237,19 +339,22 @@ class CommentWidget extends StatelessWidget {
                     onPressed: () {},
                   ),
                   Spacer(),
-                  Container(
-                    alignment: Alignment.center,
-                    width: 130,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: AppColors.primaryButtonColor,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Text(
-                        'Accept Offer',
-                        style: TextStyle(color: AppColors.white),
+                  GestureDetector(
+                    onTap: onAcceptOffer,
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: 130,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: AppColors.primaryButtonColor,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Text(
+                          'Accept Offer',
+                          style: TextStyle(color: AppColors.white),
+                        ),
                       ),
                     ),
                   )
@@ -262,143 +367,14 @@ class CommentWidget extends StatelessWidget {
       ],
     );
   }
-}
 
-class PostRequestTile extends StatelessWidget {
-  const PostRequestTile({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: AppColors.primaryPinkColor),
-          height: 200,
-          width: double.infinity,
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'March 2022 23',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
-                    ),
-                    Spacer(),
-                    Container(
-                      alignment: Alignment.center,
-                      width: 60,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.red,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Text(
-                          'Active',
-                          style: TextStyle(color: AppColors.white),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  'Looking for a Pumbler for pipe repair',
-                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    Text(
-                      'Order Amount :',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
-                    ),
-                    Spacer(),
-                    Text(
-                      '\$25',
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    Text(
-                      'Order Duration :',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
-                    ),
-                    Spacer(),
-                    Text(
-                      '2 days',
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    Text(
-                      'Order Location :',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
-                    ),
-                    Spacer(),
-                    Text(
-                      'Colombo',
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    Text(
-                      '8 oreders submit',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
-                    ),
-                    Spacer(),
-                    Icon(Icons.edit),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Icon(Icons.delete)
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 10,
-        )
-      ],
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
     );
+    await launchUrl(launchUri);
   }
+
 }
+

@@ -1,74 +1,125 @@
-import 'dart:io';
-
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
-import 'package:ayikie_users/src/models/user.dart';
+import 'package:ayikie_users/src/models/buyerRequest.dart';
+import 'package:ayikie_users/src/models/dropdown.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_users/src/ui/widget/custom_form_field.dart';
 import 'package:ayikie_users/src/ui/widget/primary_button.dart';
 import 'package:ayikie_users/src/ui/widget/progress_view.dart';
-import 'package:ayikie_users/src/ui/widget/image_source_dialog.dart';
 import 'package:ayikie_users/src/utils/alerts.dart';
 import 'package:ayikie_users/src/utils/validations.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 
-class CreaterequestScreen extends StatefulWidget {
-  const CreaterequestScreen({Key? key}) : super(key: key);
+class CreateRequestScreen extends StatefulWidget {
+  final BuyerRequest? buyerRequest;
+
+  CreateRequestScreen({Key? key, this.buyerRequest}) : super(key: key);
 
   @override
-  _CreaterequestScreenState createState() => _CreaterequestScreenState();
+  _CreateRequestScreenState createState() => _CreateRequestScreenState();
 }
 
-class _CreaterequestScreenState extends State<CreaterequestScreen> {
+class _CreateRequestScreenState extends State<CreateRequestScreen> {
+  TextEditingController _titleController = TextEditingController();
   TextEditingController _locationController = TextEditingController();
-  TextEditingController _categoryController = TextEditingController();
-  TextEditingController _addressController = TextEditingController();
-  TextEditingController _phoneNumberController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _periodController = TextEditingController();
+  TextEditingController _budgetController = TextEditingController();
 
-  
+  List<Dropdown> serviceCategories = [];
+  List<Dropdown> serviceSubCategories = [];
+
+  late Dropdown selectedServiceCategory;
+  late Dropdown selectedSubServiceCategory;
 
   bool _isLoading = true;
-  bool _isEditable = true;
-  late User _user;
+  bool _isUpdate = false;
 
   @override
   void initState() {
     super.initState();
-    
+    if (widget.buyerRequest != null) {
+      setBuyerDetails();
+    }
+    _getServiceCategory();
   }
 
-  // void _getUserData() async {
-  //   await ApiCalls.getUser().then((response) {
-  //     if (!mounted) {
-  //       return;
-  //     }
-  //     if (response.isSuccess) {
-  //       _user = User.fromJson(response.jsonBody);
-  //       _fullNameController.text = _user.name;
-  //       _emailController.text = _user.email;
-  //       _addressController.text = _user.address;
-  //       _phoneNumberController.text = _user.phone;
-  //     } else {
-  //       Alerts.showMessage(context, "Something went wrong. Please try again.",
-  //           title: "Oops!");
-  //     }
-  //     setState(() {
-  //       _isLoading = false;
-  //     });
-  //   });
-  // }
+  void setBuyerDetails() {
+    _titleController.text = widget.buyerRequest!.title;
+    _locationController.text = widget.buyerRequest!.location;
+    _descriptionController.text = widget.buyerRequest!.description;
+    _periodController.text = widget.buyerRequest!.duration.toString();
+    _budgetController.text = widget.buyerRequest!.price.toString();
+    setState(() {
+      _isUpdate = true;
+    });
+  }
+
+  void _getServiceCategory() async {
+    await ApiCalls.getServicesDropdown().then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        var data = response.jsonBody;
+        serviceCategories.clear();
+        for (var item in data) {
+          Dropdown dropdown = Dropdown.fromJson(item);
+          if(_isUpdate && dropdown.id == widget.buyerRequest!.categoryId){
+            selectedServiceCategory=dropdown;
+          }
+          serviceCategories.add(dropdown);
+        }
+        if(!_isUpdate){
+          selectedServiceCategory = serviceCategories[0];
+        }
+        _getSubServiceCategory(selectedServiceCategory.id);
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+    });
+  }
+
+  void _getSubServiceCategory(int categoryId) async {
+    await ApiCalls.getSubServicesDropdown(categoryId: categoryId)
+        .then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        var data = response.jsonBody;
+        serviceSubCategories.clear();
+        for (var item in data) {
+          Dropdown dropdown = Dropdown.fromJson(item);
+          if(_isUpdate && dropdown.id == widget.buyerRequest!.subCategoryId){
+            selectedSubServiceCategory=dropdown;
+          }
+          serviceSubCategories.add(dropdown);
+        }
+        if(!_isUpdate){
+          selectedSubServiceCategory = serviceSubCategories[0];
+        }
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
 
   @override
   void dispose() {
     super.dispose();
+    _titleController.dispose();
     _locationController.dispose();
-    _addressController.dispose();
-    _categoryController.dispose();
-    _phoneNumberController.dispose();
+    _descriptionController.dispose();
+    _periodController.dispose();
+    _budgetController.dispose();
   }
 
   @override
@@ -80,7 +131,7 @@ class _CreaterequestScreenState extends State<CreaterequestScreen> {
         backgroundColor: AppColors.white,
         elevation: 0,
         title: Text(
-          'Post a Request',
+          _isUpdate?'Update Post':'Post a Request',
           style: TextStyle(color: Colors.black),
         ),
         leading: Container(
@@ -140,21 +191,33 @@ class _CreaterequestScreenState extends State<CreaterequestScreen> {
         ],
       ),
       endDrawer: DrawerScreen(),
-      body:
-      //  _isLoading
-      //     ? Center(
-      //         child: ProgressView(),
-      //       )
-      //     :
-           SingleChildScrollView(
+      body: _isLoading
+          ? Center(
+              child: ProgressView(),
+            )
+          : SingleChildScrollView(
               child: Container(
-                padding: EdgeInsets.only(left: 16, right: 16,top: 20),
+                padding: EdgeInsets.only(left: 16, right: 16, top: 20),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                
                     Container(
-                      padding: const EdgeInsets.only(bottom: 10, left: 5),
+                      padding:
+                          const EdgeInsets.only(top: 20, bottom: 10, left: 5),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Title',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    CustomFormField(
+                      controller: _titleController,
+                      hintText: 'Enter title here',
+                      inputType: TextInputType.text,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(top: 10,bottom: 10, left: 5),
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'Location',
@@ -162,9 +225,7 @@ class _CreaterequestScreenState extends State<CreaterequestScreen> {
                             fontSize: 14, fontWeight: FontWeight.w700),
                       ),
                     ),
-                    
                     CustomFormField(
-                      isEnabled: _isEditable,
                       controller: _locationController,
                       hintText: 'Enter your location',
                       inputType: TextInputType.text,
@@ -179,11 +240,40 @@ class _CreaterequestScreenState extends State<CreaterequestScreen> {
                             fontSize: 14, fontWeight: FontWeight.w700),
                       ),
                     ),
-                    CustomFormField(
-                      isEnabled: _isEditable,
-                      controller: _categoryController,
-                      hintText: 'Select your category',
-                      inputType: TextInputType.emailAddress,
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        border: Border.all(
+                            width: 1, //
+                            color: AppColors
+                                .greyLightColor //            <--- border width here
+                            ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: DropdownButton<Dropdown>(
+                          value: selectedServiceCategory,
+                          isExpanded: true,
+                          iconEnabledColor: AppColors.primaryButtonColor,
+                          items: serviceCategories.map((Dropdown value) {
+                            return DropdownMenuItem<Dropdown>(
+                              value: value,
+                              child: Text(value.name),
+                            );
+                          }).toList(),
+                          underline: SizedBox(
+                            width: 120,
+                          ),
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                          onChanged: (Dropdown? newValue) {
+                            setState(() {
+                              selectedServiceCategory = newValue!;
+                              _isLoading = true;
+                            });
+                            _getSubServiceCategory(selectedServiceCategory.id);
+                          },
+                        ),
+                      ),
                     ),
                     Container(
                       padding:
@@ -195,11 +285,36 @@ class _CreaterequestScreenState extends State<CreaterequestScreen> {
                             fontSize: 14, fontWeight: FontWeight.w700),
                       ),
                     ),
-                    CustomFormField(
-                      isEnabled: _isEditable,
-                      controller: _addressController,
-                      hintText: 'select your sub category',
-                      inputType: TextInputType.text,
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        border: Border.all(
+                            width: 1, //
+                            color: AppColors
+                                .greyLightColor //            <--- border width here
+                            ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: DropdownButton<Dropdown>(
+                          value: selectedSubServiceCategory,
+                          isExpanded: true,
+                          iconEnabledColor: AppColors.primaryButtonColor,
+                          items: serviceSubCategories.map((Dropdown value) {
+                            return DropdownMenuItem<Dropdown>(
+                              value: value,
+                              child: Text(value.name),
+                            );
+                          }).toList(),
+                          underline: SizedBox(
+                            width: 120,
+                          ),
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                          onChanged: (Dropdown? newValue) {
+                            selectedSubServiceCategory = newValue!;
+                          },
+                        ),
+                      ),
                     ),
                     Container(
                       padding:
@@ -212,10 +327,9 @@ class _CreaterequestScreenState extends State<CreaterequestScreen> {
                       ),
                     ),
                     CustomFormField(
-                      isEnabled: _isEditable,
-                      controller: _phoneNumberController,
-                      hintText: 'enter description here',
-                      inputType: TextInputType.phone,
+                      controller: _descriptionController,
+                      hintText: 'Enter description here',
+                      inputType: TextInputType.text,
                     ),
                     Container(
                       padding:
@@ -228,10 +342,9 @@ class _CreaterequestScreenState extends State<CreaterequestScreen> {
                       ),
                     ),
                     CustomFormField(
-                      isEnabled: _isEditable,
-                      controller: _phoneNumberController,
-                      hintText: 'enter delivery period here',
-                      inputType: TextInputType.phone,
+                      controller: _periodController,
+                      hintText: 'Enter delivery period here',
+                      inputType: TextInputType.number,
                     ),
                     Container(
                       padding:
@@ -244,19 +357,17 @@ class _CreaterequestScreenState extends State<CreaterequestScreen> {
                       ),
                     ),
                     CustomFormField(
-                      isEnabled: _isEditable,
-                      controller: _phoneNumberController,
-                      hintText: 'enter your budget here',
-                      inputType: TextInputType.phone,
+                      controller: _budgetController,
+                      hintText: 'Enter your budget here',
+                      inputType: TextInputType.number,
                     ),
                     SizedBox(
                       height: 30,
                     ),
                     PrimaryButton(
-                        text: 'Post',
-                        fontSize: 16,
-                        clickCallback: (){}),
-                         SizedBox(
+                        text: _isUpdate?'Update Post':'Post',
+                        fontSize: 16, clickCallback: _addService),
+                    SizedBox(
                       height: 50,
                     ),
                   ],
@@ -264,5 +375,88 @@ class _CreaterequestScreenState extends State<CreaterequestScreen> {
               ),
             ),
     );
+  }
+
+  void _addService() async {
+    String title = _titleController.text.trim();
+    String location = _locationController.text.trim();
+    String des = _descriptionController.text.trim();
+    String budget = _budgetController.text.trim();
+    String period = _periodController.text.trim();
+
+    if (!Validations.validateString(title)) {
+      Alerts.showMessage(context, "Enter your title");
+      return;
+    }
+    if (!Validations.validateString(location)) {
+      Alerts.showMessage(context, "Enter your Location");
+      return;
+    }
+    if (!Validations.validateString(des)) {
+      Alerts.showMessage(context, "Enter your short description");
+      return;
+    }
+    if (!Validations.validateString(period)) {
+      Alerts.showMessage(context, "Enter your delivery Period");
+      return;
+    }
+    if (!Validations.validateString(budget)) {
+      Alerts.showMessage(context, "Enter your budget");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+    (!_isUpdate)
+        ? ApiCalls.createBuyerRequest(
+                title: title,
+                location: location,
+                description: des,
+                price: double.parse(budget),
+                duration: period,
+                categoryId: selectedServiceCategory.id,
+                subCategoryId: selectedSubServiceCategory.id)
+            .then((response) async {
+            if (!mounted) {
+              return;
+            }
+            if (response.isSuccess) {
+              Alerts.showMessage(context, "Request updated successfully.",
+                  title: "Success!",
+                  onCloseCallback: () =>
+                      {Navigator.pop(context), Navigator.pop(context)});
+            } else {
+              Alerts.showMessageForResponse(context, response);
+              setState(() {
+                _isLoading = false;
+              });
+            }
+          })
+        : ApiCalls.updateBuyerRequest(
+                requestId: widget.buyerRequest!.id,
+                title: title,
+                location: location,
+                description: des,
+                price: double.parse(budget),
+                duration: period,
+                categoryId: selectedServiceCategory.id,
+                subCategoryId: selectedSubServiceCategory.id)
+            .then((response) async {
+            if (!mounted) {
+              return;
+            }
+            if (response.isSuccess) {
+              Alerts.showMessage(context, "Request added successfully.",
+                  title: "Success!",
+                  onCloseCallback: () =>
+                      {Navigator.pop(context), Navigator.pop(context)});
+            } else {
+              Alerts.showMessageForResponse(context, response);
+              setState(() {
+                _isLoading = false;
+              });
+            }
+          });
   }
 }

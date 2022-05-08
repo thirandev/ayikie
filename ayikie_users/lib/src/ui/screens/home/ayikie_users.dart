@@ -13,6 +13,7 @@ import 'package:ayikie_users/src/ui/screens/sub_categories_screen/sub_product_sc
 import 'package:ayikie_users/src/ui/screens/sub_categories_screen/sub_service_screen.dart';
 import 'package:ayikie_users/src/ui/widget/progress_view.dart';
 import 'package:ayikie_users/src/utils/alerts.dart';
+import 'package:ayikie_users/src/utils/settings.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:geocode/geocode.dart';
 
@@ -31,6 +32,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   bool _location = true;
   String city = '';
   String country = '';
+  String? current_address;
   Position? _position;
   GeoCode geoCode = GeoCode();
   List<Images> banners = [];
@@ -48,8 +50,13 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     Position position = await _determinePosition();
     Address address = await geoCode.reverseGeocoding(
         latitude: position.latitude, longitude: position.longitude);
-    city = address.city!;
-    country = address.countryName!;
+    // city = address.city!;
+    // country = address.countryName!;
+
+    current_address = address.city! + ' ' + address.countryName!;
+    print(current_address);
+    // await Settings.setLocation(current_address!);
+    // current_address = await Settings.getLocation();
     setState(() {
       _position = position;
       _location = false;
@@ -247,7 +254,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                       width: 5,
                                     ),
                                     Text(
-                                     _location? 'Tap to get Your Location': city +' '+ country,
+                                      _location
+                                          ? 'Tap to get Your Location'
+                                          : current_address!,
                                       style: TextStyle(color: Colors.white),
                                     )
                                   ],

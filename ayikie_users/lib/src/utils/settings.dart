@@ -27,4 +27,15 @@ class Settings {
     String? token = sharedPrefs.getString("access_token");
     return token;
   }
+
+  static setLocation(String location) async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    sharedPrefs.setString("location", location);
+  }
+
+  static Future<String?> getLocation() async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    String? location = sharedPrefs.getString("location");
+    return location;
+  }
 }
