@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_users/src/ui/widget/custom_form_field.dart';
 import 'package:ayikie_users/src/ui/widget/primary_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_paystack/flutter_paystack.dart';
 
 class CreditCardVerification extends StatefulWidget {
   const CreditCardVerification({Key? key}) : super(key: key);
@@ -16,13 +19,58 @@ class _CreditCardVerificationState extends State<CreditCardVerification> {
 
   TextEditingController _emailController = TextEditingController();
 
-  @override
-  Widget build(BuildContext context) {
 
     bool _enterEmail = true;
     bool _enterOtp = false;
+    String publicKeyTest = 'pk_test_6e9d10c9cae9aadd7735a89c91ee6c0c01103ecb';
+  final plugin = PaystackPlugin();
+
+  @override
+  void initState() {
+    plugin.initialize(publicKey: publicKeyTest);
+    super.initState();
+  }
+
+  void _showMessage(String message) {
+    final snackBar = SnackBar(content: Text(message));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  String _getReference() {
+    var platform = (Platform.isIOS) ? 'iOS' : 'Android';
+    final thisDate = DateTime.now().millisecondsSinceEpoch;
+    return 'ChargedFrom${platform}_$thisDate';
+  }
+
+  chargeCard() async {
+    var charge = Charge()
+    
+      ..amount = 10 *
+          100 //the money should be in kobo hence the need to multiply the value by 100
+      ..reference = _getReference()
+      
+      ..putCustomField('custom_id',
+          '846gey6w') //to pass extra parameters to be retrieved on the response from Paystack
+      ..currency = 'GHS'    
+      
+      ..email = 'Ayikie2.0@gmail.com';
+      
+    CheckoutResponse response = await plugin.checkout(
+      context,
+      method: CheckoutMethod.card,
+      charge: charge,
+    );
+    print(response);
+    if (response.status == true) {
+      _showMessage('Payment was successful!!!');
+    } else {
+      _showMessage('Payment Failed!!!');
+    }
+  }
 
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
@@ -124,7 +172,7 @@ class _CreditCardVerificationState extends State<CreditCardVerification> {
                      PrimaryButton(
                         text: 'Add Card',
                         fontSize: 16,
-                        clickCallback: (){}),
+                        clickCallback: ()=>chargeCard()),
                   ],
                 ),
               ),
