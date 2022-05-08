@@ -85,7 +85,8 @@ class ApiCalls {
       var query = new Map<String, String>();
       query['search'] = keyword;
       return ApiCaller.getRequestAuth(
-          baseUrl + '/api/search', _getEmptyHeaders(),query: query);
+          baseUrl + '/api/search', _getEmptyHeaders(),
+          query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -647,7 +648,6 @@ class ApiCalls {
     }
   }
 
-  
   static Future<ApiResponse> verifyLinkedIn({
     required String linkedIn,
   }) async {
@@ -667,14 +667,17 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> verifyNic({required File picture, required File picture2}) async {
+  static Future<ApiResponse> verifyNic(
+      {required File picture, required File picture2}) async {
     try {
       var fields = new Map<String, String>();
 
       // print('Hereee');
       List<MultipartFile> image = [];
-      var multipartFile = await MultipartFile.fromPath('front_image', picture.path);
-      var multipartFile2 = await MultipartFile.fromPath('back_image', picture2.path);
+      var multipartFile =
+          await MultipartFile.fromPath('front_image', picture.path);
+      var multipartFile2 =
+          await MultipartFile.fromPath('back_image', picture2.path);
       image.add(multipartFile);
       image.add(multipartFile2);
       // Map<String, String> payload = new Map<String, String>();
@@ -683,11 +686,163 @@ class ApiCalls {
       // payload['comment'] = comment;
 
       return ApiCaller.multiPartRequestAuth(
-          baseUrl + '/api/user/verification/nic',
+          baseUrl + '/api/user/verification/nic', _getEmptyHeaders(),
+          requestType: 'POST', fields: fields, files: image);
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getAllBuyerRequest({required int page}) async {
+    try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/customer/buyer-requests', _getEmptyHeaders(),
+          query: query);
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getBuyerRequest(String requestId) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/customer/buyer-requests/$requestId',
+          _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> createBuyerRequest({
+    required int categoryId,
+    required String title,
+    required int subCategoryId,
+    required double price,
+    required String duration,
+    required String location,
+    required String description,
+  }) async {
+    try {
+      var payload = new Map<String, dynamic>();
+      payload['title'] = title;
+      payload['category_id'] = categoryId;
+      payload['sub_category_id'] = subCategoryId;
+      payload['price'] = price;
+      payload['duration'] = duration;
+      payload['location'] = location;
+      payload['description'] = description;
+
+      return ApiCaller.jsonRequestAuth(baseUrl + '/api/customer/buyer-requests',
+          _getEmptyHeaders(), jsonEncode(payload));
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> updateBuyerRequest({
+    required int requestId,
+    required String title,
+    required int categoryId,
+    required int subCategoryId,
+    required double price,
+    required String duration,
+    required String location,
+    required String description,
+  }) async {
+    try {
+      var payload = new Map<String, dynamic>();
+      payload['title'] = title;
+      payload['category_id'] = categoryId;
+      payload['sub_category_id'] = subCategoryId;
+      payload['price'] = price;
+      payload['duration'] = duration;
+      payload['location'] = location;
+      payload['description'] = description;
+
+      return ApiCaller.jsonRequestAuth(
+          baseUrl + '/api/customer/buyer-requests/$requestId',
           _getEmptyHeaders(),
-          requestType: 'POST',
-          fields: fields,
-          files: image);
+          jsonEncode(payload));
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> deleteBuyerRequest(int requestId) async {
+    try {
+      return ApiCaller.requestAuth(
+          baseUrl + "/api/customer/buyer-requests/$requestId",
+          _getEmptyHeaders(),
+          requestType: "DELETE");
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> cancelBuyerRequest(String requestId) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/customer/buyer-requests/offer/$requestId/cancel',
+          _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> acceptBuyerRequest(String requestId) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/customer/buyer-requests/offer/$requestId/accept',
+          _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getServicesDropdown() async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/services/categories/dropdown', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getSubServicesDropdown(
+      {required int categoryId}) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/services/$categoryId/sub-categories/dropdown',
+          _getEmptyHeaders());
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;

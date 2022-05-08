@@ -1,11 +1,8 @@
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
-import 'package:ayikie_users/src/models/Item.dart';
 import 'package:ayikie_users/src/models/search.dart';
-import 'package:ayikie_users/src/models/service.dart';
 import 'package:ayikie_users/src/ui/screens/Item/product_screen.dart';
 import 'package:ayikie_users/src/ui/screens/Item/service_screen.dart';
-import 'package:ayikie_users/src/ui/screens/all_items/all_products_screen.dart';
 
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';

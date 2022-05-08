@@ -1,9 +1,15 @@
+import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
+import 'package:ayikie_users/src/models/buyerRequest.dart';
+import 'package:ayikie_users/src/models/meta.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_users/src/ui/screens/post_request_screen/create_request.dart';
 import 'package:ayikie_users/src/ui/screens/post_request_screen/my_offers.dart';
 import 'package:ayikie_users/src/ui/widget/primary_button.dart';
+import 'package:ayikie_users/src/ui/widget/progress_view.dart';
+import 'package:ayikie_users/src/utils/alerts.dart';
+import 'package:ayikie_users/src/utils/common.dart';
 import 'package:flutter/material.dart';
 
 class PostRequestScreen extends StatefulWidget {
@@ -14,6 +20,57 @@ class PostRequestScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<PostRequestScreen> {
+  bool _isLoading = true;
+  int currentIndex = 1;
+  int currentIndexProduct = 1;
+
+  List<BuyerRequest> buyerRequests = [];
+
+  late ScrollController _controller;
+  bool isLastPage = false;
+  bool isFirstLoad = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _getRequest();
+    _controller = new ScrollController()..addListener(loadMore);
+  }
+
+  void loadMore() {
+    if (_controller.position.extentAfter < 240 && !isLastPage && !_isLoading) {
+      setState(() {
+        currentIndex++;
+        _isLoading = true;
+      });
+      _getRequest(loadData: true);
+    }
+  }
+
+  void _getRequest({bool? loadData}) async {
+    await ApiCalls.getAllBuyerRequest(page: currentIndex).then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        var meta = response.metaBody;
+        Meta _meta = Meta.fromJson(meta);
+        isLastPage = _meta.lastPage == currentIndex;
+        var data = response.jsonBody;
+        for (var item in data) {
+          BuyerRequest buyer = BuyerRequest.fromJson(item);
+          buyerRequests.add(buyer);
+        }
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,59 +141,103 @@ class _NotificationScreenState extends State<PostRequestScreen> {
       ),
       endDrawer: DrawerScreen(),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.only(left: 16, right: 16, top: 10),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height - 180,
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      itemCount: 3,
-                      itemBuilder: (BuildContext context, int index) =>
-                          PostRequestTile()),
-                ),
-                SizedBox(height: 20,),
-                PrimaryButton(text: 'Post a Request', clickCallback: () {Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return CreaterequestScreen();
+        child: _isLoading
+            ? Center(
+                child: ProgressView(),
+              )
+            : SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.only(left: 16, right: 16, top: 10),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height - 180,
+                        child: ListView.builder(
+                            controller: _controller,
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                            itemCount: buyerRequests.length,
+                            itemBuilder: (BuildContext context, int index) =>
+                                PostRequestTile(
+                                    request: buyerRequests[index],
+                                    deletePress: () {
+                                      deleteRequest(buyerRequests[index].id);
+                                    })),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      PrimaryButton(
+                          text: 'Post a Request',
+                          clickCallback: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) {
+                                return CreateRequestScreen();
+                              }),
+                            );
                           }),
-                        );}),
-                SizedBox(height: 30,)
-              ],
-            ),
-          ),
-        ),
+                      SizedBox(
+                        height: 30,
+                      )
+                    ],
+                  ),
+                ),
+              ),
       ),
     );
+  }
+
+  void deleteRequest(int requestId) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    ApiCalls.deleteBuyerRequest(requestId).then((response) async {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        Alerts.showMessage(context, "Request Deleted successfully.",
+            title: "Success!", onCloseCallback: () => Navigator.pop(context));
+        buyerRequests.clear();
+        _getRequest();
+      } else {
+        Alerts.showMessageForResponse(context, response);
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    });
   }
 }
 
 class PostRequestTile extends StatelessWidget {
-  const PostRequestTile({Key? key}) : super(key: key);
+  BuyerRequest request;
+  final VoidCallback deletePress;
+
+  PostRequestTile({Key? key, required this.request, required this.deletePress})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) {
-                                return MyOffersScreen();
-                              }),
-                            );
-        
+          context,
+          MaterialPageRoute(builder: (context) {
+            return MyOffersScreen();
+          }),
+        );
       },
       child: Column(
         children: [
           Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: AppColors.primaryPinkColor),
+                border: Border.all(color: AppColors.primaryButtonColor),
+                color: AppColors.white),
             height: 200,
             width: double.infinity,
             child: Padding(
@@ -148,34 +249,51 @@ class PostRequestTile extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        'March 2022 23',
-                        style:
-                            TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
+                        Common.dateFormator(ios8601: request.createdAt),
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w900),
                       ),
                       Spacer(),
-                      Container(
-                        alignment: Alignment.center,
-                        width: 60,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: Colors.red,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Text(
-                            'Active',
-                            style: TextStyle(color: AppColors.white),
-                          ),
-                        ),
-                      )
+                      request.status == 1
+                          ? Container(
+                              alignment: Alignment.center,
+                              width: 60,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.red[400],
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Text(
+                                  'Active',
+                                  style: TextStyle(color: AppColors.white),
+                                ),
+                              ),
+                            )
+                          : Container(
+                              alignment: Alignment.center,
+                              width: 80,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.green[400],
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Text(
+                                  'Completed',
+                                  style: TextStyle(color: AppColors.white),
+                                ),
+                              ),
+                            )
                     ],
                   ),
                   SizedBox(
                     height: 10,
                   ),
                   Text(
-                    'Looking for a Pumbler for pipe repair',
+                    request.title,
                     style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
                   ),
                   SizedBox(
@@ -185,12 +303,12 @@ class PostRequestTile extends StatelessWidget {
                     children: [
                       Text(
                         'Order Amount :',
-                        style:
-                            TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w900),
                       ),
                       Spacer(),
                       Text(
-                        '\$25',
+                        '\$${request.price}',
                         style: TextStyle(
                           fontSize: 12,
                         ),
@@ -204,12 +322,12 @@ class PostRequestTile extends StatelessWidget {
                     children: [
                       Text(
                         'Order Duration :',
-                        style:
-                            TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w900),
                       ),
                       Spacer(),
                       Text(
-                        '2 days',
+                        '${request.duration} days',
                         style: TextStyle(
                           fontSize: 12,
                         ),
@@ -223,12 +341,12 @@ class PostRequestTile extends StatelessWidget {
                     children: [
                       Text(
                         'Order Location :',
-                        style:
-                            TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w900),
                       ),
                       Spacer(),
                       Text(
-                        'Colombo',
+                        request.location,
                         style: TextStyle(
                           fontSize: 12,
                         ),
@@ -241,16 +359,31 @@ class PostRequestTile extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '8 oreders submit',
-                        style:
-                            TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
+                        '${request.offers!.length} Offers Submitted',
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w900),
                       ),
                       Spacer(),
-                      Icon(Icons.edit),
+                      request.status == 1
+                          ? GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) {
+                                    return CreateRequestScreen(
+                                        buyerRequest: request);
+                                  }),
+                                );
+                              },
+                              child: Icon(Icons.edit))
+                          : Container(),
                       SizedBox(
                         width: 10,
                       ),
-                      Icon(Icons.delete)
+                      request.status == 1
+                          ? GestureDetector(
+                              onTap: deletePress, child: Icon(Icons.delete))
+                          : Container()
                     ],
                   ),
                 ],

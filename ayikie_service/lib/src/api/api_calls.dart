@@ -327,7 +327,6 @@ class ApiCalls {
     }
   }
 
-  //ToDo: Replace with Service Api after the fix
   static Future<ApiResponse> getService({required int serviceId}) async {
     try {
       return ApiCaller.getRequest(
