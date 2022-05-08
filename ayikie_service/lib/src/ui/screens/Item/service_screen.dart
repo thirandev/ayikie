@@ -275,6 +275,14 @@ class _ServiceScreenState extends State<ServiceScreen> {
                           },
                         ),
                         SizedBox(
+                          height: 10,
+                        ),
+                        PrimaryButton(
+                          bgColor: Colors.red[400],
+                          text: 'Delete'
+                          , clickCallback: deleteRequest,
+                        ),
+                        SizedBox(
                           height: 20,
                         ),
                         Text(
@@ -309,6 +317,33 @@ class _ServiceScreenState extends State<ServiceScreen> {
                 ),
               )));
   }
+
+  void deleteRequest() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    ApiCalls.deleteService(service.id).then((response) async {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        Alerts.showMessage(context, "Service Deleted successfully.",
+            title: "Success!", onCloseCallback: () =>
+            {
+              Navigator.pop(context),
+              Navigator.pop(context)
+            }
+        );
+      } else {
+        Alerts.showMessageForResponse(context, response);
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    });
+  }
+
 }
 
 class CommentWidget extends StatelessWidget {

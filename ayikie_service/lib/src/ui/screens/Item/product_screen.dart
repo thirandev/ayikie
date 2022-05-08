@@ -11,7 +11,6 @@ import 'package:ayikie_service/src/utils/alerts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class ProductScreen extends StatefulWidget {
   final int productId;
@@ -242,7 +241,7 @@ class _ProductScreenState extends State<ProductScreen> {
                               fontSize: 14, fontWeight: FontWeight.w900),
                         ),
                         SizedBox(
-                          height: 10,
+                          height: 30,
                         ),
                         PrimaryButton(
                             text: 'Update'
@@ -256,13 +255,21 @@ class _ProductScreenState extends State<ProductScreen> {
                         },
                         ),
                         SizedBox(
+                          height: 10,
+                        ),
+                        PrimaryButton(
+                          bgColor: Colors.red[400],
+                          text: 'Delete'
+                          , clickCallback: deleteRequest,
+                        ),
+                        SizedBox(
                           height: 40,
                         ),
-                        Text(
+                        product.comment!.isNotEmpty?Text(
                           'Comments',
                           style: TextStyle(
                               fontSize: 12, fontWeight: FontWeight.w900),
-                        ),
+                        ):Container(),
                         SizedBox(
                           height: 10,
                         ),
@@ -291,6 +298,33 @@ class _ProductScreenState extends State<ProductScreen> {
                 ),
               )));
   }
+
+  void deleteRequest() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    ApiCalls.deleteProduct(product.id).then((response) async {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        Alerts.showMessage(context, "Product Deleted successfully.",
+            title: "Success!", onCloseCallback: () =>
+                {
+                  Navigator.pop(context),
+                  Navigator.pop(context)
+                }
+        );
+      } else {
+        Alerts.showMessageForResponse(context, response);
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    });
+  }
+
 }
 
 class CommentWidget extends StatelessWidget {
