@@ -412,7 +412,7 @@ class ApiCalls {
   }
 
   static Future<ApiResponse> createBuyerRequest({
-    required int requestId,
+    required int serviceId,
     required int buyerRequestId,
     required double price,
     required String duration,
@@ -423,9 +423,10 @@ class ApiCalls {
       payload['buyer_request_id'] = buyerRequestId;
       payload['price'] = price;
       payload['duration'] = duration;
+      payload['service_id'] = serviceId;
       payload['description'] = description;
 
-      return ApiCaller.jsonRequestAuth(baseUrl + '/api/seller/buyer-requests/$requestId',
+      return ApiCaller.jsonRequestAuth(baseUrl + '/api/seller/buyer-requests',
           _getEmptyHeaders(), jsonEncode(payload));
     } catch (e) {
       ApiResponse response = ApiResponse();

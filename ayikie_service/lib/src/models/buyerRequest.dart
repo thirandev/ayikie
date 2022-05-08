@@ -33,7 +33,7 @@ class BuyerRequest {
       description:json['description'],
       location: json['location'],
       duration: json['duration'],
-      price: json['price'],
+      price: double.parse(json['price']),
       status: json['status'],
       createdAt: json['created_at'],
       user: User.fromJson(json['customer']),
