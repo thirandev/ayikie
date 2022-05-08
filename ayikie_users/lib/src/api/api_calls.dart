@@ -85,7 +85,8 @@ class ApiCalls {
       var query = new Map<String, String>();
       query['search'] = keyword;
       return ApiCaller.getRequestAuth(
-          baseUrl + '/api/search', _getEmptyHeaders(),query: query);
+          baseUrl + '/api/search', _getEmptyHeaders(),
+          query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -647,7 +648,6 @@ class ApiCalls {
     }
   }
 
-  
   static Future<ApiResponse> verifyLinkedIn({
     required String linkedIn,
   }) async {
@@ -667,14 +667,17 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> verifyNic({required File picture, required File picture2}) async {
+  static Future<ApiResponse> verifyNic(
+      {required File picture, required File picture2}) async {
     try {
       var fields = new Map<String, String>();
 
       // print('Hereee');
       List<MultipartFile> image = [];
-      var multipartFile = await MultipartFile.fromPath('front_image', picture.path);
-      var multipartFile2 = await MultipartFile.fromPath('back_image', picture2.path);
+      var multipartFile =
+          await MultipartFile.fromPath('front_image', picture.path);
+      var multipartFile2 =
+          await MultipartFile.fromPath('back_image', picture2.path);
       image.add(multipartFile);
       image.add(multipartFile2);
       // Map<String, String> payload = new Map<String, String>();
@@ -683,11 +686,37 @@ class ApiCalls {
       // payload['comment'] = comment;
 
       return ApiCaller.multiPartRequestAuth(
-          baseUrl + '/api/user/verification/nic',
-          _getEmptyHeaders(),
-          requestType: 'POST',
-          fields: fields,
-          files: image);
+          baseUrl + '/api/user/verification/nic', _getEmptyHeaders(),
+          requestType: 'POST', fields: fields, files: image);
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> verifyAddress({
+    required File picture,
+  }) async {
+    try {
+      var fields = new Map<String, String>();
+
+      // print('Hereee');
+      List<MultipartFile> image = [];
+      var multipartFile =
+          await MultipartFile.fromPath('front_image', picture.path);
+
+      image.add(multipartFile);
+
+      // Map<String, String> payload = new Map<String, String>();
+      // payload['service_order_id'] = serviceId.toString();
+      // payload['rate'] = rate.toString();
+      // payload['comment'] = comment;
+
+      return ApiCaller.multiPartRequestAuth(
+          baseUrl + '/api/user/verification/address', _getEmptyHeaders(),
+          requestType: 'POST', fields: fields, files: image);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;

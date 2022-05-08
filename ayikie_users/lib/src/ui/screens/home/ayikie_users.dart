@@ -14,6 +14,8 @@ import 'package:ayikie_users/src/ui/screens/sub_categories_screen/sub_service_sc
 import 'package:ayikie_users/src/ui/widget/progress_view.dart';
 import 'package:ayikie_users/src/utils/alerts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:geocode/geocode.dart';
+
 import 'package:geolocator/geolocator.dart';
 
 import 'package:flutter/material.dart';
@@ -26,9 +28,11 @@ class UserHomeScreen extends StatefulWidget {
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
   bool _isLoading = true;
-//   Position _currentPosition;
-// String _currentAddress;
-
+  bool _location = true;
+  String city = '';
+  String country = '';
+  Position? _position;
+  GeoCode geoCode = GeoCode();
   List<Images> banners = [];
   List<Item> categories = [];
   List<Service> recommandedServices = [];
@@ -38,6 +42,34 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   void initState() {
     super.initState();
     _getBanners();
+  }
+
+  void _getCurrentLocation() async {
+    Position position = await _determinePosition();
+    Address address = await geoCode.reverseGeocoding(
+        latitude: position.latitude, longitude: position.longitude);
+    city = address.city!;
+    country = address.countryName!;
+    setState(() {
+      _position = position;
+      _location = false;
+    });
+  }
+
+  Future<Position> _determinePosition() async {
+    LocationPermission permission;
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+    return await Geolocator.getCurrentPosition();
   }
 
   void _getBanners() async {
@@ -154,7 +186,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                       Column(
                         children: [
                           GestureDetector(
-                            onTap: (){
+                            onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) {
@@ -169,7 +201,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                 color: AppColors.textFieldBackground,
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Padding(
                                       padding: EdgeInsets.only(left: 20),
@@ -177,7 +210,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                         'Search here',
                                         style: TextStyle(
                                             fontSize: 14,
-                                            color: AppColors.primaryButtonColor),
+                                            color:
+                                                AppColors.primaryButtonColor),
                                       )),
                                   IconButton(
                                       onPressed: () {},
@@ -192,20 +226,33 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                           SizedBox(
                             height: 10,
                           ),
-                          Container(
-                            width: double.infinity,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(0),
-                              color: Colors.blue,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(3.0),
-                              child: Row(children: [
-                                Icon(Icons.location_on_outlined,color: Colors.white,),
-                                SizedBox(width: 5,),
-                                Text('Horana , Sri Lanka',style: TextStyle(color: Colors.white),)
-                              ],),
+                          InkWell(
+                            onTap: _getCurrentLocation,
+                            child: Container(
+                              width: double.infinity,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(0),
+                                color: Colors.blue,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(3.0),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.location_on_outlined,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                     _location? 'Tap to get Your Location': city +' '+ country,
+                                      style: TextStyle(color: Colors.white),
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                           SizedBox(

@@ -1,14 +1,13 @@
 import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/app_colors.dart';
 import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
+import 'package:ayikie_service/src/ui/screens/home/ayikie_services.dart';
 import 'package:ayikie_service/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_service/src/ui/widget/custom_form_field.dart';
 import 'package:ayikie_service/src/ui/widget/primary_button.dart';
 import 'package:ayikie_service/src/utils/alerts.dart';
 import 'package:ayikie_service/src/utils/validations.dart';
 import 'package:flutter/material.dart';
-
-
 
 class SupportScreen extends StatefulWidget {
   const SupportScreen({Key? key}) : super(key: key);
@@ -21,6 +20,45 @@ class _SupportScreenState extends State<SupportScreen> {
   TextEditingController _fullNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _messageController = TextEditingController();
+
+  void sendRequest() {
+    String name = _fullNameController.text.trim();
+    String email = _emailController.text.trim();
+    String message = _messageController.text.trim();
+
+    if (!Validations.validateString(name) ||
+        !Validations.validateString(message)) {
+      Alerts.showMessage(context, "Please enter the fields");
+      return;
+    }
+
+    if (!Validations.validateEmail(email)) {
+      Alerts.showMessage(context, "Please valid email");
+      return;
+    }
+
+    ApiCalls.vistorSupport(email: email, message: message, name: name)
+        .then((response) async {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        Alerts.showMessage(
+            context, response.jsonBody['success']['message'].toString(),
+            title: "Hurrah!",
+            onCloseCallback: () => {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return ServicesHomeScreen();
+                    }),
+                  )
+                });
+      } else {
+        Alerts.showMessageForResponse(context, response);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -162,43 +200,4 @@ class _SupportScreenState extends State<SupportScreen> {
       ),
     );
   }
-
-  void sendRequest() {
-    String name = _fullNameController.text.trim();
-    String email = _emailController.text.trim();
-    String message = _messageController.text.trim();
-
-    if (!Validations.validateString(name) ||
-        !Validations.validateString(message)) {
-      Alerts.showMessage(context, "Please enter the fields");
-      return;
-    }
-
-    if (!Validations.validateEmail(email)) {
-      Alerts.showMessage(context, "Please valid email");
-      return;
-    }
-
-  //   ApiCalls.vistorSupport(email: email, message: message, name: name)
-  //       .then((response) async {
-  //     if (!mounted) {
-  //       return;
-  //     }
-  //     if (response.isSuccess) {
-  //       Alerts.showMessage(
-  //           context, response.jsonBody['success']['message'].toString(),
-  //           title: "Hurrah!",
-  //           onCloseCallback: () => {
-  //                 Navigator.push(
-  //                   context,
-  //                   MaterialPageRoute(builder: (context) {
-  //                     return UserHomeScreen();
-  //                   }),
-  //                 )
-  //               });
-  //     } else {
-  //       Alerts.showMessageForResponse(context, response);
-  //     }
-  //   });
-   }
 }

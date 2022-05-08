@@ -12,15 +12,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AddressVerification extends StatefulWidget {
-  const AddressVerification({Key? key}) : super(key: key);
+class CompanyRegistrationVerification extends StatefulWidget {
+  const CompanyRegistrationVerification({Key? key}) : super(key: key);
 
   @override
-  _AddressVerificationState createState() => _AddressVerificationState();
+  _CompanyRegistrationVerificationState createState() =>
+      _CompanyRegistrationVerificationState();
 }
 
-class _AddressVerificationState extends State<AddressVerification> {
-  
+class _CompanyRegistrationVerificationState
+    extends State<CompanyRegistrationVerification> {
+  TextEditingController _emailController = TextEditingController();
 
   late File _reviewPhotoFront;
 
@@ -70,18 +72,18 @@ class _AddressVerificationState extends State<AddressVerification> {
     }
   }
 
-  void verifyAddress() async {
+  void verifyCompanyRegistration() async {
     setState(() {
       _isLoading = true;
     });
-    ApiCalls.verifyAddress(
+    ApiCalls.verifyCompanyRegistration(
       picture: _reviewPhotoFront,
     ).then((response) async {
       if (!mounted) {
         return;
       }
       if (response.isSuccess) {
-        Alerts.showMessage(context, "Address added sucessfully.",
+        Alerts.showMessage(context, "Company Registration added sucessfully.",
             title: "Success!",
             onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
                 context, '/ServiceScreen', (route) => false));
@@ -103,8 +105,8 @@ class _AddressVerificationState extends State<AddressVerification> {
         backgroundColor: AppColors.white,
         elevation: 0,
         title: Text(
-          'Address Verification',
-          style: TextStyle(color: Colors.black),
+          'Company Registration',
+          style: TextStyle(color: Colors.black, fontSize: 18),
         ),
         leading: Container(
           width: 24,
@@ -176,7 +178,7 @@ class _AddressVerificationState extends State<AddressVerification> {
                   padding: const EdgeInsets.only(top: 20, bottom: 10, left: 5),
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Upload Address verification document',
+                    'Company Registration document',
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                   ),
                 ),
@@ -227,7 +229,7 @@ class _AddressVerificationState extends State<AddressVerification> {
                     text: 'SUBMIT',
                     fontSize: 16,
                     clickCallback: () {
-                      verifyAddress();
+                      verifyCompanyRegistration();
                     }),
               ],
             ),

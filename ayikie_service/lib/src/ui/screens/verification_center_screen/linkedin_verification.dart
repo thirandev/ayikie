@@ -1,8 +1,11 @@
+import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/app_colors.dart';
 import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_service/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_service/src/ui/widget/custom_form_field.dart';
 import 'package:ayikie_service/src/ui/widget/primary_button.dart';
+import 'package:ayikie_service/src/utils/alerts.dart';
+import 'package:ayikie_service/src/utils/validations.dart';
 import 'package:flutter/material.dart';
 
 class LinkedinVerification extends StatefulWidget {
@@ -14,13 +17,51 @@ class LinkedinVerification extends StatefulWidget {
 
 class _NotificationScreenState extends State<LinkedinVerification> {
 
-  TextEditingController _fbController = TextEditingController();
+  TextEditingController _linkedInController = TextEditingController();
+
+  bool _isLoading = false;
+  bool _enterEmail = true;
+  bool _enterOtp = false;
+
+  void verifyLinkedIn() async {
+    String message = _linkedInController.text.trim();
+
+    if (!Validations.validateString(message)) {
+      Alerts.showMessage(context, "Enter your linkedin link");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+    ApiCalls.verifyLinkedIn(linkedIn:  message).then((response) async {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        Alerts.showMessage(context, "LinkedIn added Successfully",
+            title: "Success!",
+            onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
+                context, '/ServiceScreen', (route) => false));
+      } else {
+        Alerts.showMessageForResponse(context, response);
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _linkedInController.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
 
-    bool _enterEmail = true;
-    bool _enterOtp = false;
 
 
     return Scaffold(
@@ -111,7 +152,7 @@ class _NotificationScreenState extends State<LinkedinVerification> {
                     ),
                     CustomFormField(
                       
-                      controller: _fbController,
+                      controller: _linkedInController,
                       hintText: 'Enter your facebook link',
                       inputType: TextInputType.emailAddress,
                     ),
@@ -119,7 +160,7 @@ class _NotificationScreenState extends State<LinkedinVerification> {
                      PrimaryButton(
                         text: 'SUBMIT',
                         fontSize: 16,
-                        clickCallback: (){}),
+                        clickCallback: (){verifyLinkedIn();}),
                   ],
                 ),
               ),

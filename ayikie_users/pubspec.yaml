@@ -34,6 +34,8 @@ dependencies:
   geolocator: ^7.5.0
   flutter_paystack: ^1.0.5+1
   async: ^2.7.0
+  geocode: 1.0.1
+  
 
 dev_dependencies:
   flutter_test:

@@ -1,8 +1,11 @@
+import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/app_colors.dart';
 import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_service/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_service/src/ui/widget/custom_form_field.dart';
 import 'package:ayikie_service/src/ui/widget/primary_button.dart';
+import 'package:ayikie_service/src/utils/alerts.dart';
+import 'package:ayikie_service/src/utils/validations.dart';
 import 'package:flutter/material.dart';
 
 class FbVerification extends StatefulWidget {
@@ -16,11 +19,48 @@ class _FbVerificationState extends State<FbVerification> {
 
   TextEditingController _fbController = TextEditingController();
 
+  bool _isLoading = false;
+  bool _enterEmail = true;
+  bool _enterOtp = false;
+
+  void verifyFb() async {
+    String message = _fbController.text.trim();
+
+    if (!Validations.validateString(message)) {
+      Alerts.showMessage(context, "Enter your facebook link");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+    ApiCalls.verifyFacebook(facebook:  message).then((response) async {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        Alerts.showMessage(context, "Facebook added Successfully",
+            title: "Success!",
+            onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
+                context, '/ServiceScreen', (route) => false));
+      } else {
+        Alerts.showMessageForResponse(context, response);
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _fbController.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    bool _enterEmail = true;
-    bool _enterOtp = false;
 
 
     return Scaffold(
@@ -119,7 +159,7 @@ class _FbVerificationState extends State<FbVerification> {
                      PrimaryButton(
                         text: 'SUBMIT',
                         fontSize: 16,
-                        clickCallback: (){}),
+                        clickCallback: (){verifyFb();}),
                   ],
                 ),
               ),

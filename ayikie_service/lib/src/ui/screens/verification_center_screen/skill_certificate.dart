@@ -1,44 +1,87 @@
+import 'dart:io';
+
 import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/app_colors.dart';
 import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_service/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_service/src/ui/widget/custom_form_field.dart';
+import 'package:ayikie_service/src/ui/widget/image_source_dialog.dart';
 import 'package:ayikie_service/src/ui/widget/primary_button.dart';
 import 'package:ayikie_service/src/utils/alerts.dart';
-import 'package:ayikie_service/src/utils/validations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 
-class EmailVerification extends StatefulWidget {
-  const EmailVerification({Key? key}) : super(key: key);
+class SkillCertificate extends StatefulWidget {
+  const SkillCertificate({Key? key}) : super(key: key);
 
   @override
-  _EmailVerificationState createState() => _EmailVerificationState();
+  _SkillCertificateState createState() => _SkillCertificateState();
 }
 
-class _EmailVerificationState extends State<EmailVerification> {
+class _SkillCertificateState extends State<SkillCertificate> {
   TextEditingController _emailController = TextEditingController();
 
-  bool _enterEmail = true;
-  bool _enterOtp = false;
+  late File _reviewPhotoFront;
+
+  bool isUploadedFront = false;
   bool _isLoading = false;
 
-  void verifyEmail() async {
-    String message = _emailController.text.trim();
+  void _updatePictureFront() {
+    ImageSourceDialog.show(context, _selectPictureFront);
+  }
 
-    if (!Validations.validateEmail(message)) {
-      Alerts.showMessage(context, "Enter your email");
-      return;
+  Future _selectPictureFront(int mode) async {
+    if (mode == 1) {
+      try {
+        var image = await ImagePicker().getImage(
+            source: ImageSource.camera, maxWidth: 400, maxHeight: 400);
+        if (image != null) {
+          _reviewPhotoFront = File(image.path);
+
+          setState(() {
+            isUploadedFront = true;
+          });
+        }
+      } on PlatformException catch (e) {
+        Alerts.showMessage(context,
+            "Access to the camera has been denied, please enable it to continue.");
+      } catch (e) {
+        Alerts.showMessage(context, e.toString());
+      }
+    } else {
+      try {
+        var image = await ImagePicker().getImage(
+            source: ImageSource.gallery, maxWidth: 400, maxHeight: 400);
+        if (image != null) {
+          _reviewPhotoFront = File(image.path);
+
+          setState(() {
+            isUploadedFront = true;
+          });
+          print('here');
+        }
+      } on PlatformException catch (e) {
+        Alerts.showMessage(context,
+            "Access to the gallery has been denied, please enable it to continue.");
+      } catch (e) {
+        Alerts.showMessage(context, e.toString());
+      }
     }
+  }
 
+  void verifySkill() async {
     setState(() {
       _isLoading = true;
     });
-    ApiCalls.verifyEmail(email: message).then((response) async {
+    ApiCalls.verifySkillCertificate(
+      picture: _reviewPhotoFront,
+    ).then((response) async {
       if (!mounted) {
         return;
       }
       if (response.isSuccess) {
-        Alerts.showMessage(context, "Email added Successfully",
+        Alerts.showMessage(context, "Skill certificate added sucessfully.",
             title: "Success!",
             onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
                 context, '/ServiceScreen', (route) => false));
@@ -52,13 +95,6 @@ class _EmailVerificationState extends State<EmailVerification> {
   }
 
   @override
-  void dispose() {
-    _emailController.dispose();
-    // TODO: implement dispose
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -67,7 +103,7 @@ class _EmailVerificationState extends State<EmailVerification> {
         backgroundColor: AppColors.white,
         elevation: 0,
         title: Text(
-          'Email Verification',
+          'Skill Certificate',
           style: TextStyle(color: Colors.black),
         ),
         leading: Container(
@@ -140,20 +176,59 @@ class _EmailVerificationState extends State<EmailVerification> {
                   padding: const EdgeInsets.only(top: 20, bottom: 10, left: 5),
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Enter your email bellow',
+                    'Upload Skill Certificate document',
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                   ),
                 ),
-                CustomFormField(
-                  controller: _emailController,
-                  hintText: 'Enter your email',
-                  inputType: TextInputType.emailAddress,
+                SizedBox(
+                  height: 10,
                 ),
+                isUploadedFront
+                    ? Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: AppColors.textFieldBackground,
+                        ),
+                        width: double.infinity,
+                        height: 75,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              color: Colors.green,
+                            ),
+                            Text('Uploaded Successfully'),
+                          ],
+                        ))
+                    : GestureDetector(
+                        onTap: _updatePictureFront,
+                        child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: AppColors.textFieldBackground,
+                            ),
+                            width: double.infinity,
+                            height: 75,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.camera_alt_outlined),
+                                Text('Photos'),
+                              ],
+                            )),
+                      ),
                 SizedBox(
                   height: 30,
                 ),
                 PrimaryButton(
-                    text: 'SUBMIT', fontSize: 16, clickCallback: () {verifyEmail();}),
+                    text: 'SUBMIT',
+                    fontSize: 16,
+                    clickCallback: () {
+                      verifySkill();
+                    }),
               ],
             ),
           ),
