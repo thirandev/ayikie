@@ -224,10 +224,11 @@ class PostRequestTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        if(request.offers.isNotEmpty && request.status == 1)
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) {
-            return MyOffersScreen();
+            return MyOffersScreen(requestId: request.id,);
           }),
         );
       },
@@ -359,7 +360,7 @@ class PostRequestTile extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '${request.offers!.length} Offers Submitted',
+                        '${request.offers.length} Offers Submitted',
                         style: TextStyle(
                             fontSize: 12, fontWeight: FontWeight.w900),
                       ),

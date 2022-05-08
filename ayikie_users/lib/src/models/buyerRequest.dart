@@ -12,7 +12,7 @@ class BuyerRequest {
   int status;
   String createdAt;
   String title;
-  List<Offer>? offers;
+  List<Offer> offers;
 
   BuyerRequest(
       {required this.id,
@@ -26,7 +26,7 @@ class BuyerRequest {
       required this.status,
       required this.createdAt,
       required this.description,
-      this.offers});
+        required this.offers});
 
   @override
   factory BuyerRequest.fromJson(Map<String, dynamic> json) {
