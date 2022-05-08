@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:ayikie_service/src/models/Item.dart';
+import 'package:ayikie_service/src/models/comment.dart';
 import 'package:ayikie_service/src/models/images.dart';
 
 class Service extends Item {
@@ -10,6 +11,7 @@ class Service extends Item {
   String introduction;
   String location;
   double price;
+  List<Comment>? comment;
 
   Service(
       {required int id,
@@ -21,6 +23,7 @@ class Service extends Item {
       required this.subCategoryId,
       required this.location,
       required this.price,
+      this.comment,
       Images? image})
       : super(id: id, name: name, description: description, image: image);
 
@@ -37,6 +40,9 @@ class Service extends Item {
       location: json['location'] == null ? "" : json['location'],
       price: double.parse(json['price']),
       image: Images.fromJson(json['images']),
+      comment: (json['comments'] == null ? [] : json['comments'] as List)
+          .map((i) => Comment.fromJson(i))
+          .toList(),
     );
   }
 }

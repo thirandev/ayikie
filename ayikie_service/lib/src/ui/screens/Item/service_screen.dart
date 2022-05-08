@@ -1,17 +1,23 @@
-import 'package:auto_size_text/auto_size_text.dart';
+
+import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/app_colors.dart';
+import 'package:ayikie_service/src/models/comment.dart';
+import 'package:ayikie_service/src/models/service.dart';
+import 'package:ayikie_service/src/ui/screens/Item/update_service_screen.dart';
 import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_service/src/ui/screens/notification_screen/notification_screen.dart';
-
 import 'package:ayikie_service/src/ui/widget/custom_form_field.dart';
 import 'package:ayikie_service/src/ui/widget/primary_button.dart';
+import 'package:ayikie_service/src/ui/widget/progress_view.dart';
+import 'package:ayikie_service/src/utils/alerts.dart';
+import 'package:ayikie_service/src/utils/validations.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ServiceScreen extends StatefulWidget {
   final int serviceId;
+
   const ServiceScreen({Key? key, required this.serviceId}) : super(key: key);
 
   @override
@@ -19,20 +25,38 @@ class ServiceScreen extends StatefulWidget {
 }
 
 class _ServiceScreenState extends State<ServiceScreen> {
-  List<String> images = [
-    'asserts/images/caresol.jpg',
-    'asserts/images/worker.jpg',
-    'asserts/images/caresol.jpg',
-    'asserts/images/caresol.jpg'
-  ];
-
   TextEditingController _priceController = TextEditingController();
   TextEditingController _durationController = TextEditingController();
   TextEditingController _messageController = TextEditingController();
+  bool _isLoading = true;
+  late Service service;
+
+  @override
+  void initState() {
+    super.initState();
+    getServiceData();
+  }
+
+  void getServiceData() async {
+    await ApiCalls.getService(serviceId: widget.serviceId).then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        print(response.jsonBody);
+        service = Service.fromJson(response.jsonBody);
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _priceController.dispose();
     _durationController.dispose();
@@ -41,254 +65,257 @@ class _ServiceScreenState extends State<ServiceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
+    return Scaffold(
+        backgroundColor: AppColors.white,
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: AppColors.black),
           backgroundColor: AppColors.white,
-          appBar: AppBar(
-            iconTheme: IconThemeData(color: AppColors.black),
-            backgroundColor: AppColors.white,
-            elevation: 0,
-            title: Text(
-              'Service',
-              style: TextStyle(color: Colors.black),
-            ),
-            leading: Container(
-              width: 24,
-              height: 24,
-              child: new IconButton(
-                icon: new Icon(
-                  Icons.arrow_back_ios,
-                  color: AppColors.black,
-                ),
-                onPressed: () => Navigator.of(context).pop(),
+          elevation: 0,
+          title: Text(
+            'Service',
+            style: TextStyle(color: Colors.black),
+          ),
+          leading: Container(
+            width: 24,
+            height: 24,
+            child: new IconButton(
+              icon: new Icon(
+                Icons.arrow_back_ios,
+                color: AppColors.black,
               ),
+              onPressed: () => Navigator.of(context).pop(),
             ),
-            actions: [
-              Builder(
-                builder: (context) => GestureDetector(
-                  onTap: () => Scaffold.of(context).openEndDrawer(),
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 16),
-                    child: Row(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) {
-                                return NotificationScreen();
-                              }),
-                            );
-                          },
-                          child: Container(
-                            width: 26,
-                            height: 26,
-                            child: new Icon(
-                              Icons.notifications_none,
-                              color: AppColors.black,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Container(
+          ),
+          actions: [
+            Builder(
+              builder: (context) => GestureDetector(
+                onTap: () => Scaffold.of(context).openEndDrawer(),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 16),
+                  child: Row(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) {
+                              return NotificationScreen();
+                            }),
+                          );
+                        },
+                        child: Container(
                           width: 26,
                           height: 26,
-                          child: RotationTransition(
-                            turns: AlwaysStoppedAnimation(180 / 360),
-                            child: Image.asset(
-                              'asserts/icons/menu.png',
-                              scale: 10,
-                            ),
+                          child: new Icon(
+                            Icons.notifications_none,
+                            color: AppColors.black,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        width: 26,
+                        height: 26,
+                        child: RotationTransition(
+                          turns: AlwaysStoppedAnimation(180 / 360),
+                          child: Image.asset(
+                            'asserts/icons/menu.png',
+                            scale: 10,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
-          endDrawer: DrawerScreen(),
-          body: SingleChildScrollView(
-              child: Padding(
-            padding: const EdgeInsets.only(
-              left: 20,
-              right: 20,
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: SizedBox(
-                    height: 175,
-                    child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.asset(
-                            images[1],
-                            height: 175,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          )
-                    )
-                  ),
+          ],
+        ),
+        endDrawer: DrawerScreen(),
+        body: _isLoading
+            ? Center(
+                child: ProgressView(),
+              )
+            : SingleChildScrollView(
+                child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    Row(
-                      children: [
-                        Text(
-                          'Keller Tine',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w900, fontSize: 16),
-                        ),
-                        Spacer(),
-                        new IconButton(
-                          icon: new Icon(
-                            Icons.call_outlined,
-                            color: AppColors.black,
-                          ),
-                          onPressed: () {},
-                        ),
-                        new IconButton(
-                          icon: new Icon(
-                            Icons.chat_bubble_outline_sharp,
-                            color: AppColors.black,
-                          ),
-                          onPressed: () {},
-                        ),
-                      ],
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: SizedBox(
+                          height: 175,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: CachedNetworkImage(
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                      alignment: AlignmentDirectional.center),
+                                ),
+                              ),
+                              imageUrl: service.image!.getBannerUrl(),
+                              errorWidget: (context, url, error) => Image.asset(
+                                'asserts/images/ayikie_logo.png',
+                                fit: BoxFit.fitHeight,
+                              ),
+                            ),
+                          )),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Best Plumber in Accra Area ',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. ',
-                      textAlign: TextAlign.justify,
-                      style: TextStyle(fontSize: 12),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      '\$25 / h',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w900),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          'Order Price',
-                          style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w900),
-                        ),
-                        Spacer(),
-                        Flexible(
-                            child: CustomFormField(
-                          controller: _priceController,
-                          height: 35,
-                          hintText: '\$25',
-                        )),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          'Order Duration',
-                          style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w900),
-                        ),
-                        Spacer(),
-                        Flexible(
-                            child: CustomFormField(
-                          controller: _durationController,
-                          height: 35,
-                          hintText: '1 day',
-                        )),
-                      ],
-                    ),
-                    Text(
-                      'Message',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    CustomFormField(controller: _messageController),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    PrimaryButton(text: 'Request Offer', clickCallback: () {
-                      // Navigator.push(
-                      //         context,
-                      //         MaterialPageRoute(builder: (context) {
-                      //           return OrderLandingScreen();
-                      //         }),
-                      //       );
-                    }),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Comments',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    CommentWidget(),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    CommentWidget(),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    CommentWidget(),
                     SizedBox(
                       height: 20,
                     ),
-                    Text(
-                      'see all comments',
-                      style: TextStyle(
-                          fontSize: 12, color: AppColors.primaryButtonColor),
-                    ),
-                    SizedBox(
-                      height: 50,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              service.name,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w900, fontSize: 16),
+                            ),
+                            Spacer(),
+                            new IconButton(
+                              icon: new Icon(
+                                Icons.chat_bubble_outline_sharp,
+                                color: AppColors.black,
+                              ),
+                              onPressed: () {},
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          service.introduction,
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w600),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          service.description ?? "",
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(fontSize: 12),
+                        ),
+                        SizedBox(
+                          height: 25,
+                        ),
+                        Text(
+                          '\$${service.price} / h',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w900),
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Order Price',
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w900),
+                            ),
+                            Spacer(),
+                            Flexible(
+                                child: CustomFormField(
+                              controller: _priceController,
+                              inputType: TextInputType.number,
+                              height: 35,
+                              hintText: '\$25',
+                                  isEnabled: true,
+                                )),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Order Duration',
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w900),
+                            ),
+                            Spacer(),
+                            Flexible(
+                                child: CustomFormField(
+                              controller: _durationController,
+                              inputType: TextInputType.number,
+                              height: 35,
+                              isEnabled: true,
+                              hintText: '1 day',
+                            )),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        PrimaryButton(
+                          text: 'Update',
+                          clickCallback: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) {
+                                return UpdateServiceScreen(service: service);
+                              }),
+                            );
+                          },
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          'Comments',
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w900),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                            itemCount: service.comment!.length,
+                            itemBuilder: (BuildContext context, int index) =>
+                                Column(
+                                  children: [
+                                    CommentWidget(
+                                    comment: service.comment![index],
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                  ],
+                                )),
+                        SizedBox(
+                          height: 10,
+                        )
+                      ],
                     )
                   ],
-                )
-              ],
-            ),
-          ))),
-    );
+                ),
+              )));
   }
 }
 
 class CommentWidget extends StatelessWidget {
-  const CommentWidget({
+  Comment comment;
+  CommentWidget({
     Key? key,
+    required this.comment
   }) : super(key: key);
 
   @override
@@ -311,9 +338,22 @@ class CommentWidget extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(100),
-                  child: SvgPicture.asset(
-                    'asserts/images/profile.svg',
-                    fit: BoxFit.cover,
+                  child: CachedNetworkImage(
+                    imageBuilder: (context, imageProvider) =>
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                                alignment: AlignmentDirectional.center),
+                          ),
+                        ),
+                    imageUrl: comment.user.imgUrl.imageName,
+                    errorWidget: (context, url, error) => Image.asset(
+                      'asserts/images/ayikie_logo.png',
+                      fit: BoxFit.fitHeight,
+                    ),
                   ),
                 ),
               ),
@@ -321,32 +361,32 @@ class CommentWidget extends StatelessWidget {
                 width: 10,
               ),
               Text(
-                'Jane Perera',
+                comment.user.name,
+                textAlign: TextAlign.left,
                 style: TextStyle(fontWeight: FontWeight.w900),
               ),
               Spacer(),
-              Text(
-                '1 hour ago',
-              )
             ],
           ),
           SizedBox(
-            height: 5,
+            height: 10,
           ),
-          Text(
-              'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout'),
+          Align(
+              alignment: Alignment.centerLeft,
+              child: Text(comment.comment)),
           SizedBox(
             height: 5,
           ),
           Container(
             alignment: Alignment.centerLeft,
             child: RatingBar.builder(
+              ignoreGestures: true,
               wrapAlignment: WrapAlignment.start,
-              initialRating: 3,
+              initialRating: comment.rate.toDouble(),
               minRating: 1,
               direction: Axis.horizontal,
               itemSize: 25,
-              allowHalfRating: true,
+              allowHalfRating: false,
               itemCount: 5,
               itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
               itemBuilder: (context, _) => Icon(
@@ -354,7 +394,6 @@ class CommentWidget extends StatelessWidget {
                 color: Colors.amber,
               ),
               onRatingUpdate: (rating) {
-                print(rating);
               },
             ),
           ),

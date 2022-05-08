@@ -4,9 +4,9 @@ import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/app_colors.dart';
 import 'package:ayikie_service/src/models/user.dart';
 import 'package:ayikie_service/src/ui/widget/custom_form_field.dart';
+import 'package:ayikie_service/src/ui/widget/image_source_dialog.dart';
 import 'package:ayikie_service/src/ui/widget/primary_button.dart';
 import 'package:ayikie_service/src/ui/widget/progress_view.dart';
-import 'package:ayikie_service/src/ui/widget/image_source_dialog.dart';
 import 'package:ayikie_service/src/utils/alerts.dart';
 import 'package:ayikie_service/src/utils/validations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -45,7 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return;
       }
       if (response.isSuccess) {
-        _user = User.fromJson(response.jsonBody["data"]);
+        _user = User.fromJson(response.jsonBody);
         _fullNameController.text = _user.name;
         _emailController.text = _user.email;
         _addressController.text = _user.address;
@@ -75,124 +75,124 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: AppColors.white,
       body: _isLoading
           ? Center(
-        child: ProgressView(),
-      )
+              child: ProgressView(),
+            )
           : SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.only(left: 16, right: 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              GestureDetector(
-                onTap:_updateProfilePicture,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  padding: EdgeInsets.all(5),
-                  width: 100,
-                  height: 100,
-                  child: CachedNetworkImage(
-                    imageBuilder: (context, imageProvider) =>
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.primaryButtonColor),
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
-                                alignment:
-                                AlignmentDirectional.topCenter),
+              child: Container(
+                padding: EdgeInsets.only(left: 16, right: 16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    GestureDetector(
+                      onTap:_updateProfilePicture,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        padding: EdgeInsets.all(5),
+                        width: 100,
+                        height: 100,
+                        child: CachedNetworkImage(
+                          imageBuilder: (context, imageProvider) =>
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: AppColors.primaryButtonColor),
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                      alignment:
+                                      AlignmentDirectional.topCenter),
+                                ),
+                              ),
+                          imageUrl:_user.imgUrl.getBannerUrl(),
+                          errorWidget: (context, url, error) => Icon(
+                            Icons.account_circle_sharp,
+                            size: 100,
+                            color: Colors.grey,
                           ),
                         ),
-                    imageUrl:_user.imgUrl.getBannerUrl(),
-                    errorWidget: (context, url, error) => Icon(
-                      Icons.account_circle_sharp,
-                      size: 100,
-                      color: Colors.grey,
+                      ),
                     ),
-                  ),
+                    SizedBox(
+                      height: 50,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(bottom: 10, left: 5),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Full Name',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    CustomFormField(
+                      isEnabled: _isEditable,
+                      controller: _fullNameController,
+                      hintText: 'Enter your full name',
+                      inputType: TextInputType.text,
+                    ),
+                    Container(
+                      padding:
+                          const EdgeInsets.only(top: 20, bottom: 10, left: 5),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Email',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    CustomFormField(
+                      isEnabled: _isEditable,
+                      controller: _emailController,
+                      hintText: 'Enter your email',
+                      inputType: TextInputType.emailAddress,
+                    ),
+                    Container(
+                      padding:
+                          const EdgeInsets.only(top: 20, bottom: 10, left: 5),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Address',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    CustomFormField(
+                      isEnabled: _isEditable,
+                      controller: _addressController,
+                      hintText: 'Enter your full name',
+                      inputType: TextInputType.text,
+                    ),
+                    Container(
+                      padding:
+                          const EdgeInsets.only(top: 20, bottom: 10, left: 5),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Phone Number',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    CustomFormField(
+                      isEnabled: _isEditable,
+                      controller: _phoneNumberController,
+                      hintText: 'Enter your phone number',
+                      inputType: TextInputType.phone,
+                      prefixEnable: true,
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    PrimaryButton(
+                        text: _isEditable ? 'Edit' : 'Save',
+                        fontSize: 16,
+                        clickCallback: onBtnClick),
+                  ],
                 ),
               ),
-              SizedBox(
-                height: 50,
-              ),
-              Container(
-                padding: const EdgeInsets.only(bottom: 10, left: 5),
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Full Name',
-                  style: TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.w700),
-                ),
-              ),
-              CustomFormField(
-                isEnabled: _isEditable,
-                controller: _fullNameController,
-                hintText: 'Enter your full name',
-                inputType: TextInputType.text,
-              ),
-              Container(
-                padding:
-                const EdgeInsets.only(top: 20, bottom: 10, left: 5),
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Email',
-                  style: TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.w700),
-                ),
-              ),
-              CustomFormField(
-                isEnabled: _isEditable,
-                controller: _emailController,
-                hintText: 'Enter your email',
-                inputType: TextInputType.emailAddress,
-              ),
-              Container(
-                padding:
-                const EdgeInsets.only(top: 20, bottom: 10, left: 5),
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Address',
-                  style: TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.w700),
-                ),
-              ),
-              CustomFormField(
-                isEnabled: _isEditable,
-                controller: _addressController,
-                hintText: 'Enter your full name',
-                inputType: TextInputType.text,
-              ),
-              Container(
-                padding:
-                const EdgeInsets.only(top: 20, bottom: 10, left: 5),
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Phone Number',
-                  style: TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.w700),
-                ),
-              ),
-              CustomFormField(
-                isEnabled: _isEditable,
-                controller: _phoneNumberController,
-                hintText: 'Enter your phone number',
-                inputType: TextInputType.phone,
-                prefixEnable: true,
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              PrimaryButton(
-                  text: _isEditable ? 'Edit' : 'Save',
-                  fontSize: 16,
-                  clickCallback: onBtnClick),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
@@ -275,15 +275,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _isLoading = true;
       });
       ApiCalls.updateUser(
-          username: username, email: email, phone: phone, address: address)
+              username: username, email: email, phone: phone, address: address)
           .then((response) async {
         if (!mounted) {
           return;
         }
         if (response.isSuccess) {
           Alerts.showMessage(
-            context, "Profile updated sucessfully.",
-            title: "Success!",);
+              context, "Profile updated sucessfully.",
+              title: "Success!",);
         } else {
           Alerts.showMessageForResponse(context, response);
           setState(() {

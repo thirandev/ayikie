@@ -25,7 +25,7 @@ class Service extends Item {
       required this.location,
       required this.price,
       required this.phoneNumber,
-        this.comment,
+      this.comment,
       Images? image})
       : super(id: id, name: name, description: description, image: image);
 
@@ -42,7 +42,7 @@ class Service extends Item {
       location: json['location'] == null ? "" : json['location'],
       price: double.parse(json['price']),
       image: Images.fromJson(json['images']),
-      phoneNumber: json['phone']== null ? "" : json['phone'],
+      phoneNumber: json['phone'] == null ? "" : json['phone'],
       comment: (json['comments'] == null ? [] : json['comments'] as List)
           .map((i) => Comment.fromJson(i))
           .toList(),

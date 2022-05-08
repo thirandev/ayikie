@@ -245,4 +245,111 @@ class ApiCalls {
     }
   }
 
+  static Future<ApiResponse> updateService({
+    required int serviceId,
+    required String title,
+    required String introduction,
+    required String description,
+    required String location,
+    required String price,
+    required int catId,
+    required int subCatId,
+    required File? picture
+  }) async {
+    try {
+      var fields = new Map<String, String>();
+      fields['name'] = title;
+      fields['introduction'] = introduction;
+      fields['description'] = description;
+      fields['location'] = location;
+      fields['price'] = price;
+      fields['category_id'] = catId.toString();
+      fields['sub_category_id'] = subCatId.toString();
+
+      List<MultipartFile> image = [];
+      var multipartFile =
+      await MultipartFile.fromPath('images', picture!.path);
+      image.add(multipartFile);
+
+      return ApiCaller.multiPartRequestAuth(baseUrl +'/api/seller/services/$serviceId',
+          _getEmptyHeaders(),
+          requestType: 'PUT',
+          fields: fields,
+          files: image
+      );
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> updateProduct({
+    required int productId,
+    required String title,
+    required String introduction,
+    required String description,
+    required String location,
+    required String price,
+    required int catId,
+    required int subCatId,
+    required String stock,
+    required File? picture
+  }) async {
+    try {
+      var fields = new Map<String, String>();
+      fields['name'] = title;
+      fields['introduction'] = introduction;
+      fields['description'] = description;
+      fields['location'] = location;
+      fields['price'] = price;
+      fields['stock'] = stock;
+      fields['category_id'] = catId.toString();
+      fields['sub_category_id'] = subCatId.toString();
+
+      List<MultipartFile> image = [];
+      var multipartFile =
+      await MultipartFile.fromPath('images', picture!.path);
+      image.add(multipartFile);
+
+      return ApiCaller.multiPartRequestAuth(baseUrl +'/api/seller/products/$productId',
+          _getEmptyHeaders(),
+          requestType: 'PUT',
+          fields: fields,
+          files: image
+      );
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  //ToDo: Replace with Service Api after the fix
+  static Future<ApiResponse> getService({required int serviceId}) async {
+    try {
+      return ApiCaller.getRequest(
+          baseUrl + '/api/services/$serviceId/show', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getProduct({required int productId}) async {
+    try {
+      return ApiCaller.getRequest(
+          baseUrl + '/api/products/$productId/show', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
 }
