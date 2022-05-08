@@ -32,6 +32,8 @@ dependencies:
   country_code_picker: ^2.0.2
   intl_phone_field: ^3.1.0
   geolocator: ^7.5.0
+  flutter_paystack: ^1.0.5+1
+  async: ^2.7.0
 
 dev_dependencies:
   flutter_test:
