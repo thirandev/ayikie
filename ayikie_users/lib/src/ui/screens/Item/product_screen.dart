@@ -10,7 +10,6 @@ import 'package:ayikie_users/src/utils/alerts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProductScreen extends StatefulWidget {
@@ -65,18 +64,17 @@ class _ProductScreenState extends State<ProductScreen> {
     _messageController.dispose();
   }
 
-  void increaseQuantity(){
-    int stockPrediction = _itemCount+1;
-    if(stockPrediction <= product.stock){
+  void increaseQuantity() {
+    int stockPrediction = _itemCount + 1;
+    if (stockPrediction <= product.stock) {
       setState(() {
         _itemCount++;
         totalPrice = totalPrice * _itemCount;
       });
     }
-
   }
 
-  void decreaseQuantity(){
+  void decreaseQuantity() {
     setState(() {
       _itemCount--;
       totalPrice = totalPrice * _itemCount;
@@ -168,32 +166,32 @@ class _ProductScreenState extends State<ProductScreen> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: SizedBox(
-                        height: 175,
-                        child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: CachedNetworkImage(
-                                imageBuilder: (context, imageProvider) => Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.rectangle,
-                                    image: DecorationImage(
-                                        image: imageProvider,
-                                        fit: BoxFit.scaleDown,
-                                        alignment: AlignmentDirectional.center),
-                                  ),
-                                ),
-                                imageUrl: product.image!.getBannerUrl(),
-                                errorWidget: (context, url, error) => Image.asset(
-                                  'asserts/images/ayikie_logo.png',
-                                  fit: BoxFit.fitHeight,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: SizedBox(
+                          height: 175,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: CachedNetworkImage(
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.scaleDown,
+                                      alignment: AlignmentDirectional.center),
                                 ),
                               ),
+                              imageUrl: product.image!.getBannerUrl(),
+                              errorWidget: (context, url, error) => Image.asset(
+                                'asserts/images/ayikie_logo.png',
+                                fit: BoxFit.fitHeight,
+                              ),
                             ),
-                      )
-                    ),
+                          ),
+                        )),
                     SizedBox(
                       height: 20,
                     ),
@@ -236,7 +234,7 @@ class _ProductScreenState extends State<ProductScreen> {
                           height: 10,
                         ),
                         Text(
-                          product.description??"",
+                          product.description ?? "",
                           textAlign: TextAlign.justify,
                           style: TextStyle(fontSize: 12),
                         ),
@@ -337,7 +335,6 @@ class _ProductScreenState extends State<ProductScreen> {
                                     ),
                                   ],
                                 )),
-
                         SizedBox(
                           height: 20,
                         )
@@ -366,9 +363,8 @@ class _ProductScreenState extends State<ProductScreen> {
         return;
       }
       if (response.isSuccess) {
-        Alerts.showMessage(
-          context, "Product added to your cart sucessfully.",
-          title: "Success!",onCloseCallback: (){
+        Alerts.showMessage(context, "Product added to your cart sucessfully.",
+            title: "Success!", onCloseCallback: () {
           Navigator.pushNamedAndRemoveUntil(
               context, '/UserScreen', (route) => false);
         });
@@ -380,15 +376,12 @@ class _ProductScreenState extends State<ProductScreen> {
       }
     });
   }
-
 }
 
 class CommentWidget extends StatelessWidget {
   Comment comment;
-  CommentWidget({
-    Key? key,
-    required this.comment
-  }) : super(key: key);
+
+  CommentWidget({Key? key, required this.comment}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -411,16 +404,15 @@ class CommentWidget extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(100),
                   child: CachedNetworkImage(
-                    imageBuilder: (context, imageProvider) =>
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
-                                alignment: AlignmentDirectional.center),
-                          ),
-                        ),
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                            alignment: AlignmentDirectional.center),
+                      ),
+                    ),
                     imageUrl: comment.user.imgUrl.imageName,
                     errorWidget: (context, url, error) => Image.asset(
                       'asserts/images/ayikie_logo.png',
@@ -443,9 +435,7 @@ class CommentWidget extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          Align(
-              alignment: Alignment.centerLeft,
-              child: Text(comment.comment)),
+          Align(alignment: Alignment.centerLeft, child: Text(comment.comment)),
           SizedBox(
             height: 5,
           ),
@@ -465,8 +455,7 @@ class CommentWidget extends StatelessWidget {
                 Icons.star,
                 color: Colors.amber,
               ),
-              onRatingUpdate: (rating) {
-              },
+              onRatingUpdate: (rating) {},
             ),
           ),
         ],
@@ -474,4 +463,3 @@ class CommentWidget extends StatelessWidget {
     );
   }
 }
-

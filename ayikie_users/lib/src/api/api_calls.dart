@@ -80,6 +80,20 @@ class ApiCalls {
     }
   }
 
+  static Future<ApiResponse> getSearchResults({required String keyword}) async {
+    try {
+      var query = new Map<String, String>();
+      query['search'] = keyword;
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/search', _getEmptyHeaders(),query: query);
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
   static Future<ApiResponse> getAllProducts() async {
     try {
       return ApiCaller.getRequest(

@@ -12,7 +12,6 @@ import 'package:ayikie_users/src/utils/validations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ServiceScreen extends StatefulWidget {
@@ -294,7 +293,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
                         SizedBox(
                           height: 10,
                         ),
-
                         SizedBox(
                           height: 20,
                         ),
@@ -306,7 +304,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                                 Column(
                                   children: [
                                     CommentWidget(
-                                    comment: service.comment![index],
+                                      comment: service.comment![index],
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -382,10 +380,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
 
 class CommentWidget extends StatelessWidget {
   Comment comment;
-  CommentWidget({
-    Key? key,
-    required this.comment
-  }) : super(key: key);
+
+  CommentWidget({Key? key, required this.comment}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -408,16 +404,15 @@ class CommentWidget extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(100),
                   child: CachedNetworkImage(
-                    imageBuilder: (context, imageProvider) =>
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
-                                alignment: AlignmentDirectional.center),
-                          ),
-                        ),
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                            alignment: AlignmentDirectional.center),
+                      ),
+                    ),
                     imageUrl: comment.user.imgUrl.imageName,
                     errorWidget: (context, url, error) => Image.asset(
                       'asserts/images/ayikie_logo.png',
@@ -440,9 +435,7 @@ class CommentWidget extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          Align(
-              alignment: Alignment.centerLeft,
-              child: Text(comment.comment)),
+          Align(alignment: Alignment.centerLeft, child: Text(comment.comment)),
           SizedBox(
             height: 5,
           ),
@@ -462,8 +455,7 @@ class CommentWidget extends StatelessWidget {
                 Icons.star,
                 color: Colors.amber,
               ),
-              onRatingUpdate: (rating) {
-              },
+              onRatingUpdate: (rating) {},
             ),
           ),
         ],

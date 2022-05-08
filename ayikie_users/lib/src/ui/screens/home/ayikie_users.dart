@@ -6,6 +6,7 @@ import 'package:ayikie_users/src/models/images.dart';
 import 'package:ayikie_users/src/models/service.dart';
 import 'package:ayikie_users/src/ui/screens/Item/service_screen.dart';
 import 'package:ayikie_users/src/ui/screens/categories_screen/categories_screen.dart';
+import 'package:ayikie_users/src/ui/screens/home/search_screen.dart';
 import 'package:ayikie_users/src/ui/screens/popular_screen/popular_screen.dart';
 import 'package:ayikie_users/src/ui/screens/recommanded_for_you/recommanded_screen.dart';
 import 'package:ayikie_users/src/ui/screens/sub_categories_screen/sub_product_screen.dart';
@@ -152,30 +153,40 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     children: [
                       Column(
                         children: [
-                          Container(
-                            height: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: AppColors.textFieldBackground,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Padding(
-                                    padding: EdgeInsets.only(left: 20),
-                                    child: Text(
-                                      'Search here',
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: AppColors.primaryButtonColor),
-                                    )),
-                                IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      Icons.search,
-                                      color: AppColors.primaryButtonColor,
-                                    ))
-                              ],
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) {
+                                  return SearchScreen();
+                                }),
+                              );
+                            },
+                            child: Container(
+                              height: 40,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: AppColors.textFieldBackground,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                      padding: EdgeInsets.only(left: 20),
+                                      child: Text(
+                                        'Search here',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: AppColors.primaryButtonColor),
+                                      )),
+                                  IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(
+                                        Icons.search,
+                                        color: AppColors.primaryButtonColor,
+                                      ))
+                                ],
+                              ),
                             ),
                           ),
                           SizedBox(
