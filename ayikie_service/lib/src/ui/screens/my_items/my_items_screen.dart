@@ -76,8 +76,8 @@ class _MyItemsScreenState extends State<MyItemsScreen> {
         isLastPage = _meta.lastPage == currentIndex;
         var data = response.jsonBody;
         for (var item in data) {
-          Service popular = Service.fromJson(item);
-          popularServices.add(popular);
+          Service service = Service.fromJson(item);
+          popularServices.add(service);
         }
       } else {
         Alerts.showMessage(context, "Something went wrong. Please try again.",

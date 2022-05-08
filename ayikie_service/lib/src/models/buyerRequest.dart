@@ -1,4 +1,4 @@
-import 'package:ayikie_service/src/models/offer.dart';
+import 'package:ayikie_service/src/models/user.dart';
 
 class BuyerRequest {
   int id;
@@ -10,7 +10,7 @@ class BuyerRequest {
   double price;
   int status;
   String createdAt;
-  List<Offer>? offers;
+  User user;
 
   BuyerRequest(
       {required this.id,
@@ -22,7 +22,7 @@ class BuyerRequest {
       required this.price,
       required this.status,
       required this.createdAt,
-      this.offers});
+      required this.user});
 
   @override
   factory BuyerRequest.fromJson(Map<String, dynamic> json) {
@@ -33,12 +33,10 @@ class BuyerRequest {
       description:json['description'],
       location: json['location'],
       duration: json['duration'],
-      price: json['price'],
+      price: double.parse(json['price']),
       status: json['status'],
       createdAt: json['created_at'],
-      offers: (json['offers'] == null ? [] : json['offers'] as List)
-          .map((i) => Offer.fromJson(i))
-          .toList(),
+      user: User.fromJson(json['customer']),
     );
   }
 }

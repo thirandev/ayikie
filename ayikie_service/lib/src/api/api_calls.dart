@@ -262,12 +262,18 @@ class ApiCalls {
       fields['sub_category_id'] = subCatId.toString();
 
       List<MultipartFile> image = [];
-      var multipartFile = await MultipartFile.fromPath('images', picture!.path);
-      image.add(multipartFile);
+      if(picture!=null) {
+        var multipartFile =
+        await MultipartFile.fromPath('images', picture.path);
+        image.add(multipartFile);
+      }
 
-      return ApiCaller.multiPartRequestAuth(
-          baseUrl + '/api/seller/services/$serviceId', _getEmptyHeaders(),
-          requestType: 'PUT', fields: fields, files: image);
+      return ApiCaller.multiPartRequestAuth(baseUrl +'/api/seller/services/$serviceId',
+          _getEmptyHeaders(),
+          requestType: 'POST',
+          fields: fields,
+          files: image
+      );
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -299,12 +305,46 @@ class ApiCalls {
       fields['sub_category_id'] = subCatId.toString();
 
       List<MultipartFile> image = [];
-      var multipartFile = await MultipartFile.fromPath('images', picture!.path);
-      image.add(multipartFile);
+      if(picture!=null) {
+        var multipartFile =
+        await MultipartFile.fromPath('images', picture.path);
+        image.add(multipartFile);
+      }
 
-      return ApiCaller.multiPartRequestAuth(
-          baseUrl + '/api/seller/products/$productId', _getEmptyHeaders(),
-          requestType: 'PUT', fields: fields, files: image);
+      return ApiCaller.multiPartRequestAuth(baseUrl +'/api/seller/products/$productId',
+          _getEmptyHeaders(),
+          requestType: 'POST',
+          fields: fields,
+          files: image
+      );
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> deleteProduct(int productId) async {
+    try {
+      return ApiCaller.requestAuth(
+          baseUrl + "/api/seller/products/$productId",
+          _getEmptyHeaders(),
+          requestType: "DELETE");
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> deleteService(int serviceId) async {
+    try {
+      return ApiCaller.requestAuth(
+          baseUrl + "/api/seller/services/$serviceId",
+          _getEmptyHeaders(),
+          requestType: "DELETE");
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -448,6 +488,20 @@ class ApiCalls {
       return ApiCaller.multiPartRequestAuth(
           baseUrl + '/api/user/verification/skill', _getEmptyHeaders(),
           requestType: 'POST', fields: fields, files: image);
+          } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+  static Future<ApiResponse> getAllBuyerRequest({required int page}) async {
+    try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/buyer-requests', _getEmptyHeaders(),
+          query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -477,6 +531,18 @@ class ApiCalls {
       return ApiCaller.multiPartRequestAuth(
           baseUrl + '/api/user/verification/nic', _getEmptyHeaders(),
           requestType: 'POST', fields: fields, files: image);
+          } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+  static Future<ApiResponse> getBuyerRequest(String requestId) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/buyer-requests/$requestId',
+          _getEmptyHeaders());
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -485,7 +551,7 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> verifyEmail({
+   static Future<ApiResponse> verifyEmail({
     required String email,
   }) async {
     try {
@@ -501,8 +567,32 @@ class ApiCalls {
       return response;
     }
   }
+  static Future<ApiResponse> createBuyerRequest({
+    required int serviceId,
+    required int buyerRequestId,
+    required double price,
+    required String duration,
+    required String description,
+  }) async {
+    try {
+      var payload = new Map<String, dynamic>();
+      payload['buyer_request_id'] = buyerRequestId;
+      payload['price'] = price;
+      payload['duration'] = duration;
+      payload['service_id'] = serviceId;
+      payload['description'] = description;
 
-  static Future<ApiResponse> verifyFacebook({
+      return ApiCaller.jsonRequestAuth(baseUrl + '/api/seller/buyer-requests',
+          _getEmptyHeaders(), jsonEncode(payload));
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+ static Future<ApiResponse> verifyFacebook({
     required String facebook,
   }) async {
     try {
@@ -513,6 +603,20 @@ class ApiCalls {
           baseUrl + '/api/user/verification/facebook',
           _getEmptyHeaders(),
           jsonEncode(payload));
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+  static Future<ApiResponse> getAllMyOffers({required int page}) async {
+    try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/buyer-requests/offers/all', _getEmptyHeaders(),
+          query: query);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -559,4 +663,6 @@ class ApiCalls {
       return response;
     }
   }
+
+
 }

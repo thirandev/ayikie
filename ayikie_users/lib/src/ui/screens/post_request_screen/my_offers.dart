@@ -184,11 +184,8 @@ class _MyOffersScreenState extends State<MyOffersScreen> {
         Alerts.showMessage(context, "Offer Accepted successfully.",
             title: "Success!", onCloseCallback:()=> {
           Navigator.pop(context),
-          Navigator.push(context, MaterialPageRoute(builder: (context) => PostRequestScreen())).then((value) {
-            setState(() {
+              Navigator.pop(context),
             });
-            })
-        });
       } else {
         Alerts.showMessageForResponse(context, response);
         setState(() {

@@ -1,12 +1,17 @@
+import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/app_colors.dart';
+import 'package:ayikie_service/src/models/buyerRequest.dart';
+import 'package:ayikie_service/src/models/meta.dart';
+import 'package:ayikie_service/src/models/service.dart';
 import 'package:ayikie_service/src/ui/screens/buyer_request/send_customer_offer.dart';
 import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_service/src/ui/screens/notification_screen/notification_screen.dart';
-import 'package:ayikie_service/src/ui/widget/primary_button.dart';
+import 'package:ayikie_service/src/ui/widget/progress_view.dart';
+import 'package:ayikie_service/src/utils/alerts.dart';
+import 'package:ayikie_service/src/utils/common.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class BuyerRequestScreen extends StatefulWidget {
   const BuyerRequestScreen({Key? key}) : super(key: key);
@@ -16,108 +21,170 @@ class BuyerRequestScreen extends StatefulWidget {
 }
 
 class _BuyerRequestScreenState extends State<BuyerRequestScreen> {
+
+  bool _isLoading = true;
+  List<BuyerRequest> buyerRequests = [];
+  int currentIndex = 1;
+  List<Service> services = [];
+
+  late ScrollController _controller;
+  bool isLastPage = false;
+  bool isFirstLoad = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _getServices();
+    _controller = new ScrollController()..addListener(loadMore);
+  }
+
+  void loadMore() {
+    if (_controller.position.extentAfter < 240 && !isLastPage && !_isLoading) {
+      setState(() {
+        currentIndex++;
+        _isLoading = true;
+      });
+      _getRequest(loadData: true);
+    }
+  }
+
+  void _getServices({bool? loadData}) async {
+    await ApiCalls.getSellerSerivces(page: 1).then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        // var meta = response.metaBody;
+        // Meta _meta = Meta.fromJson(meta);
+        // isLastPage = _meta.lastPage == currentIndex;
+        var data = response.jsonBody;
+        for (var item in data) {
+          Service service = Service.fromJson(item);
+          services.add(service);
+        }
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      _getRequest();
+    });
+  }
+
+  void _getRequest({bool? loadData}) async {
+    await ApiCalls.getAllBuyerRequest(page: currentIndex).then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        var meta = response.metaBody;
+        Meta _meta = Meta.fromJson(meta);
+        isLastPage = _meta.lastPage == currentIndex;
+        var data = response.jsonBody;
+        for (var item in data) {
+          BuyerRequest buyer = BuyerRequest.fromJson(item);
+          buyerRequests.add(buyer);
+        }
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: AppColors.black),
         backgroundColor: AppColors.white,
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: AppColors.black),
-          backgroundColor: AppColors.white,
-          elevation: 0,
-          title: Text(
-            'Buyer Requests',
-            style: TextStyle(color: Colors.black),
-          ),
-          leading: Container(
-            width: 24,
-            height: 24,
-            child: new IconButton(
-              icon: new Icon(
-                Icons.arrow_back_ios,
-                color: AppColors.black,
-              ),
-              onPressed: () => Navigator.of(context).pop(),
+        elevation: 0,
+        title: Text(
+          'Buyer Requests',
+          style: TextStyle(color: Colors.black),
+        ),
+        leading: Container(
+          width: 24,
+          height: 24,
+          child: new IconButton(
+            icon: new Icon(
+              Icons.arrow_back_ios,
+              color: AppColors.black,
             ),
+            onPressed: () => Navigator.of(context).pop(),
           ),
-          actions: [
-            Builder(
-              builder: (context) => GestureDetector(
-                onTap: () => Scaffold.of(context).openEndDrawer(),
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: Row(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) {
-                              return NotificationScreen();
-                            }),
-                          );
-                        },
-                        child: Container(
-                          width: 26,
-                          height: 26,
-                          child: new Icon(
-                            Icons.notifications_none,
-                            color: AppColors.black,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Container(
+        ),
+        actions: [
+          Builder(
+            builder: (context) => GestureDetector(
+              onTap: () => Scaffold.of(context).openEndDrawer(),
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return NotificationScreen();
+                          }),
+                        );
+                      },
+                      child: Container(
                         width: 26,
                         height: 26,
-                        child: RotationTransition(
-                          turns: AlwaysStoppedAnimation(180 / 360),
-                          child: Image.asset(
-                            'asserts/icons/menu.png',
-                            scale: 10,
-                          ),
+                        child: new Icon(
+                          Icons.notifications_none,
+                          color: AppColors.black,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Container(
+                      width: 26,
+                      height: 26,
+                      child: RotationTransition(
+                        turns: AlwaysStoppedAnimation(180 / 360),
+                        child: Image.asset(
+                          'asserts/icons/menu.png',
+                          scale: 10,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
-        endDrawer: DrawerScreen(),
-        body: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Container(
-            padding: EdgeInsets.only(left: 16, right: 16, top: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                CommentWidget(),
-                SizedBox(
-                  height: 20,
-                ),
-                Spacer(),
-              ],
-            ),
           ),
-        ),
+        ],
+      ),
+      endDrawer: DrawerScreen(),
+      body: _isLoading
+          ? Center(
+        child: ProgressView(),
+      )
+          :ListView.builder(
+              controller: _controller,
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              itemCount: buyerRequests.length,
+              itemBuilder: (BuildContext context, int index) =>
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                  child: CommentWidget(buyerRequest: buyerRequests[index],modalShow:(){_modalBottomSheetMenu(index);} ,))
       ),
     );
   }
-}
 
-class CommentWidget extends StatelessWidget {
-  const CommentWidget({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    void _modalBottomSheetMenu() {
-      showModalBottomSheet(
+  void _modalBottomSheetMenu(int buyerRequestId) {
+    showModalBottomSheet(
+        isScrollControlled: true,
         context: context,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only( // <-- SEE HERE
@@ -126,36 +193,58 @@ class CommentWidget extends StatelessWidget {
           ),
         ),
         builder: (context) {
-          return SizedBox(
-           
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children:  [
-                    SizedBox(height: 10,),
-                    Text('Select Your Gig',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14),),
-                    MyGigsWidget(index: 1,),
-                    InkWell(child: MyGigsWidget(index: 1,),onTap: (){
-                       Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) {
-                              return SendCustomerOffer();
-                            }),
-                          );
-                    },),
-                  ],
-                ),
+          return FractionallySizedBox(
+            heightFactor: 0.6,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    alignment: Alignment.centerLeft,
+                      margin: EdgeInsets.only(top: 20,left: 10,bottom: 10),
+                      child: Text("Select preferred Gig",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500
+                      ),
+                      )
+                  ),
+                  ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemCount: services.length,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (BuildContext context, int index) =>
+                          Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10,),
+                              child: MyGigsWidget(popularServices: services[index],buyerRequest: buyerRequests[buyerRequestId],))
+                  ),
+                ],
               ),
             ),
           );
         });
-    }
+  }
 
+}
+
+class CommentWidget extends StatefulWidget {
+  final BuyerRequest buyerRequest;
+  final VoidCallback modalShow;
+  const CommentWidget({
+    Key? key,
+    required this.buyerRequest,
+    required this.modalShow
+  }) : super(key: key);
+
+  @override
+  State<CommentWidget> createState() => _CommentWidgetState();
+}
+
+class _CommentWidgetState extends State<CommentWidget> {
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(8),
+      padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: AppColors.textFieldBackground),
@@ -172,9 +261,22 @@ class CommentWidget extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(100),
-                  child: SvgPicture.asset(
-                    'asserts/images/profile.svg',
-                    fit: BoxFit.cover,
+                  child: CachedNetworkImage(
+                    imageBuilder: (context, imageProvider) =>
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                                alignment: AlignmentDirectional.center),
+                          ),
+                        ),
+                    imageUrl: widget.buyerRequest.user.imgUrl.imageName,
+                    errorWidget: (context, url, error) => Image.asset(
+                      'asserts/images/ayikie_logo.png',
+                      fit: BoxFit.fitHeight,
+                    ),
                   ),
                 ),
               ),
@@ -182,12 +284,15 @@ class CommentWidget extends StatelessWidget {
                 width: 10,
               ),
               Text(
-                'Jane Perera',
+                widget.buyerRequest.user.name,
                 style: TextStyle(fontWeight: FontWeight.w900),
               ),
               Spacer(),
               Text(
-                '1 hour ago',
+                Common.dateFormator(ios8601: widget.buyerRequest.createdAt),
+                style: TextStyle(
+                  fontSize: 12
+                ),
               )
             ],
           ),
@@ -197,12 +302,12 @@ class CommentWidget extends StatelessWidget {
           Row(
             children: [
               Text(
-                'Order Description :',
+                'Order Title :',
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
               ),
               Spacer(),
               Text(
-                'This is the order description ',
+                widget.buyerRequest.title,
                 style: TextStyle(
                   fontSize: 12,
                 ),
@@ -220,7 +325,7 @@ class CommentWidget extends StatelessWidget {
               ),
               Spacer(),
               Text(
-                '1 day',
+                '${widget.buyerRequest.duration} day',
                 style: TextStyle(
                   fontSize: 12,
                 ),
@@ -238,7 +343,7 @@ class CommentWidget extends StatelessWidget {
               ),
               Spacer(),
               Text(
-                '\$25',
+                '\$${widget.buyerRequest.price}',
                 style: TextStyle(
                   fontSize: 12,
                 ),
@@ -256,7 +361,7 @@ class CommentWidget extends StatelessWidget {
               ),
               Spacer(),
               Text(
-                'Colombo',
+                widget.buyerRequest.location,
                 style: TextStyle(
                   fontSize: 12,
                 ),
@@ -268,10 +373,6 @@ class CommentWidget extends StatelessWidget {
           ),
           Row(
             children: [
-              Text(
-                '8 Offers send',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
-              ),
               Spacer(),
               ElevatedButton(
                   child: Text("Send Offer", style: TextStyle(fontSize: 14)),
@@ -284,7 +385,7 @@ class CommentWidget extends StatelessWidget {
                           RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ))),
-                  onPressed: () => _modalBottomSheetMenu())
+                  onPressed: widget.modalShow)
             ],
           ),
         ],
@@ -295,21 +396,30 @@ class CommentWidget extends StatelessWidget {
 
 
 class MyGigsWidget extends StatelessWidget {
- // final List<Service> popularServices;
-  final int index;
+ final Service popularServices;
+ final BuyerRequest buyerRequest;
 
   MyGigsWidget(
       {Key? key, 
-      //required this.popularServices,
-       required this.index})
+      required this.popularServices,
+        required this.buyerRequest
+       })
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+    return GestureDetector(
+      onTap: (){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) {
+            return SendCustomerOffer(popularServices: popularServices,buyerRequest: buyerRequest,);
+          }),
+        );
+      },
       child: Container(
         height: 120,
+        margin: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
         decoration: BoxDecoration(
             color: AppColors.textFieldBackground,
             borderRadius: BorderRadius.all(Radius.circular(8))),
@@ -334,8 +444,7 @@ class MyGigsWidget extends StatelessWidget {
                           alignment: AlignmentDirectional.center),
                     ),
                   ),
-                  //imageUrl: popularServices[index].image!.getBannerUrl(),
-                  imageUrl: 'popularServices[index].image!.getBannerUrl()',
+                  imageUrl: popularServices.image!.getBannerUrl(),
                   errorWidget: (context, url, error) => Image.asset(
                     'asserts/images/ayikie_logo.png',
                     fit: BoxFit.fitHeight,
@@ -352,8 +461,7 @@ class MyGigsWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                    //  popularServices[index].name,
-                    'this is name',
+                     popularServices.name,
                       style: TextStyle(fontWeight: FontWeight.w900),
                     ),
                     Text(
@@ -361,8 +469,7 @@ class MyGigsWidget extends StatelessWidget {
                       'this is intro',
                       ),
                     Text(
-                      //'\$${popularServices[index].price}',
-                      '\$25',
+                      '\$${popularServices.price}',
                       style: TextStyle(fontWeight: FontWeight.w900),
                     ),
                   ],

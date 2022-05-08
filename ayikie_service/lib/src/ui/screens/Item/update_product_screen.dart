@@ -566,7 +566,6 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                 context, '/ServiceScreen', (route) => false)
         );
       } else {
-
         Alerts.showMessageForResponse(context, response);
         setState(() {
           _isLoading = false;
