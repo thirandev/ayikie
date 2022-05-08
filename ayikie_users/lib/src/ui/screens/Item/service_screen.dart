@@ -1,5 +1,6 @@
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
+import 'package:ayikie_users/src/models/comment.dart';
 import 'package:ayikie_users/src/models/service.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
@@ -293,26 +294,27 @@ class _ServiceScreenState extends State<ServiceScreen> {
                         SizedBox(
                           height: 10,
                         ),
-                        CommentWidget(),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        CommentWidget(),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        CommentWidget(),
+
                         SizedBox(
                           height: 20,
                         ),
-                        Text(
-                          'see all comments',
-                          style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.primaryButtonColor),
-                        ),
+                        ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                            itemCount: service.comment!.length,
+                            itemBuilder: (BuildContext context, int index) =>
+                                Column(
+                                  children: [
+                                    CommentWidget(
+                                    comment: service.comment![index],
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                  ],
+                                )),
                         SizedBox(
-                          height: 50,
+                          height: 10,
                         )
                       ],
                     )
@@ -379,8 +381,10 @@ class _ServiceScreenState extends State<ServiceScreen> {
 }
 
 class CommentWidget extends StatelessWidget {
-  const CommentWidget({
+  Comment comment;
+  CommentWidget({
     Key? key,
+    required this.comment
   }) : super(key: key);
 
   @override
@@ -403,9 +407,22 @@ class CommentWidget extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(100),
-                  child: SvgPicture.asset(
-                    'asserts/images/profile.svg',
-                    fit: BoxFit.cover,
+                  child: CachedNetworkImage(
+                    imageBuilder: (context, imageProvider) =>
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                                alignment: AlignmentDirectional.center),
+                          ),
+                        ),
+                    imageUrl: comment.user.imgUrl.imageName,
+                    errorWidget: (context, url, error) => Image.asset(
+                      'asserts/images/ayikie_logo.png',
+                      fit: BoxFit.fitHeight,
+                    ),
                   ),
                 ),
               ),
@@ -413,32 +430,32 @@ class CommentWidget extends StatelessWidget {
                 width: 10,
               ),
               Text(
-                'Jane Perera',
+                comment.user.name,
+                textAlign: TextAlign.left,
                 style: TextStyle(fontWeight: FontWeight.w900),
               ),
               Spacer(),
-              Text(
-                '1 hour ago',
-              )
             ],
           ),
           SizedBox(
-            height: 5,
+            height: 10,
           ),
-          Text(
-              'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout'),
+          Align(
+              alignment: Alignment.centerLeft,
+              child: Text(comment.comment)),
           SizedBox(
             height: 5,
           ),
           Container(
             alignment: Alignment.centerLeft,
             child: RatingBar.builder(
+              ignoreGestures: true,
               wrapAlignment: WrapAlignment.start,
-              initialRating: 3,
+              initialRating: comment.rate.toDouble(),
               minRating: 1,
               direction: Axis.horizontal,
               itemSize: 25,
-              allowHalfRating: true,
+              allowHalfRating: false,
               itemCount: 5,
               itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
               itemBuilder: (context, _) => Icon(
@@ -446,7 +463,6 @@ class CommentWidget extends StatelessWidget {
                 color: Colors.amber,
               ),
               onRatingUpdate: (rating) {
-                print(rating);
               },
             ),
           ),

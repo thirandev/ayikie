@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:ayikie_users/src/models/Item.dart';
+import 'package:ayikie_users/src/models/comment.dart';
 import 'package:ayikie_users/src/models/images.dart';
 
 class Service extends Item {
@@ -11,6 +12,7 @@ class Service extends Item {
   String location;
   double price;
   String phoneNumber;
+  List<Comment>? comment;
 
   Service(
       {required int id,
@@ -23,6 +25,7 @@ class Service extends Item {
       required this.location,
       required this.price,
       required this.phoneNumber,
+        this.comment,
       Images? image})
       : super(id: id, name: name, description: description, image: image);
 
@@ -40,6 +43,9 @@ class Service extends Item {
       price: double.parse(json['price']),
       image: Images.fromJson(json['images']),
       phoneNumber: json['phone']== null ? "" : json['phone'],
+      comment: (json['comments'] == null ? [] : json['comments'] as List)
+          .map((i) => Comment.fromJson(i))
+          .toList(),
     );
   }
 }
