@@ -5,7 +5,7 @@ class Comment {
   String comment;
   int rate;
   String createdAt;
-  User user;
+  User? user;
 
   Comment(
       {required this.id,

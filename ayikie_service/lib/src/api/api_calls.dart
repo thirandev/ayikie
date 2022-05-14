@@ -383,7 +383,6 @@ class ApiCalls {
     try {
       var fields = new Map<String, String>();
 
-      // print('Hereee');
       List<MultipartFile> image = [];
       var multipartFile =
           await MultipartFile.fromPath('address_image', picture.path);
@@ -644,7 +643,7 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> vistorSupport(
+  static Future<ApiResponse> visitorSupport(
       {required String name,
       required String email,
       required String message}) async {
@@ -664,5 +663,211 @@ class ApiCalls {
     }
   }
 
+  static Future<ApiResponse> getReview() async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/review', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getAllServiceOrders() async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/order/service', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getServiceOrder(int orderId) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/order/service/$orderId', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> extendServiceOrder({
+    required int orderId,
+    required int price,
+    required int duration,
+  }) async {
+    try {
+      var payload = new Map<String, dynamic>();
+      payload['price'] = price;
+      payload['duration'] = duration;
+
+      return ApiCaller.jsonRequestAuth(
+          baseUrl + '/api/seller/order/service/extend/$orderId',
+          _getEmptyHeaders(),
+          jsonEncode(payload));
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> deleteServiceOrder(int orderId) async {
+    try {
+      return ApiCaller.requestAuth(
+          baseUrl + "/api/seller/order/service/$orderId", _getEmptyHeaders(),
+          requestType: "DELETE");
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> cancelServiceOrder(int orderId) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/order/service/cancel/$orderId',
+          _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> acceptServiceOrder(int orderId) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/order/service/accept/$orderId',
+          _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> ongoingServiceOrder(int orderId) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/order/service/ongoing/$orderId',
+          _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> deliverServiceOrder(int orderId) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/order/service/deliver/$orderId',
+          _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getAllProductOrders() async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/order/products', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getProductOrderDetails({required int orderId}) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/order/products/$orderId',
+          _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> deleteProductOrder(int orderId) async {
+    try {
+      return ApiCaller.requestAuth(
+          baseUrl + "/api/seller/order/products/$orderId", _getEmptyHeaders(),
+          requestType: "DELETE");
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> cancelProductOrder(int orderId) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/order/products/cancel/$orderId',
+          _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> acceptProductOrder(int orderId) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/order/products/accept/$orderId',
+          _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> deliverProductOrder({
+    required int orderId,
+    required String trackingNo,
+  }) async {
+    try {
+      var payload = new Map<String, dynamic>();
+      payload['tracking_no'] = trackingNo;
+
+      return ApiCaller.jsonRequestAuth(
+          baseUrl + '/api/seller/order/products/deliver/$orderId',
+          _getEmptyHeaders(),
+          jsonEncode(payload));
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
 
 }

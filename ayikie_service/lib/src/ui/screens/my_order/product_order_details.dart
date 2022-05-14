@@ -1,4 +1,5 @@
 import 'package:ayikie_service/src/app_colors.dart';
+import 'package:ayikie_service/src/models/productOrder.dart';
 import 'package:ayikie_service/src/ui/screens/Item/service_screen.dart';
 import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_service/src/ui/screens/notification_screen/notification_screen.dart';
@@ -9,7 +10,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ProductOrderDetails extends StatefulWidget {
-  const ProductOrderDetails({Key? key}) : super(key: key);
+  final ProductOrder product;
+  ProductOrderDetails({Key? key,required this.product}) : super(key: key);
 
   @override
   _ProductOrderDetailsState createState() => _ProductOrderDetailsState();

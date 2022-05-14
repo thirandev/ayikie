@@ -18,4 +18,26 @@ class Common{
     var outputDate = outputFormat.format(inputDate);
     return outputDate;
   }
+
+  static String getStatus({required int status}) {
+    String statusString;
+    switch (status) {
+      case 1:
+        statusString = "Accepted";
+        break;
+      case 2:
+        statusString = "Ongoing";
+        break;
+      case 3:
+        statusString = "Completed";
+        break;
+      case 4:
+        statusString = "Cancelled";
+        break;
+      default:
+        statusString = "Pending";
+        break;
+    }
+    return statusString;
+  }
 }

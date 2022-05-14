@@ -413,7 +413,7 @@ class CommentWidget extends StatelessWidget {
                             alignment: AlignmentDirectional.center),
                       ),
                     ),
-                    imageUrl: comment.user.imgUrl.imageName,
+                    imageUrl: comment.user!.imgUrl.imageName,
                     errorWidget: (context, url, error) => Image.asset(
                       'asserts/images/ayikie_logo.png',
                       fit: BoxFit.fitHeight,
@@ -425,7 +425,7 @@ class CommentWidget extends StatelessWidget {
                 width: 10,
               ),
               Text(
-                comment.user.name,
+                comment.user!.name,
                 textAlign: TextAlign.left,
                 style: TextStyle(fontWeight: FontWeight.w900),
               ),

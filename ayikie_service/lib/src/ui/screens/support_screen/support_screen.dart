@@ -37,7 +37,7 @@ class _SupportScreenState extends State<SupportScreen> {
       return;
     }
 
-    ApiCalls.vistorSupport(email: email, message: message, name: name)
+    ApiCalls.visitorSupport(email: email, message: message, name: name)
         .then((response) async {
       if (!mounted) {
         return;
