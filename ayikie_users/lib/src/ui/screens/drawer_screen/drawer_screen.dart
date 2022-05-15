@@ -1,4 +1,6 @@
 import 'package:ayikie_users/src/api/api_calls.dart';
+import 'package:ayikie_users/src/ui/screens/chat/chat_screen.dart';
+import 'package:ayikie_users/src/ui/screens/chat/rooms.dart';
 import 'package:ayikie_users/src/ui/screens/invite_friends_screen/invite_friends_screen.dart';
 import 'package:ayikie_users/src/ui/screens/post_request_screen/post_request_screen.dart';
 import 'package:ayikie_users/src/ui/screens/privacy_policies_screen/privacy_policies_screen.dart';
@@ -20,7 +22,6 @@ class DrawerScreen extends StatefulWidget {
 }
 
 class _DrawerScreenState extends State<DrawerScreen> {
-
   bool isGuest = true;
 
   @override
@@ -30,7 +31,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
   }
 
   _checkIsGuest() async {
-    var guest = await Settings.getIsGuest()??false;
+    var guest = await Settings.getIsGuest() ?? false;
     setState(() {
       isGuest = guest;
     });
@@ -38,7 +39,6 @@ class _DrawerScreenState extends State<DrawerScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     var width = MediaQuery.of(context).size.width;
 
     return Drawer(
@@ -63,98 +63,96 @@ class _DrawerScreenState extends State<DrawerScreen> {
               ),
             ],
           ),
-          isGuest?SizedBox(
-            width: width,
-            child: Container(
-              color: Colors.grey[300],
-              padding: EdgeInsets.only(left: 15,top:20),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Container(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "Welcome",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        color: AppColors.primaryButtonColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Container(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "Login account or create new one for free",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                          color: AppColors.black,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w300
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Container(
-                    alignment: Alignment.topLeft,
-                    child: Row(
+          isGuest
+              ? SizedBox(
+                  width: width,
+                  child: Container(
+                    color: Colors.grey[300],
+                    padding: EdgeInsets.only(left: 15, top: 20),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
                       children: [
-                        PrimaryButton(
-                            buttonWidth: width/3.5,
-                            buttonHeight: 40,
-                            text: "Login",
-                            fontSize: 16,
-                            clickCallback: (){
-                              Navigator.pushNamed(
-                                  context, '/LoginScreen');
-                            },
-                          prexIcon: Icon(
-                            Icons.logout,
-                            color: AppColors.white,
-                            size: 20,
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "Welcome",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                color: AppColors.primaryButtonColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600),
                           ),
-
                         ),
                         SizedBox(
-                          width: 10,
+                          height: 5,
                         ),
-                        PrimaryButton(
-                            buttonWidth: width/3,
-                            buttonHeight: 40,
-                            text: "Register",
-                            bgColor: AppColors.white,
-                            textColor: AppColors.primaryButtonColor,
-                            fontSize: 16,
-                            prexIcon: Icon(
-                              Icons.assignment_ind,
-                              color: AppColors.primaryButtonColor,
-                              size: 20,
-                            ),
-                            clickCallback: (){
-                              Navigator.pushNamed(
-                                  context, '/RegistrationScreen');
-                            }),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "Login account or create new one for free",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                color: AppColors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w300),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: Row(
+                            children: [
+                              PrimaryButton(
+                                buttonWidth: width / 3.5,
+                                buttonHeight: 40,
+                                text: "Login",
+                                fontSize: 16,
+                                clickCallback: () {
+                                  Navigator.pushNamed(context, '/LoginScreen');
+                                },
+                                prexIcon: Icon(
+                                  Icons.logout,
+                                  color: AppColors.white,
+                                  size: 20,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              PrimaryButton(
+                                  buttonWidth: width / 3,
+                                  buttonHeight: 40,
+                                  text: "Register",
+                                  bgColor: AppColors.white,
+                                  textColor: AppColors.primaryButtonColor,
+                                  fontSize: 16,
+                                  prexIcon: Icon(
+                                    Icons.assignment_ind,
+                                    color: AppColors.primaryButtonColor,
+                                    size: 20,
+                                  ),
+                                  clickCallback: () {
+                                    Navigator.pushNamed(
+                                        context, '/RegistrationScreen');
+                                  }),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 25,
+                        ),
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                ],
-              ),
-            ),
-          ):Container(),
+                )
+              : Container(),
           DrawerWidget(
             title: 'Verification Center',
             imagePath: 'asserts/icons/verification_center.png',
             onPress: () {
-              if(isGuest){
+              if (isGuest) {
                 Alerts.showGuestMessage(context);
                 return;
               }
@@ -182,7 +180,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             title: 'Settings',
             imagePath: 'asserts/icons/settings.png',
             onPress: () {
-              if(isGuest){
+              if (isGuest) {
                 Alerts.showGuestMessage(context);
                 return;
               }
@@ -198,7 +196,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             title: 'Post a Request',
             imagePath: 'asserts/icons/post_a_request.png',
             onPress: () {
-              if(isGuest){
+              if (isGuest) {
                 Alerts.showGuestMessage(context);
                 return;
               }
@@ -214,12 +212,12 @@ class _DrawerScreenState extends State<DrawerScreen> {
             title: 'Chat',
             imagePath: 'asserts/icons/chat.png',
             onPress: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) {
-              //     return InviteFriendsScreen();
-              //   }),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) {
+                  return RoomsPage();
+                }),
+              );
             },
           ),
           DrawerWidget(
@@ -250,7 +248,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             title: 'Log Out',
             imagePath: 'asserts/icons/logout.png',
             onPress: () async {
-              if(isGuest){
+              if (isGuest) {
                 Alerts.showGuestMessage(context);
                 return;
               }
