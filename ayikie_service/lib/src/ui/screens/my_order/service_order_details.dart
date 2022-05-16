@@ -1,6 +1,7 @@
 import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/app_colors.dart';
 import 'package:ayikie_service/src/models/order.dart';
+import 'package:ayikie_service/src/models/user.dart';
 import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_service/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_service/src/ui/widget/custom_form_field.dart';
@@ -9,6 +10,7 @@ import 'package:ayikie_service/src/ui/widget/progress_view.dart';
 import 'package:ayikie_service/src/utils/alerts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ServiceOrderDetails extends StatefulWidget {
   final Order serviceOrder;
@@ -27,7 +29,8 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
   TextEditingController _durationController = TextEditingController();
   TextEditingController _messageController = TextEditingController();
 
-  bool _isLoading = false;
+  bool _isLoading = true;
+  late User customer;
 
   tapped(int step) {
     setState(() => _currentStep = step);
@@ -55,6 +58,26 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
     }
     _priceController.text = widget.serviceOrder.price.toString();
     _durationController.text = widget.serviceOrder.duration.toString();
+    _getOrderCustomer();
+  }
+
+  void _getOrderCustomer() async {
+    await ApiCalls.getServiceOrder(widget.serviceOrder.orderId).then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        print(response.jsonBody);
+        var data = response.jsonBody;
+        customer = User.fromJson(data["customer"]);
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   @override
@@ -216,7 +239,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                   Row(
                                     children: [
                                       Text(
-                                        'Keller Tine',
+                                        customer.name,
                                         style: TextStyle(
                                             fontWeight: FontWeight.w900,
                                             fontSize: 16),
@@ -227,7 +250,9 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                           Icons.call_outlined,
                                           color: AppColors.black,
                                         ),
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          _makePhoneCall(customer.phone);
+                                        },
                                       ),
                                       new IconButton(
                                         icon: new Icon(
@@ -273,7 +298,6 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                         isEnabled: true,
                                         controller: _priceController,
                                         height: 35,
-                                        hintText: '\$25',
                                       )),
                                     ],
                                   ),
@@ -294,7 +318,6 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                         isEnabled: true,
                                         controller: _durationController,
                                         height: 35,
-                                        hintText: '1 day',
                                       )),
                                     ],
                                   ),
@@ -345,7 +368,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                   Row(
                                     children: [
                                       Text(
-                                        'Keller Tine',
+                                        customer.name,
                                         style: TextStyle(
                                             fontWeight: FontWeight.w900,
                                             fontSize: 16),
@@ -356,7 +379,9 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                           Icons.call_outlined,
                                           color: AppColors.black,
                                         ),
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          _makePhoneCall(customer.phone);
+                                        },
                                       ),
                                       new IconButton(
                                         icon: new Icon(
@@ -373,7 +398,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                     height: 10,
                                   ),
                                   Text(
-                                    'Order Requirenmets',
+                                    'Order Requirements',
                                     style:
                                         TextStyle(fontWeight: FontWeight.w900),
                                   ),
@@ -381,7 +406,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                     height: 10,
                                   ),
                                   Text(
-                                    'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. ',
+                                    widget.serviceOrder.note,
                                     textAlign: TextAlign.justify,
                                     style: TextStyle(fontSize: 12),
                                   ),
@@ -473,7 +498,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                   Row(
                                     children: [
                                       Text(
-                                        'Keller Tine',
+                                        customer.name,
                                         style: TextStyle(
                                             fontWeight: FontWeight.w900,
                                             fontSize: 16),
@@ -484,7 +509,9 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                           Icons.call_outlined,
                                           color: AppColors.black,
                                         ),
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          _makePhoneCall(customer.phone);
+                                        },
                                       ),
                                       new IconButton(
                                         icon: new Icon(
@@ -501,7 +528,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                     height: 10,
                                   ),
                                   Text(
-                                    'Order Requirenmets',
+                                    'Order Requirements',
                                     style:
                                         TextStyle(fontWeight: FontWeight.w900),
                                   ),
@@ -687,10 +714,10 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
         return;
       }
       if (response.isSuccess) {
-        Alerts.showMessage(context, "Order Cancelled sucessfully.",
+        Alerts.showMessage(context, "Order Cancelled successfully.",
             title: "Success!",
             onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
-                context, '/UserScreen', (route) => false));
+                context, '/ServiceScreen', (route) => false));
       } else {
         Alerts.showMessageForResponse(context, response);
       }
@@ -710,10 +737,10 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
         return;
       }
       if (response.isSuccess) {
-        Alerts.showMessage(context, "Order Cancelled sucessfully.",
+        Alerts.showMessage(context, "Order Delivered successfully.",
             title: "Success!",
             onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
-                context, '/UserScreen', (route) => false));
+                context, '/ServiceScreen', (route) => false));
       } else {
         Alerts.showMessageForResponse(context, response);
       }
@@ -734,9 +761,9 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
         return;
       }
       if (response.isSuccess) {
-        Alerts.showMessage(context, "Order Deleted sucessfully.",
+        Alerts.showMessage(context, "Order Deleted successfully.",
             title: "Success!",onCloseCallback: ()=>    Navigator.pushNamedAndRemoveUntil(
-                context, '/UserScreen', (route) => false)
+                context, '/ServiceScreen', (route) => false)
         );
       } else {
         Alerts.showMessageForResponse(context, response);
@@ -757,10 +784,10 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
         return;
       }
       if (response.isSuccess) {
-        Alerts.showMessage(context, "Order Cancelled sucessfully.",
+        Alerts.showMessage(context, "Order Cancelled successfully.",
             title: "Success!",
             onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
-                context, '/UserScreen', (route) => false));
+                context, '/ServiceScreen', (route) => false));
       } else {
         Alerts.showMessageForResponse(context, response);
       }
@@ -769,4 +796,13 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
       });
     });
   }
+
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+    await launchUrl(launchUri);
+  }
+
 }
