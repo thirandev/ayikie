@@ -1,11 +1,7 @@
-import 'dart:io';
-
 import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/app_colors.dart';
 import 'package:ayikie_service/src/models/order.dart';
 import 'package:ayikie_service/src/models/productOrder.dart';
-import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
-import 'package:ayikie_service/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_service/src/ui/screens/my_order/product_order_details.dart';
 import 'package:ayikie_service/src/ui/screens/my_order/service_order_details.dart';
 import 'package:ayikie_service/src/ui/widget/progress_view.dart';

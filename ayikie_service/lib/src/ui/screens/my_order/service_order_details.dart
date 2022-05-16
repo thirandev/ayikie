@@ -1,16 +1,20 @@
+import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/app_colors.dart';
 import 'package:ayikie_service/src/models/order.dart';
 import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_service/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_service/src/ui/widget/custom_form_field.dart';
 import 'package:ayikie_service/src/ui/widget/primary_button.dart';
+import 'package:ayikie_service/src/ui/widget/progress_view.dart';
+import 'package:ayikie_service/src/utils/alerts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class ServiceOrderDetails extends StatefulWidget {
   final Order serviceOrder;
 
-  const ServiceOrderDetails({Key? key, required this.serviceOrder}) : super(key: key);
+  const ServiceOrderDetails({Key? key, required this.serviceOrder})
+      : super(key: key);
 
   @override
   _ServiceOrderDetailsState createState() => _ServiceOrderDetailsState();
@@ -23,12 +27,14 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
   TextEditingController _durationController = TextEditingController();
   TextEditingController _messageController = TextEditingController();
 
+  bool _isLoading = false;
+
   tapped(int step) {
     setState(() => _currentStep = step);
   }
 
   continued() {
-    _currentStep < 3 ? setState(() => _currentStep += 1) : null;
+    _currentStep < 2 ? setState(() => _currentStep += 1) : null;
   }
 
   cancel() {
@@ -36,7 +42,19 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
   }
 
   onTapCancelOrder() {
-    _currentStep < 3 ? setState(() => _currentStep += 1) : null;
+    _currentStep < 2 ? setState(() => _currentStep += 1) : null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.serviceOrder.status == 3){
+      _currentStep = 2;
+    }else{
+      _currentStep = widget.serviceOrder.status;
+    }
+    _priceController.text = widget.serviceOrder.price.toString();
+    _durationController.text = widget.serviceOrder.duration.toString();
   }
 
   @override
@@ -120,628 +138,635 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
           ],
         ),
         endDrawer: DrawerScreen(),
-        body: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Container(
-            padding: EdgeInsets.only(
-              left: 5,
-            ),
-            child: Column(
-              children: [
-                Expanded(
-                  child: Stepper(
-                    type: stepperType,
-                    physics: ScrollPhysics(),
-                    currentStep: _currentStep,
-                    // onStepTapped: (step) => tapped(step),
-                    controlsBuilder: (BuildContext context,
-                        {VoidCallback? onStepContinue,
-                        VoidCallback? onStepCancel}) {
-                      return _currentStep != 3
-                          ? Container(
-                              height: 45,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(25),
-                                color: _currentStep == 2
-                                    ? AppColors.primaryButtonColor
-                                    : AppColors.redButtonColor,
-                              ),
-                              child: FlatButton(
-                                onPressed: () {
-                                  _currentStep < 3
-                                      ? setState(() => _currentStep += 1)
-                                      : null;
-                                },
-                                child: Text(
-                                    _currentStep == 0
-                                        ? 'Cancel Offer'
-                                        : _currentStep == 1
-                                            ? 'Delete Order'
-                                            : 'Submit',
-                                    style: TextStyle(
-                                      color: AppColors.white,
-                                    )),
-                                //  textColor: _currentStep == 0? AppColors.redButtonColor: AppColors.primaryButtonColor,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(50)),
-                              ))
-                          : Container();
-                    },
-                    steps: [
+        body: _isLoading
+            ? Center(
+                child: ProgressView(),
+              )
+            : SizedBox(
+                height: MediaQuery.of(context).size.height,
+                child: Container(
+                  padding: EdgeInsets.only(
+                    left: 5,
+                  ),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Stepper(
+                          type: stepperType,
+                          physics: ScrollPhysics(),
+                          currentStep: _currentStep,
+                          // onStepTapped: (step) => tapped(step),
+                          controlsBuilder: (BuildContext context,
+                              {VoidCallback? onStepContinue,
+                              VoidCallback? onStepCancel}) {
+                            return _currentStep != 2
+                                ? Container(
+                                    height: 45,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(25),
+                                      color: _currentStep == 2
+                                          ? AppColors.primaryButtonColor
+                                          : AppColors.redButtonColor,
+                                    ),
+                                    child: FlatButton(
+                                      onPressed: onCommonButtonPress,
+                                      child: Text(
+                                          _currentStep == 0
+                                              ? 'Cancel Offer'
+                                              : 'Delete Order',
+                                          style: TextStyle(
+                                            color: AppColors.white,
+                                          )),
+                                      //  textColor: _currentStep == 0? AppColors.redButtonColor: AppColors.primaryButtonColor,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(50)),
+                                    ))
+                                : Container();
+                          },
+                          steps: [
 //This is the first stepper *********************************************************
-                      Step(
-                        // title: new Image.asset(
-                        //   'asserts/images/pending_approval.png',
-                        //   height: 65,
-                        // ),
-                        title: Row(
-                          children: [
-                            Text(
-                              'Order Pending',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w900),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            new Image.asset(
-                              'asserts/images/pending_approval.png',
-                              height: 65,
-                            ),
-                          ],
-                        ),
-                        content: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              children: [
-                                Text(
-                                  'Keller Tine',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 16),
-                                ),
-                                Spacer(),
-                                new IconButton(
-                                  icon: new Icon(
-                                    Icons.call_outlined,
-                                    color: AppColors.black,
+                            Step(
+                              // title: new Image.asset(
+                              //   'asserts/images/pending_approval.png',
+                              //   height: 65,
+                              // ),
+                              title: Row(
+                                children: [
+                                  Text(
+                                    'Order Pending',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w900),
                                   ),
-                                  onPressed: () {},
-                                ),
-                                new IconButton(
-                                  icon: new Icon(
-                                    Icons.chat_bubble_outline_sharp,
-                                    color: AppColors.black,
+                                  SizedBox(
+                                    width: 10,
                                   ),
-                                  onPressed: () {
-                                    onTapCancelOrder();
-                                  },
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Order Requirenmets',
-                              style: TextStyle(fontWeight: FontWeight.w900),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. ',
-                              textAlign: TextAlign.justify,
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  'Order Price',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900),
-                                ),
-                                Spacer(),
-                                Flexible(
-                                    child: CustomFormField(
-                                  controller: _priceController,
-                                  height: 35,
-                                  hintText: '\$25',
-                                )),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  'Order Duration',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900),
-                                ),
-                                Spacer(),
-                                Flexible(
-                                    child: CustomFormField(
-                                  controller: _durationController,
-                                  height: 35,
-                                  hintText: '1 day',
-                                )),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            PrimaryButton(text: 'Accept Offer',fontSize: 14, clickCallback: () {}),
-                            SizedBox(height: 10,),
-                          ],
-                        ),
-                        isActive: _currentStep >= 0,
-                        state: _currentStep >= 0
-                            ? StepState.complete
-                            : StepState.disabled,
-                      ),
-                      //This is the second stepper *********************************************************
-                      Step(
-                        // title: new Image.asset(
-                        //   'asserts/images/order_accepted.png',
-                        //   height: 65,
-                        // ),
-                        title: Row(
-                          children: [
-                            new Image.asset(
-                              'asserts/images/order_accepted.png',
-                              height: 65,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              'Order Accepted',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w900),
-                            ),
-                          ],
-                        ),
-                        content: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              children: [
-                                Text(
-                                  'Keller Tine',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 16),
-                                ),
-                                Spacer(),
-                                new IconButton(
-                                  icon: new Icon(
-                                    Icons.call_outlined,
-                                    color: AppColors.black,
+                                  new Image.asset(
+                                    'asserts/images/pending_approval.png',
+                                    height: 65,
                                   ),
-                                  onPressed: () {},
-                                ),
-                                new IconButton(
-                                  icon: new Icon(
-                                    Icons.chat_bubble_outline_sharp,
-                                    color: AppColors.black,
-                                  ),
-                                  onPressed: () {
-                                    onTapCancelOrder();
-                                  },
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Order Requirenmets',
-                              style: TextStyle(fontWeight: FontWeight.w900),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. ',
-                              textAlign: TextAlign.justify,
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  'Order Price',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900),
-                                ),
-                                Spacer(),
-                                Flexible(
-                                    child: CustomFormField(
-                                  controller: _priceController,
-                                  height: 35,
-                                  hintText: '\$25',
-                                )),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  'Order Duration',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900),
-                                ),
-                                Spacer(),
-                                Flexible(
-                                    child: CustomFormField(
-                                  controller: _durationController,
-                                  height: 35,
-                                  hintText: '1 day',
-                                )),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            PrimaryButton(text: 'Extend Order',fontSize: 14, clickCallback: () {}),
-                            SizedBox(height: 10,),
-                            PrimaryButton(text: 'Deliver Order',fontSize: 14, clickCallback: () {}),
-                            SizedBox(height: 10,),
-                          ],
-                        ),
-                        isActive: _currentStep >= 0,
-                        state: _currentStep >= 1
-                            ? StepState.complete
-                            : StepState.disabled,
-                      ),
-                      //This is the third stepper *********************************************************
-                      Step(
-                        // title: new Image.asset(
-                        //   'asserts/images/order_ongoing.png',
-                        //   height: 65,
-                        // ),
-                        title: Row(
-                          children: [
-                            Text(
-                              'Order Ongoing',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w900),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            new Image.asset(
-                              'asserts/images/order_ongoing.png',
-                              height: 65,
-                            ),
-                          ],
-                        ),
-                        content: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              children: [
-                                Text(
-                                  'Keller Tine',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 16),
-                                ),
-                                Spacer(),
-                                new IconButton(
-                                  icon: new Icon(
-                                    Icons.call_outlined,
-                                    color: AppColors.black,
-                                  ),
-                                  onPressed: () {},
-                                ),
-                                new IconButton(
-                                  icon: new Icon(
-                                    Icons.chat_bubble_outline_sharp,
-                                    color: AppColors.black,
-                                  ),
-                                  onPressed: () {
-                                    onTapCancelOrder();
-                                  },
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Order Requirenmets',
-                              style: TextStyle(fontWeight: FontWeight.w900),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. ',
-                              textAlign: TextAlign.justify,
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  'Order Price',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900),
-                                ),
-                                Spacer(),
-                                Flexible(
-                                    child: CustomFormField(
-                                  controller: _priceController,
-                                  height: 35,
-                                  hintText: '\$25',
-                                )),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  'Order Duration',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900),
-                                ),
-                                Spacer(),
-                                Flexible(
-                                    child: CustomFormField(
-                                  controller: _durationController,
-                                  height: 35,
-                                  hintText: '1 day',
-                                )),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            
-                          ],
-                        ),
-                        isActive: _currentStep >= 0,
-                        state: _currentStep >= 2
-                            ? StepState.complete
-                            : StepState.disabled,
-                      ),
-                      //this is the fourth step**********************************************
-                      Step(
-                        // title: new Image.asset(
-                        //   'asserts/images/order_ongoing.png',
-                        //   height: 65,
-                        // ),
-                        title: Row(
-                          children: [
-                            new Image.asset(
-                              'asserts/images/order_completed.png',
-                              height: 65,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              'Order Completed',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w900),
-                            ),
-                          ],
-                        ),
-                        content: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              children: [
-                                Text(
-                                  'Keller Tine',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 16),
-                                ),
-                                Spacer(),
-                                new IconButton(
-                                  icon: new Icon(
-                                    Icons.call_outlined,
-                                    color: AppColors.black,
-                                  ),
-                                  onPressed: () {},
-                                ),
-                                new IconButton(
-                                  icon: new Icon(
-                                    Icons.chat_bubble_outline_sharp,
-                                    color: AppColors.black,
-                                  ),
-                                  onPressed: () {
-                                    onTapCancelOrder();
-                                  },
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Order Requirenmets',
-                              style: TextStyle(fontWeight: FontWeight.w900),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. ',
-                              textAlign: TextAlign.justify,
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  'Order Price',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900),
-                                ),
-                                Spacer(),
-                                Flexible(
-                                    child: CustomFormField(
-                                  controller: _priceController,
-                                  height: 35,
-                                  hintText: '\$25',
-                                )),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  'Order Duration',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900),
-                                ),
-                                Spacer(),
-                                Flexible(
-                                    child: CustomFormField(
-                                  controller: _durationController,
-                                  height: 35,
-                                  hintText: '1 day',
-                                )),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  'Order Status',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900),
-                                ),
-                                Spacer(),
-                                Text(
-                                  'Order Completed',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Order Photos',
-                              style: TextStyle(fontWeight: FontWeight.w900),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.asset(
-                                  'asserts/images/black_guitar.jpg',
-                                  width: double.infinity,
-                                  height: 200,
-                                  fit: BoxFit.cover,
-                                )),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Order Review',
-                              style: TextStyle(fontWeight: FontWeight.w900),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at ',
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Order Rating',
-                              style: TextStyle(fontWeight: FontWeight.w900),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              child: RatingBar.builder(
-                                wrapAlignment: WrapAlignment.start,
-                                initialRating: 3,
-                                minRating: 1,
-                                direction: Axis.horizontal,
-                                itemSize: 25,
-                                allowHalfRating: true,
-                                itemCount: 5,
-                                itemPadding:
-                                    EdgeInsets.symmetric(horizontal: 4.0),
-                                itemBuilder: (context, _) => Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                ),
-                                onRatingUpdate: (rating) {
-                                  print(rating);
-                                },
+                                ],
                               ),
+                              content: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Keller Tine',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 16),
+                                      ),
+                                      Spacer(),
+                                      new IconButton(
+                                        icon: new Icon(
+                                          Icons.call_outlined,
+                                          color: AppColors.black,
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                      new IconButton(
+                                        icon: new Icon(
+                                          Icons.chat_bubble_outline_sharp,
+                                          color: AppColors.black,
+                                        ),
+                                        onPressed: () {
+                                          onTapCancelOrder();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Order Requirements',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w900),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    widget.serviceOrder.note,
+                                    textAlign: TextAlign.justify,
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Order Price',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w900),
+                                      ),
+                                      Spacer(),
+                                      Flexible(
+                                          child: CustomFormField(
+                                        isEnabled: true,
+                                        controller: _priceController,
+                                        height: 35,
+                                        hintText: '\$25',
+                                      )),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Order Duration',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w900),
+                                      ),
+                                      Spacer(),
+                                      Flexible(
+                                          child: CustomFormField(
+                                        isEnabled: true,
+                                        controller: _durationController,
+                                        height: 35,
+                                        hintText: '1 day',
+                                      )),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  PrimaryButton(
+                                      text: 'Accept Offer',
+                                      fontSize: 14,
+                                      clickCallback: acceptOrder),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                ],
+                              ),
+                              isActive: _currentStep >= 0,
+                              state: _currentStep >= 0
+                                  ? StepState.complete
+                                  : StepState.disabled,
                             ),
-                            SizedBox(
-                              height: 20,
-                            )
+                            //This is the second stepper *********************************************************
+                            Step(
+                              // title: new Image.asset(
+                              //   'asserts/images/order_accepted.png',
+                              //   height: 65,
+                              // ),
+                              title: Row(
+                                children: [
+                                  new Image.asset(
+                                    'asserts/images/order_accepted.png',
+                                    height: 65,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    'Order Accepted',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w900),
+                                  ),
+                                ],
+                              ),
+                              content: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Keller Tine',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 16),
+                                      ),
+                                      Spacer(),
+                                      new IconButton(
+                                        icon: new Icon(
+                                          Icons.call_outlined,
+                                          color: AppColors.black,
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                      new IconButton(
+                                        icon: new Icon(
+                                          Icons.chat_bubble_outline_sharp,
+                                          color: AppColors.black,
+                                        ),
+                                        onPressed: () {
+                                          onTapCancelOrder();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Order Requirenmets',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w900),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. ',
+                                    textAlign: TextAlign.justify,
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Order Price',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w900),
+                                      ),
+                                      Spacer(),
+                                      Flexible(
+                                          child: CustomFormField(
+                                            isEnabled: true,
+                                            controller: _priceController,
+                                        height: 35,
+                                      )),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Order Duration',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w900),
+                                      ),
+                                      Spacer(),
+                                      Flexible(
+                                          child: CustomFormField(
+                                            isEnabled: true,
+                                        controller: _durationController,
+                                        height: 35,
+                                        hintText: '1 day',
+                                      )),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  PrimaryButton(
+                                      text: 'Deliver Order',
+                                      fontSize: 14,
+                                      clickCallback: deliverOrder),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                ],
+                              ),
+                              isActive: _currentStep >= 0,
+                              state: _currentStep >= 1
+                                  ? StepState.complete
+                                  : StepState.disabled,
+                            ),
+                            //This is the third stepper *********************************************************
+                            Step(
+                              // title: new Image.asset(
+                              //   'asserts/images/order_ongoing.png',
+                              //   height: 65,
+                              // ),
+                              title: Row(
+                                children: [
+                                  new Image.asset(
+                                    'asserts/images/order_completed.png',
+                                    height: 65,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    'Order Completed',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w900),
+                                  ),
+                                ],
+                              ),
+                              content: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Keller Tine',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 16),
+                                      ),
+                                      Spacer(),
+                                      new IconButton(
+                                        icon: new Icon(
+                                          Icons.call_outlined,
+                                          color: AppColors.black,
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                      new IconButton(
+                                        icon: new Icon(
+                                          Icons.chat_bubble_outline_sharp,
+                                          color: AppColors.black,
+                                        ),
+                                        onPressed: () {
+                                          onTapCancelOrder();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Order Requirenmets',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w900),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    widget.serviceOrder.note,
+                                    textAlign: TextAlign.justify,
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Order Price',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w900),
+                                      ),
+                                      Spacer(),
+                                      Flexible(
+                                          child: CustomFormField(
+                                            isEnabled: true,
+                                        controller: _priceController,
+                                        height: 35,
+                                        hintText: '\$25',
+                                      )),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Order Duration',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w900),
+                                      ),
+                                      Spacer(),
+                                      Flexible(
+                                          child: CustomFormField(
+                                        controller: _durationController,
+                                            isEnabled: true,
+                                            height: 35,
+                                        hintText: '1 day',
+                                      )),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Order Status',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w900),
+                                      ),
+                                      Spacer(),
+                                      Text(
+                                        'Order Completed',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Order Photos',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w900),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.asset(
+                                        'asserts/images/black_guitar.jpg',
+                                        width: double.infinity,
+                                        height: 200,
+                                        fit: BoxFit.cover,
+                                      )),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Order Review',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w900),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    widget.serviceOrder.note
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Order Rating',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w900),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: RatingBar.builder(
+                                      wrapAlignment: WrapAlignment.start,
+                                      initialRating: 3,
+                                      minRating: 1,
+                                      direction: Axis.horizontal,
+                                      itemSize: 25,
+                                      allowHalfRating: true,
+                                      itemCount: 5,
+                                      itemPadding:
+                                          EdgeInsets.symmetric(horizontal: 4.0),
+                                      itemBuilder: (context, _) => Icon(
+                                        Icons.star,
+                                        color: Colors.amber,
+                                      ),
+                                      onRatingUpdate: (rating) {
+                                        print(rating);
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  )
+                                ],
+                              ),
+                              isActive: _currentStep >= 0,
+                              state: _currentStep >= 3
+                                  ? StepState.complete
+                                  : StepState.disabled,
+                            ),
                           ],
                         ),
-                        isActive: _currentStep >= 0,
-                        state: _currentStep >= 3
-                            ? StepState.complete
-                            : StepState.disabled,
-                      ),
+                      )
                     ],
                   ),
-                )
-              ],
-            ),
-          ),
-        ),
+                ),
+              ),
       ),
     );
+  }
+
+  void onCommonButtonPress(){
+    _currentStep < 3
+        ? setState(() => _currentStep += 1)
+        : null;
+
+    // TODO: Uncomment below and delete above
+    // switch(_currentStep){
+    //   case 0:
+    //     cancelOrder();
+    //     break;
+    //   case 1:
+    //     deleteOrder();
+    //     break;
+    // }
+  }
+
+  void acceptOrder() async {
+    setState(() {
+      _isLoading = true;
+    });
+    ApiCalls.acceptServiceOrder(widget.serviceOrder.orderId)
+        .then((response) async {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        Alerts.showMessage(context, "Order Cancelled sucessfully.",
+            title: "Success!",
+            onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
+                context, '/UserScreen', (route) => false));
+      } else {
+        Alerts.showMessageForResponse(context, response);
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
+  void deliverOrder() async {
+    setState(() {
+      _isLoading = true;
+    });
+    ApiCalls.deliverServiceOrder(widget.serviceOrder.orderId)
+        .then((response) async {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        Alerts.showMessage(context, "Order Cancelled sucessfully.",
+            title: "Success!",
+            onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
+                context, '/UserScreen', (route) => false));
+      } else {
+        Alerts.showMessageForResponse(context, response);
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
+  void deleteOrder() async{
+    setState(() {
+      _isLoading = true;
+    });
+
+    ApiCalls.deleteServiceOrder(widget.serviceOrder.orderId)
+        .then((response) async {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        Alerts.showMessage(context, "Order Deleted sucessfully.",
+            title: "Success!",onCloseCallback: ()=>    Navigator.pushNamedAndRemoveUntil(
+                context, '/UserScreen', (route) => false)
+        );
+      } else {
+        Alerts.showMessageForResponse(context, response);
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
+  void cancelOrder() async {
+    setState(() {
+      _isLoading = true;
+    });
+    ApiCalls.cancelServiceOrder(widget.serviceOrder.orderId)
+        .then((response) async {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        Alerts.showMessage(context, "Order Cancelled sucessfully.",
+            title: "Success!",
+            onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
+                context, '/UserScreen', (route) => false));
+      } else {
+        Alerts.showMessageForResponse(context, response);
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 }
