@@ -10,6 +10,7 @@ class Product extends Item {
   int subCategoryId;
   String introduction;
   String location;
+  String state;
   double price;
   List<Comment>? comment;
 
@@ -22,6 +23,7 @@ class Product extends Item {
         required this.categoryId,
         required this.subCategoryId,
         required this.location,
+        required this.state,
         required this.price,
         required this.stock,
         this.comment,
@@ -39,6 +41,7 @@ class Product extends Item {
       categoryId: json['category_id'],
       subCategoryId: json['sub_category_id'],
       location: json['location'] == null ? "" : json['location'],
+      state: json['state'] == null ? "" : json['state'],
       price: double.parse(json['price']),
       stock: json['stock'] == null ?0:json['stock'],
       image: Images.fromJson(json['images']),

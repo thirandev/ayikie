@@ -434,6 +434,7 @@ class ApiCalls {
       payload['duration'] = duration;
       payload['location'] = location;
       payload['note'] = message;
+      payload['payment_method'] = 1;
 
       return ApiCaller.jsonRequestAuth(baseUrl + '/api/customer/order/service',
           _getEmptyHeaders(), jsonEncode(payload));
@@ -567,6 +568,19 @@ class ApiCalls {
     try {
       return ApiCaller.getRequestAuth(
           baseUrl + '/api/customer/order/products/$orderId',
+          _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getProductOrderDetails({required int orderId}) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/customer/order/products/item/$orderId',
           _getEmptyHeaders());
     } catch (e) {
       ApiResponse response = ApiResponse();

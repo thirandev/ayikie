@@ -152,23 +152,15 @@ class _AllProductcreenState extends State<AllProductcreen> {
               height: MediaQuery.of(context).size.height,
               child: Container(
                 padding: EdgeInsets.only(left: 16, right: 16, top: 20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height - 100,
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          controller: _controller,
-                          itemCount: products.length,
-                          itemBuilder: (BuildContext context, int index) =>
-                              SubCategoryWidget(
-                                product: products[index],
-                              )),
-                    ),
-                  ],
-                ),
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    controller: _controller,
+                    itemCount: products.length,
+                    itemBuilder: (BuildContext context, int index) =>
+                        SubCategoryWidget(
+                          product: products[index],
+                        )),
               ),
             ),
     );

@@ -1,4 +1,5 @@
 
+import 'package:ayikie_service/src/models/orderItem.dart';
 import 'package:ayikie_service/src/models/product.dart';
 
 class ProductOrder {
@@ -8,8 +9,10 @@ class ProductOrder {
   int productId;
   double price;
   String createdAt;
+  String? trackingNo;
   int status;
   Product product;
+  OrderItem orderItem;
 
   ProductOrder(
       {required this.orderId,
@@ -19,6 +22,8 @@ class ProductOrder {
         required this.price,
         required this.createdAt,
         required this.status,
+        required this.orderItem,
+        this.trackingNo,
         required this.product});
 
   @override
@@ -31,6 +36,8 @@ class ProductOrder {
         price: double.parse(json['total']),
         status: json['status'],
         createdAt: json['created_at'],
+        trackingNo: json['tracking_no'],
+        orderItem: OrderItem.fromJson(json['order']),
         product: Product.fromJson(json['item']));
   }
 }

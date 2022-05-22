@@ -176,6 +176,7 @@ class ApiCalls {
       required String introduction,
       required String description,
       required String location,
+      required String state,
       required String price,
       required int catId,
       required int subCatId,
@@ -186,6 +187,7 @@ class ApiCalls {
       fields['introduction'] = introduction;
       fields['description'] = description;
       fields['location'] = location;
+      fields['state'] = state;
       fields['price'] = price;
       fields['category_id'] = catId.toString();
       fields['sub_category_id'] = subCatId.toString();
@@ -210,6 +212,7 @@ class ApiCalls {
       required String introduction,
       required String description,
       required String location,
+      required String state,
       required String price,
       required String stock,
       required int catId,
@@ -221,6 +224,7 @@ class ApiCalls {
       fields['introduction'] = introduction;
       fields['description'] = description;
       fields['location'] = location;
+      fields['state'] = state;
       fields['price'] = price;
       fields['stock'] = stock;
       fields['category_id'] = catId.toString();
@@ -247,33 +251,33 @@ class ApiCalls {
       required String introduction,
       required String description,
       required String location,
+      required String state,
       required String price,
       required int catId,
       required int subCatId,
       required File? picture}) async {
     try {
       var fields = new Map<String, String>();
+      print("Price"+price);
       fields['name'] = title;
       fields['introduction'] = introduction;
       fields['description'] = description;
       fields['location'] = location;
+      fields['state'] = state;
       fields['price'] = price;
       fields['category_id'] = catId.toString();
       fields['sub_category_id'] = subCatId.toString();
 
       List<MultipartFile> image = [];
-      if(picture!=null) {
+      if (picture != null) {
         var multipartFile =
-        await MultipartFile.fromPath('images', picture.path);
+            await MultipartFile.fromPath('images', picture.path);
         image.add(multipartFile);
       }
 
-      return ApiCaller.multiPartRequestAuth(baseUrl +'/api/seller/services/$serviceId',
-          _getEmptyHeaders(),
-          requestType: 'POST',
-          fields: fields,
-          files: image
-      );
+      return ApiCaller.multiPartRequestAuth(
+          baseUrl + '/api/seller/services/$serviceId', _getEmptyHeaders(),
+          requestType: 'POST', fields: fields, files: image);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -288,6 +292,7 @@ class ApiCalls {
       required String introduction,
       required String description,
       required String location,
+      required String state,
       required String price,
       required int catId,
       required int subCatId,
@@ -295,28 +300,27 @@ class ApiCalls {
       required File? picture}) async {
     try {
       var fields = new Map<String, String>();
+      print("Inside"+price);
       fields['name'] = title;
       fields['introduction'] = introduction;
       fields['description'] = description;
       fields['location'] = location;
+      fields['state'] = state;
       fields['price'] = price;
       fields['stock'] = stock;
       fields['category_id'] = catId.toString();
       fields['sub_category_id'] = subCatId.toString();
 
       List<MultipartFile> image = [];
-      if(picture!=null) {
+      if (picture != null) {
         var multipartFile =
-        await MultipartFile.fromPath('images', picture.path);
+            await MultipartFile.fromPath('images', picture.path);
         image.add(multipartFile);
       }
 
-      return ApiCaller.multiPartRequestAuth(baseUrl +'/api/seller/products/$productId',
-          _getEmptyHeaders(),
-          requestType: 'POST',
-          fields: fields,
-          files: image
-      );
+      return ApiCaller.multiPartRequestAuth(
+          baseUrl + '/api/seller/products/$productId', _getEmptyHeaders(),
+          requestType: 'POST', fields: fields, files: image);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -328,8 +332,7 @@ class ApiCalls {
   static Future<ApiResponse> deleteProduct(int productId) async {
     try {
       return ApiCaller.requestAuth(
-          baseUrl + "/api/seller/products/$productId",
-          _getEmptyHeaders(),
+          baseUrl + "/api/seller/products/$productId", _getEmptyHeaders(),
           requestType: "DELETE");
     } catch (e) {
       ApiResponse response = ApiResponse();
@@ -342,8 +345,7 @@ class ApiCalls {
   static Future<ApiResponse> deleteService(int serviceId) async {
     try {
       return ApiCaller.requestAuth(
-          baseUrl + "/api/seller/services/$serviceId",
-          _getEmptyHeaders(),
+          baseUrl + "/api/seller/services/$serviceId", _getEmptyHeaders(),
           requestType: "DELETE");
     } catch (e) {
       ApiResponse response = ApiResponse();
@@ -367,8 +369,8 @@ class ApiCalls {
 
   static Future<ApiResponse> getProduct({required int productId}) async {
     try {
-      return ApiCaller.getRequest(
-          baseUrl + '/api/products/$productId/show', _getEmptyHeaders());
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/seller/products/$productId', _getEmptyHeaders());
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -487,13 +489,14 @@ class ApiCalls {
       return ApiCaller.multiPartRequestAuth(
           baseUrl + '/api/user/verification/skill', _getEmptyHeaders(),
           requestType: 'POST', fields: fields, files: image);
-          } catch (e) {
+    } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
       response.statusMessage = e.toString();
       return response;
     }
   }
+
   static Future<ApiResponse> getAllBuyerRequest({required int page}) async {
     try {
       var query = new Map<String, String>();
@@ -530,13 +533,14 @@ class ApiCalls {
       return ApiCaller.multiPartRequestAuth(
           baseUrl + '/api/user/verification/nic', _getEmptyHeaders(),
           requestType: 'POST', fields: fields, files: image);
-          } catch (e) {
+    } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
       response.statusMessage = e.toString();
       return response;
     }
   }
+
   static Future<ApiResponse> getBuyerRequest(String requestId) async {
     try {
       return ApiCaller.getRequestAuth(
@@ -550,7 +554,7 @@ class ApiCalls {
     }
   }
 
-   static Future<ApiResponse> verifyEmail({
+  static Future<ApiResponse> verifyEmail({
     required String email,
   }) async {
     try {
@@ -566,6 +570,7 @@ class ApiCalls {
       return response;
     }
   }
+
   static Future<ApiResponse> createBuyerRequest({
     required int serviceId,
     required int buyerRequestId,
@@ -591,7 +596,7 @@ class ApiCalls {
     }
   }
 
- static Future<ApiResponse> verifyFacebook({
+  static Future<ApiResponse> verifyFacebook({
     required String facebook,
   }) async {
     try {
@@ -609,6 +614,7 @@ class ApiCalls {
       return response;
     }
   }
+
   static Future<ApiResponse> getAllMyOffers({required int page}) async {
     try {
       var query = new Map<String, String>();
@@ -798,11 +804,11 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> getProductOrderDetails({required int orderId}) async {
+  static Future<ApiResponse> getProductOrderDetails(
+      {required int orderId}) async {
     try {
       return ApiCaller.getRequestAuth(
-          baseUrl + '/api/seller/order/products/$orderId',
-          _getEmptyHeaders());
+          baseUrl + '/api/seller/order/products/$orderId', _getEmptyHeaders());
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -870,4 +876,26 @@ class ApiCalls {
     }
   }
 
+  static Future<ApiResponse> getStates() async {
+    try {
+      return ApiCaller.getRequest(baseUrl + '/api/states', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getCities(String state) async {
+    try {
+      return ApiCaller.getRequest(
+          baseUrl + '/api/cities/$state', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/app_colors.dart';
 import 'package:ayikie_service/src/models/order.dart';
+import 'package:ayikie_service/src/models/reviewOrder.dart';
 import 'package:ayikie_service/src/models/user.dart';
 import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_service/src/ui/screens/notification_screen/notification_screen.dart';
@@ -8,6 +9,8 @@ import 'package:ayikie_service/src/ui/widget/custom_form_field.dart';
 import 'package:ayikie_service/src/ui/widget/primary_button.dart';
 import 'package:ayikie_service/src/ui/widget/progress_view.dart';
 import 'package:ayikie_service/src/utils/alerts.dart';
+import 'package:ayikie_service/src/utils/common.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -30,7 +33,9 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
   TextEditingController _messageController = TextEditingController();
 
   bool _isLoading = true;
+  bool _isReviews = false;
   late User customer;
+  late ReviewOrder reviewOrder;
 
   tapped(int step) {
     setState(() => _currentStep = step);
@@ -51,9 +56,9 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
   @override
   void initState() {
     super.initState();
-    if(widget.serviceOrder.status == 3){
+    if (widget.serviceOrder.status == 3) {
       _currentStep = 2;
-    }else{
+    } else {
       _currentStep = widget.serviceOrder.status;
     }
     _priceController.text = widget.serviceOrder.price.toString();
@@ -62,7 +67,8 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
   }
 
   void _getOrderCustomer() async {
-    await ApiCalls.getServiceOrder(widget.serviceOrder.orderId).then((response) {
+    await ApiCalls.getServiceOrder(widget.serviceOrder.orderId)
+        .then((response) {
       if (!mounted) {
         return;
       }
@@ -70,6 +76,11 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
         print(response.jsonBody);
         var data = response.jsonBody;
         customer = User.fromJson(data["customer"]);
+        List review = data["order_reviews"];
+        if (review.isNotEmpty) {
+          _isReviews = true;
+          reviewOrder = ReviewOrder.fromJson(data["order_reviews"][0]);
+        }
       } else {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
             title: "Oops!");
@@ -424,8 +435,8 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                       Spacer(),
                                       Flexible(
                                           child: CustomFormField(
-                                            isEnabled: true,
-                                            controller: _priceController,
+                                        isEnabled: true,
+                                        controller: _priceController,
                                         height: 35,
                                       )),
                                     ],
@@ -444,7 +455,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                       Spacer(),
                                       Flexible(
                                           child: CustomFormField(
-                                            isEnabled: true,
+                                        isEnabled: true,
                                         controller: _durationController,
                                         height: 35,
                                         hintText: '1 day',
@@ -554,7 +565,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                       Spacer(),
                                       Flexible(
                                           child: CustomFormField(
-                                            isEnabled: true,
+                                        isEnabled: true,
                                         controller: _priceController,
                                         height: 35,
                                         hintText: '\$25',
@@ -576,14 +587,14 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                       Flexible(
                                           child: CustomFormField(
                                         controller: _durationController,
-                                            isEnabled: true,
-                                            height: 35,
+                                        isEnabled: true,
+                                        height: 35,
                                         hintText: '1 day',
                                       )),
                                     ],
                                   ),
                                   SizedBox(
-                                    height: 10,
+                                    height: 20,
                                   ),
                                   Row(
                                     children: [
@@ -595,7 +606,8 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                       ),
                                       Spacer(),
                                       Text(
-                                        'Order Completed',
+                                        Common.getStatus(
+                                            status: widget.serviceOrder.status),
                                         style: TextStyle(
                                           fontSize: 12,
                                         ),
@@ -603,73 +615,103 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                     ],
                                   ),
                                   SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    'Order Photos',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w900),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Image.asset(
-                                        'asserts/images/black_guitar.jpg',
-                                        width: double.infinity,
-                                        height: 200,
-                                        fit: BoxFit.cover,
-                                      )),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    'Order Review',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w900),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    widget.serviceOrder.note
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    'Order Rating',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w900),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: RatingBar.builder(
-                                      wrapAlignment: WrapAlignment.start,
-                                      initialRating: 3,
-                                      minRating: 1,
-                                      direction: Axis.horizontal,
-                                      itemSize: 25,
-                                      allowHalfRating: true,
-                                      itemCount: 5,
-                                      itemPadding:
-                                          EdgeInsets.symmetric(horizontal: 4.0),
-                                      itemBuilder: (context, _) => Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
-                                      ),
-                                      onRatingUpdate: (rating) {
-                                        print(rating);
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(
                                     height: 20,
-                                  )
+                                  ),
+                                  widget.serviceOrder.status == 3 && _isReviews
+                                      ? Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Order Photo',
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w900),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Container(
+                                              width: 300,
+                                              height: 200,
+                                              child: CachedNetworkImage(
+                                                imageBuilder: (context,
+                                                        imageProvider) =>
+                                                    Container(
+                                                  decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                        image: imageProvider,
+                                                        fit: BoxFit.fitWidth,
+                                                        alignment:
+                                                            AlignmentDirectional
+                                                                .center),
+                                                  ),
+                                                ),
+                                                imageUrl:reviewOrder.image.getBannerUrl(),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Image.asset(
+                                                  'asserts/images/ayikie_logo.png',
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            Text(
+                                              'Order Review',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w900),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(reviewOrder.comment),
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            Text(
+                                              'Order Rating',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w900),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Container(
+                                              alignment: Alignment.centerLeft,
+                                              child: RatingBar.builder(
+                                                ignoreGestures: true,
+                                                wrapAlignment:
+                                                    WrapAlignment.start,
+                                                initialRating: reviewOrder.rate.toDouble(),
+                                                minRating: 1,
+                                                direction: Axis.horizontal,
+                                                itemSize: 25,
+                                                allowHalfRating: true,
+                                                itemCount: 5,
+                                                itemPadding:
+                                                    EdgeInsets.symmetric(
+                                                        horizontal: 4.0),
+                                                itemBuilder: (context, _) =>
+                                                    Icon(
+                                                  Icons.star,
+                                                  color: Colors.amber,
+                                                ),
+                                                onRatingUpdate: (rating) {
+                                                  print(rating);
+                                                },
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 20,
+                                            )
+                                          ],
+                                        )
+                                      : Container(),
                                 ],
                               ),
                               isActive: _currentStep >= 0,
@@ -688,20 +730,17 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
     );
   }
 
-  void onCommonButtonPress(){
-    _currentStep < 3
-        ? setState(() => _currentStep += 1)
-        : null;
+  void onCommonButtonPress() {
+    //_currentStep < 3 ? setState(() => _currentStep += 1) : null;
 
-    // TODO: Uncomment below and delete above
-    // switch(_currentStep){
-    //   case 0:
-    //     cancelOrder();
-    //     break;
-    //   case 1:
-    //     deleteOrder();
-    //     break;
-    // }
+    switch(_currentStep){
+      case 0:
+        cancelOrder();
+        break;
+      case 1:
+        deleteOrder();
+        break;
+    }
   }
 
   void acceptOrder() async {
@@ -714,7 +753,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
         return;
       }
       if (response.isSuccess) {
-        Alerts.showMessage(context, "Order Cancelled successfully.",
+        Alerts.showMessage(context, "Order Accepted Successfully.",
             title: "Success!",
             onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
                 context, '/ServiceScreen', (route) => false));
@@ -750,7 +789,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
     });
   }
 
-  void deleteOrder() async{
+  void deleteOrder() async {
     setState(() {
       _isLoading = true;
     });
@@ -762,9 +801,9 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
       }
       if (response.isSuccess) {
         Alerts.showMessage(context, "Order Deleted successfully.",
-            title: "Success!",onCloseCallback: ()=>    Navigator.pushNamedAndRemoveUntil(
-                context, '/ServiceScreen', (route) => false)
-        );
+            title: "Success!",
+            onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
+                context, '/ServiceScreen', (route) => false));
       } else {
         Alerts.showMessageForResponse(context, response);
       }
@@ -804,5 +843,4 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
     );
     await launchUrl(launchUri);
   }
-
 }

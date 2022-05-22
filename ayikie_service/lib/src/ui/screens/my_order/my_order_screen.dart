@@ -273,12 +273,14 @@ class ProductOrderTileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) {
-            return ProductOrderDetails(product: productOrder,);
-          }),
-        );
+      if(productOrder.status!=4){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return ProductOrderDetails(product: productOrder,);
+            }),
+          );
+        }
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),

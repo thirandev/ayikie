@@ -2,6 +2,8 @@ import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/models/DetailProductOrder.dart';
 import 'package:ayikie_users/src/models/productOrder.dart';
+import 'package:ayikie_users/src/models/reviewOrder.dart';
+import 'package:ayikie_users/src/models/user.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_users/src/ui/widget/progress_view.dart';
@@ -27,7 +29,14 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
   TextEditingController _priceController = TextEditingController();
   TextEditingController _durationController = TextEditingController();
   TextEditingController _messageController = TextEditingController();
+
   bool _isLoading = true;
+  bool isUploaded = false;
+  bool _isReviews = false;
+
+  late User customer;
+  late ReviewOrder reviewOrder;
+
   late DetailProductOrder detailProductOrder;
   int rate = 1;
 
@@ -55,7 +64,7 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
   }
 
   void getFullDetails() async {
-    await ApiCalls.getFullOrderDetails(orderId: widget.product.orderId)
+    await ApiCalls.getFullOrderDetails(orderId: widget.product.productId)
         .then((response) {
       if (!mounted) {
         return;
@@ -63,6 +72,28 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
       if (response.isSuccess) {
         var data = response.jsonBody;
         detailProductOrder = DetailProductOrder.fromJson(data);
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      getOrderReviewDetails();
+    });
+  }
+
+  void getOrderReviewDetails() async {
+    await ApiCalls.getProductOrderDetails(orderId: widget.product.orderId)
+        .then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        var data = response.jsonBody;
+        detailProductOrder.trackingNo = data["tracking_no"];
+        List review = data["order_reviews"];
+        if (review.isNotEmpty) {
+          _isReviews = true;
+          reviewOrder = ReviewOrder.fromJson(data["order_reviews"][0]);
+        }
       } else {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
             title: "Oops!");
@@ -394,52 +425,67 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   OrderDetails(order: detailProductOrder),
-                                  Text(
-                                    'Order Review',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w900),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at ',
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    'Order Rating',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w900),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: RatingBar.builder(
-                                      wrapAlignment: WrapAlignment.start,
-                                      initialRating: 3,
-                                      minRating: 1,
-                                      direction: Axis.horizontal,
-                                      itemSize: 25,
-                                      allowHalfRating: true,
-                                      itemCount: 5,
-                                      itemPadding:
-                                          EdgeInsets.symmetric(horizontal: 4.0),
-                                      itemBuilder: (context, _) => Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
+                                  widget.product.status == 3 && _isReviews
+                                      ? Column(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        height: 20,
                                       ),
-                                      onRatingUpdate: (rating) {
-                                        print(rating);
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
+                                      Text(
+                                        'Order Review',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w900),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(reviewOrder.comment),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        'Order Rating',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w900),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Container(
+                                        alignment: Alignment.centerLeft,
+                                        child: RatingBar.builder(
+                                          ignoreGestures: true,
+                                          wrapAlignment:
+                                          WrapAlignment.start,
+                                          initialRating: 3,
+                                          minRating: 1,
+                                          direction: Axis.horizontal,
+                                          itemSize: 25,
+                                          allowHalfRating: true,
+                                          itemCount: 5,
+                                          itemPadding:
+                                          EdgeInsets.symmetric(
+                                              horizontal: 4.0),
+                                          itemBuilder: (context, _) =>
+                                              Icon(
+                                                Icons.star,
+                                                color: Colors.amber,
+                                              ),
+                                          onRatingUpdate: (rating) {
+                                            print(rating);
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      )
+                                    ],
                                   )
+                                      : Container(),
                                 ],
                               ),
                               isActive: _currentStep >= 0,
@@ -465,7 +511,7 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
         deleteOrder();
         break;
       case 2:
-        reviewOrder();
+        reviewProductOrder();
         break;
     }
   }
@@ -481,7 +527,7 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
         return;
       }
       if (response.isSuccess) {
-        Alerts.showMessage(context, "Order Deleted sucessfully.",
+        Alerts.showMessage(context, "Order Deleted Successfully.",
             title: "Success!",
             onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
                 context, '/UserScreen', (route) => false));
@@ -494,7 +540,7 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
     });
   }
 
-  void reviewOrder() async {
+  void reviewProductOrder() async {
     String message = _messageController.text.trim();
 
     if (!Validations.validateString(message)) {
@@ -506,7 +552,7 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
       _isLoading = true;
     });
     ApiCalls.reviewProductOrder(
-            productOrderId: detailProductOrder.orderId,
+            productOrderId: widget.product.orderId,
             comment: message,
             rate: rate)
         .then((response) async {
@@ -514,7 +560,7 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
         return;
       }
       if (response.isSuccess) {
-        Alerts.showMessage(context, "Order Reviewed sucessfully.",
+        Alerts.showMessage(context, "Order Reviewed Successfully.",
             title: "Success!",
             onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
                 context, '/UserScreen', (route) => false));
@@ -612,16 +658,22 @@ class OrderDetails extends StatelessWidget {
           height: 10,
         ),
         Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Special note :',
               style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
             ),
             Spacer(),
-            Text(
-              order.note,
-              style: TextStyle(
-                fontSize: 12,
+            Expanded(
+              flex: 1,
+              child: Text(
+                order.note,
+                textAlign: TextAlign.end,
+                style: TextStyle(
+                  fontSize: 12,
+                ),
               ),
             ),
           ],

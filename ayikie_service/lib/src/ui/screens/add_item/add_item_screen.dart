@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/app_colors.dart';
 import 'package:ayikie_service/src/models/dropdown.dart';
+import 'package:ayikie_service/src/models/location.dart';
 import 'package:ayikie_service/src/ui/widget/custom_form_field.dart';
 import 'package:ayikie_service/src/ui/widget/image_source_dialog.dart';
 import 'package:ayikie_service/src/ui/widget/primary_button.dart';
@@ -33,16 +34,19 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
   List<Dropdown> productCategories = [];
   List<Dropdown> serviceSubCategories = [];
   List<Dropdown> productSubCategories = [];
+  List<Dropdown> statesDropdown = [];
+  List<Dropdown> city = [];
 
   late Dropdown selectedServiceCategory;
   late Dropdown selectedProductCategory;
   late Dropdown selectedSubServiceCategory;
   late Dropdown selectedSubProductCategory;
+  late Dropdown selectedState;
+  late Dropdown selectedCity;
 
   TextEditingController _titleController = TextEditingController();
   TextEditingController _shortDescriptionController = TextEditingController();
   TextEditingController _fullDescriptionController = TextEditingController();
-  TextEditingController _locationController = TextEditingController();
   TextEditingController _priceController = TextEditingController();
   TextEditingController _stockController = TextEditingController();
 
@@ -91,9 +95,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
             title: "Oops!");
       }
-      setState(() {
-        _isLoading = false;
-      });
+      _getStates();
     });
   }
 
@@ -136,10 +138,70 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
             title: "Oops!");
       }
+      _getStates();
+    });
+  }
+
+  void _getStates() async {
+    await ApiCalls.getStates().then((
+        response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        var data = response.jsonBody;
+        statesDropdown.clear();
+        int countId = 0;
+        for (var item in data) {
+          States states = States.fromJson(item);
+          Dropdown dropdown = Dropdown(id: countId,name: states.state);
+          countId++;
+          statesDropdown.add(dropdown);
+        }
+        selectedState = statesDropdown[0];
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      _getCities();
+    });
+  }
+
+  void _getCities() async {
+    await ApiCalls.getCities(selectedState.name).then((
+        response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        var data = response.jsonBody;
+        city.clear();
+        int countId = 0;
+        for (var item in data) {
+          Cities cityRes = Cities.fromJson(item);
+          Dropdown dropdown = Dropdown(id: countId,name: cityRes.city);
+          countId++;
+          city.add(dropdown);
+        }
+        selectedCity = city[0];
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
       setState(() {
         _isLoading = false;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _priceController.dispose();
+    _shortDescriptionController.dispose();
+    _fullDescriptionController.dispose();
+    _titleController.dispose();
+    _stockController.dispose();
   }
 
 
@@ -462,7 +524,9 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                     ),
                     icon: const Icon(Icons.keyboard_arrow_down),
                     onChanged: (Dropdown? newValue) {
-                      selectedSubServiceCategory = newValue!;
+                      setState(() {
+                        selectedSubServiceCategory = newValue!;
+                      });
                     },
                   ),
                 ),
@@ -495,7 +559,9 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                     ),
                     icon: const Icon(Icons.keyboard_arrow_down),
                     onChanged: (Dropdown? newValue) {
-                      selectedSubProductCategory = newValue!;
+                      setState(() {
+                        selectedSubProductCategory = newValue!;
+                      });
                     },
                   ),
                 ),
@@ -504,16 +570,91 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                 height: 10,
               ),
               Text(
-                'Location',
+                'State',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               ),
               SizedBox(
                 height: 10,
               ),
-              CustomFormField(
-                controller: _locationController,
-                hintText: 'Enter location here',
-                inputType: TextInputType.text,
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius:
+                  BorderRadius.all(Radius.circular(8)),
+                  border: Border.all(
+                      width: 1, //
+                      color: AppColors
+                          .greyLightColor //            <--- border width here
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: DropdownButton<Dropdown>(
+                    value: selectedState,
+                    isExpanded: true,
+                    iconEnabledColor: AppColors.primaryButtonColor,
+                    items: statesDropdown.map((Dropdown value) {
+                      return DropdownMenuItem<Dropdown>(
+                        value: value,
+                        child: Text(value.name),
+                      );
+                    }).toList(),
+                    underline: SizedBox(
+                      width: 120,
+                    ),
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    onChanged: (Dropdown? newValue) {
+                      setState(() {
+                        selectedState = newValue!;
+                        _isLoading = true;
+                      });
+                      _getCities();
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                'City',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius:
+                  BorderRadius.all(Radius.circular(8)),
+                  border: Border.all(
+                      width: 1, //
+                      color: AppColors
+                          .greyLightColor //            <--- border width here
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: DropdownButton<Dropdown>(
+                    value: selectedCity,
+                    isExpanded: true,
+                    iconEnabledColor: AppColors.primaryButtonColor,
+                    items: city.map((Dropdown value) {
+                      return DropdownMenuItem<Dropdown>(
+                        value: value,
+                        child: Text(value.name),
+                      );
+                    }).toList(),
+                    underline: SizedBox(
+                      width: 120,
+                    ),
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    onChanged: (Dropdown? newValue) {
+                      setState(() {
+                        selectedCity = newValue!;
+                      });
+                    },
+                  ),
+                ),
               ),
               SizedBox(
                 height: 10,
@@ -663,7 +804,6 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
     String title = _titleController.text.trim();
     String info = _shortDescriptionController.text.trim();
     String des = _fullDescriptionController.text.trim();
-    String loc = _locationController.text.trim();
     String price = _priceController.text.trim();
 
     if (!Validations.validateString(title)) {
@@ -676,10 +816,6 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
     }
     if (!Validations.validateString(des)) {
       Alerts.showMessage(context, "Enter your description");
-      return;
-    }
-    if (!Validations.validateString(loc)) {
-      Alerts.showMessage(context, "Enter your location");
       return;
     }
     if (!Validations.validateString(price)) {
@@ -698,7 +834,8 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
         title: title,
         introduction: info,
         description: des,
-        location: loc,
+        location: selectedCity.name,
+        state: selectedState.name,
         price: price,
         catId: selectedServiceCategory.id,
         subCatId: selectedSubServiceCategory.id,
@@ -726,7 +863,6 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
     String title = _titleController.text.trim();
     String info = _shortDescriptionController.text.trim();
     String des = _fullDescriptionController.text.trim();
-    String loc = _locationController.text.trim();
     String price = _priceController.text.trim();
     String stock = _stockController.text.trim();
 
@@ -740,10 +876,6 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
     }
     if (!Validations.validateString(des)) {
       Alerts.showMessage(context, "Enter your description");
-      return;
-    }
-    if (!Validations.validateString(loc)) {
-      Alerts.showMessage(context, "Enter your location");
       return;
     }
     if (!Validations.validateString(price)) {
@@ -766,7 +898,8 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
         title: title,
         introduction: info,
         description: des,
-        location: loc,
+        location: selectedCity.name,
+        state: selectedState.name,
         price: price,
         stock: stock,
         catId: selectedProductCategory.id,

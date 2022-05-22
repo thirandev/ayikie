@@ -21,6 +21,7 @@ class Comment {
         comment: json['comment'],
         rate: json['rate'],
         createdAt: json['created_at'],
-        user: User.fromJson(json['customer']));
+        user: User.fromJson(json['customer'])
+    );
   }
 }

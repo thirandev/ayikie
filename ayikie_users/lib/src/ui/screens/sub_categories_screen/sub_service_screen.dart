@@ -151,22 +151,14 @@ class _SubSeriveScreenState extends State<SubSeriveScreen> {
               height: MediaQuery.of(context).size.height,
               child: Container(
                 padding: EdgeInsets.only(left: 16, right: 16, top: 20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height - 100,
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          controller: _controller,
-                          scrollDirection: Axis.vertical,
-                          itemCount: subServices.length,
-                          itemBuilder: (BuildContext context, int index) =>
-                              SubCategoryWidget(
-                                  subService: subServices[index])),
-                    ),
-                  ],
-                ),
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    controller: _controller,
+                    scrollDirection: Axis.vertical,
+                    itemCount: subServices.length,
+                    itemBuilder: (BuildContext context, int index) =>
+                        SubCategoryWidget(
+                            subService: subServices[index])),
               ),
             ),
     );
