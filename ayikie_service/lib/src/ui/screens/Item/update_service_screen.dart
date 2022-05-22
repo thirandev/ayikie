@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/app_colors.dart';
 import 'package:ayikie_service/src/models/dropdown.dart';
+import 'package:ayikie_service/src/models/location.dart';
 import 'package:ayikie_service/src/models/service.dart';
 import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_service/src/ui/screens/notification_screen/notification_screen.dart';
@@ -18,7 +19,8 @@ import 'package:image_picker/image_picker.dart';
 
 class UpdateServiceScreen extends StatefulWidget {
   final Service service;
-  UpdateServiceScreen({Key? key,required this.service}) : super(key: key);
+
+  UpdateServiceScreen({Key? key, required this.service}) : super(key: key);
 
   @override
   _UpdateServiceScreenState createState() => _UpdateServiceScreenState();
@@ -30,26 +32,36 @@ class _UpdateServiceScreenState extends State<UpdateServiceScreen> {
   File? _servicePhoto;
   bool isUploaded = false;
 
+  String defaultState = "Bono";
+  String defaultCity = "Tain";
+  int defaultStateDropdown = 0;
+  bool isDefault = false;
+
   List<Dropdown> serviceCategories = [];
   List<Dropdown> serviceSubCategories = [];
+  List<Dropdown> statesDropdown = [];
+  List<Dropdown> city = [];
 
   late Dropdown selectedServiceCategory;
   late Dropdown selectedSubServiceCategory;
+  late Dropdown selectedState;
+  late Dropdown selectedCity;
 
   TextEditingController _titleController = TextEditingController();
   TextEditingController _shortDescriptionController = TextEditingController();
   TextEditingController _fullDescriptionController = TextEditingController();
-  TextEditingController _locationController = TextEditingController();
   TextEditingController _priceController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _getServiceCategory();
+    print("State"+widget.service.state);
+    defaultState = widget.service.state;
+    defaultCity = widget.service.location;
     _titleController.text = widget.service.name;
     _shortDescriptionController.text = widget.service.introduction;
     _fullDescriptionController.text = widget.service.description!;
-    _locationController.text = widget.service.location;
     _priceController.text = widget.service.price.toString();
   }
 
@@ -75,8 +87,8 @@ class _UpdateServiceScreenState extends State<UpdateServiceScreen> {
   }
 
   void _getSubServiceCategory(int categoryId) async {
-    await ApiCalls.getSubServicesDropdown(categoryId: categoryId).then((
-        response) {
+    await ApiCalls.getSubServicesDropdown(categoryId: categoryId)
+        .then((response) {
       if (!mounted) {
         return;
       }
@@ -92,10 +104,75 @@ class _UpdateServiceScreenState extends State<UpdateServiceScreen> {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
             title: "Oops!");
       }
+      _getStates();
+    });
+  }
+
+  void _getStates() async {
+    await ApiCalls.getStates().then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        var data = response.jsonBody;
+        statesDropdown.clear();
+        int countId = 0;
+        for (var item in data) {
+          States states = States.fromJson(item);
+          if (states.state == defaultState) {
+            defaultStateDropdown = countId;
+          }
+          Dropdown dropdown = Dropdown(id: countId, name: states.state);
+          countId++;
+          statesDropdown.add(dropdown);
+        }
+        selectedState = statesDropdown[defaultStateDropdown];
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      _getCities();
+    });
+  }
+
+  void _getCities() async {
+    await ApiCalls.getCities(selectedState.name).then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        var data = response.jsonBody;
+        city.clear();
+        int countId = 0;
+        int defaultCityDropdown = 0;
+        for (var item in data) {
+          Cities cityRes = Cities.fromJson(item);
+          if (cityRes.city == defaultCity) {
+            defaultCityDropdown = countId;
+            isDefault = true;
+          }
+          Dropdown dropdown = Dropdown(id: countId, name: cityRes.city);
+          countId++;
+          city.add(dropdown);
+        }
+        selectedCity = city[isDefault ? defaultCityDropdown : 0];
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
       setState(() {
         _isLoading = false;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _priceController.dispose();
+    _shortDescriptionController.dispose();
+    _fullDescriptionController.dispose();
+    _titleController.dispose();
   }
 
   @override
@@ -175,273 +252,350 @@ class _UpdateServiceScreenState extends State<UpdateServiceScreen> {
             padding: EdgeInsets.only(left: 16, right: 16, top: 20),
             child: _isLoading
                 ? Center(
-              child: ProgressView(),
-            ) : Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  'Item Image',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                isUploaded ?
-                Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: AppColors.textFieldBackground,
-                    ),
-                    width: double.infinity,
-                    height: 75,
-                    child: Column(
-                      crossAxisAlignment:
-                      CrossAxisAlignment.center,
-                      mainAxisAlignment:
-                      MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                        ),
-                        Text('Uploaded Successfully'),
-                      ],
-                    )
-                ) :
-                GestureDetector(
-                  onTap: _updatePicture,
-                  child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: AppColors.textFieldBackground,
+                    child: ProgressView(),
+                  )
+                : Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 10,
                       ),
-                      width: double.infinity,
-                      height: 75,
-                      child: Column(
-                        crossAxisAlignment:
-                        CrossAxisAlignment.center,
-                        mainAxisAlignment:
-                        MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.camera_alt_outlined),
-                          Text('Photos'),
-                        ],
-                      )
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  'Title',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                CustomFormField(
-                  controller: _titleController,
-                  hintText: 'Enter title here',
-                  inputType: TextInputType.text,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  'Short Description',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                CustomFormField(
-                  controller: _shortDescriptionController,
-                  hintText: 'Enter short description here',
-                  inputType: TextInputType.text,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  'Full Description',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  height: 100,
-                  child: TextField(
-                    maxLines: 9,
-                    controller: _fullDescriptionController,
-                    decoration: InputDecoration(
-                        hintText: "Enter your description here",
-                        fillColor: AppColors.transparent,
-                        filled: true,
-                        hintStyle:
-                        TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(
-                            color: AppColors.greyLightColor,
-                            width: 1.0,
+                      Text(
+                        'Item Image',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      isUploaded
+                          ? Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: AppColors.textFieldBackground,
+                              ),
+                              width: double.infinity,
+                              height: 75,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.check_circle,
+                                    color: Colors.green,
+                                  ),
+                                  Text('Uploaded Successfully'),
+                                ],
+                              ))
+                          : GestureDetector(
+                              onTap: _updatePicture,
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: AppColors.textFieldBackground,
+                                  ),
+                                  width: double.infinity,
+                                  height: 75,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.camera_alt_outlined),
+                                      Text('Photos'),
+                                    ],
+                                  )),
+                            ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Title',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      CustomFormField(
+                        controller: _titleController,
+                        hintText: 'Enter title here',
+                        inputType: TextInputType.text,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Short Description',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      CustomFormField(
+                        controller: _shortDescriptionController,
+                        hintText: 'Enter short description here',
+                        inputType: TextInputType.text,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Full Description',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 100,
+                        child: TextField(
+                          maxLines: 9,
+                          controller: _fullDescriptionController,
+                          decoration: InputDecoration(
+                              hintText: "Enter your description here",
+                              fillColor: AppColors.transparent,
+                              filled: true,
+                              hintStyle: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.w500),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                borderSide: BorderSide(
+                                  color: AppColors.greyLightColor,
+                                  width: 1.0,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                borderSide: BorderSide(
+                                    color: AppColors.greyLightColor,
+                                    width: 1.5),
+                              ),
+                              contentPadding: const EdgeInsets.only(
+                                left: 15,
+                                top: 30,
+                              )),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Category',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          border: Border.all(
+                              width: 1, //
+                              color: AppColors
+                                  .greyLightColor //            <--- border width here
+                              ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: DropdownButton<Dropdown>(
+                            value: selectedServiceCategory,
+                            isExpanded: true,
+                            iconEnabledColor: AppColors.primaryButtonColor,
+                            items: serviceCategories.map((Dropdown value) {
+                              return DropdownMenuItem<Dropdown>(
+                                value: value,
+                                child: Text(value.name),
+                              );
+                            }).toList(),
+                            underline: SizedBox(
+                              width: 120,
+                            ),
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            onChanged: (Dropdown? newValue) {
+                              setState(() {
+                                selectedServiceCategory = newValue!;
+                                _isLoading = true;
+                              });
+                              _getSubServiceCategory(
+                                  selectedServiceCategory.id);
+                            },
                           ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(
-                              color: AppColors.greyLightColor, width: 1.5),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Sub Category',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          border: Border.all(
+                              width: 1, //
+                              color: AppColors
+                                  .greyLightColor //            <--- border width here
+                              ),
                         ),
-                        contentPadding: const EdgeInsets.only(
-                          left: 15,
-                          top: 30,
-                        )),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  'Category',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius:
-                    BorderRadius.all(Radius.circular(8)),
-                    border: Border.all(
-                        width: 1, //
-                        color: AppColors
-                            .greyLightColor //            <--- border width here
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: DropdownButton<Dropdown>(
-                      value: selectedServiceCategory,
-                      isExpanded: true,
-                      iconEnabledColor: AppColors.primaryButtonColor,
-                      items: serviceCategories.map((Dropdown value) {
-                        return DropdownMenuItem<Dropdown>(
-                          value: value,
-                          child: Text(value.name),
-                        );
-                      }).toList(),
-                      underline: SizedBox(
-                        width: 120,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: DropdownButton<Dropdown>(
+                            value: selectedSubServiceCategory,
+                            isExpanded: true,
+                            iconEnabledColor: AppColors.primaryButtonColor,
+                            items: serviceSubCategories.map((Dropdown value) {
+                              return DropdownMenuItem<Dropdown>(
+                                value: value,
+                                child: Text(value.name),
+                              );
+                            }).toList(),
+                            underline: SizedBox(
+                              width: 120,
+                            ),
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            onChanged: (Dropdown? newValue) {
+                              setState(() {
+                                selectedSubServiceCategory = newValue!;
+                              });
+                            },
+                          ),
+                        ),
                       ),
-                      icon: const Icon(Icons.keyboard_arrow_down),
-                      onChanged: (Dropdown? newValue) {
-                        setState(() {
-                          selectedServiceCategory = newValue!;
-                          _isLoading = true;
-                        });
-                        _getSubServiceCategory(selectedServiceCategory.id);
-                      },
-                    ),
-                  ),
-                ) ,
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  'Sub Category',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius:
-                    BorderRadius.all(Radius.circular(8)),
-                    border: Border.all(
-                        width: 1, //
-                        color: AppColors
-                            .greyLightColor //            <--- border width here
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: DropdownButton<Dropdown>(
-                      value: selectedSubServiceCategory,
-                      isExpanded: true,
-                      iconEnabledColor: AppColors.primaryButtonColor,
-                      items: serviceSubCategories.map((Dropdown value) {
-                        return DropdownMenuItem<Dropdown>(
-                          value: value,
-                          child: Text(value.name),
-                        );
-                      }).toList(),
-                      underline: SizedBox(
-                        width: 120,
+                      SizedBox(
+                        height: 10,
                       ),
-                      icon: const Icon(Icons.keyboard_arrow_down),
-                      onChanged: (Dropdown? newValue) {
-                        selectedSubServiceCategory = newValue!;
-                      },
-                    ),
+                      Text(
+                        'State',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          border: Border.all(
+                              width: 1, //
+                              color: AppColors
+                                  .greyLightColor //            <--- border width here
+                              ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: DropdownButton<Dropdown>(
+                            value: selectedState,
+                            isExpanded: true,
+                            iconEnabledColor: AppColors.primaryButtonColor,
+                            items: statesDropdown.map((Dropdown value) {
+                              return DropdownMenuItem<Dropdown>(
+                                value: value,
+                                child: Text(value.name),
+                              );
+                            }).toList(),
+                            underline: SizedBox(
+                              width: 120,
+                            ),
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            onChanged: (Dropdown? newValue) {
+                              setState(() {
+                                selectedState = newValue!;
+                                _isLoading = true;
+                              });
+                              _getCities();
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'City',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          border: Border.all(
+                              width: 1, //
+                              color: AppColors
+                                  .greyLightColor //            <--- border width here
+                              ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: DropdownButton<Dropdown>(
+                            value: selectedCity,
+                            isExpanded: true,
+                            iconEnabledColor: AppColors.primaryButtonColor,
+                            items: city.map((Dropdown value) {
+                              return DropdownMenuItem<Dropdown>(
+                                value: value,
+                                child: Text(value.name),
+                              );
+                            }).toList(),
+                            underline: SizedBox(
+                              width: 120,
+                            ),
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            onChanged: (Dropdown? newValue) {
+                              setState(() {
+                                selectedCity = newValue!;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Starting Price',
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w700),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          CustomFormField(
+                            controller: _priceController,
+                            hintText: 'Enter starting price here',
+                            inputType: TextInputType.number,
+                            suffixEnable: false,
+                            suffixIcon:
+                                Icon(Icons.keyboard_arrow_down_outlined),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      PrimaryButton(
+                          text: 'Update Service',
+                          clickCallback: _updateService),
+                      SizedBox(
+                        height: 50,
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  'Location',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                CustomFormField(
-                  controller: _locationController,
-                  hintText: 'Enter location here',
-                  inputType: TextInputType.text,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Starting Price',
-                      style: TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.w700),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    CustomFormField(
-                      controller: _priceController,
-                      hintText: 'Enter starting price here',
-                      inputType: TextInputType.number,
-                      suffixEnable: false,
-                      suffixIcon: Icon(Icons.keyboard_arrow_down_outlined),
-                    ),
-                  ],
-                ),
-
-                SizedBox(
-                  height: 20,
-                ),
-
-                PrimaryButton(
-                    text: 'Update Service',
-                    clickCallback: _updateService
-                ),
-                SizedBox(
-                  height: 50,
-                ),
-              ],
-            ),
           ),
         ),
       ),
@@ -493,7 +647,6 @@ class _UpdateServiceScreenState extends State<UpdateServiceScreen> {
     String title = _titleController.text.trim();
     String info = _shortDescriptionController.text.trim();
     String des = _fullDescriptionController.text.trim();
-    String loc = _locationController.text.trim();
     String price = _priceController.text.trim();
 
     if (!Validations.validateString(title)) {
@@ -508,10 +661,6 @@ class _UpdateServiceScreenState extends State<UpdateServiceScreen> {
       Alerts.showMessage(context, "Enter your description");
       return;
     }
-    if (!Validations.validateString(loc)) {
-      Alerts.showMessage(context, "Enter your location");
-      return;
-    }
     if (!Validations.validateString(price)) {
       Alerts.showMessage(context, "Enter your price");
       return;
@@ -521,26 +670,26 @@ class _UpdateServiceScreenState extends State<UpdateServiceScreen> {
       _isLoading = true;
     });
     ApiCalls.updateService(
-        serviceId:widget.service.id,
-        title: title,
-        introduction: info,
-        description: des,
-        location: loc,
-        price: price,
-        catId: selectedServiceCategory.id,
-        subCatId: selectedSubServiceCategory.id,
-        picture: _servicePhoto)
+            serviceId: widget.service.id,
+            title: title,
+            introduction: info,
+            description: des,
+            location: selectedCity.name,
+            state: selectedState.name,
+            price: price,
+            catId: selectedServiceCategory.id,
+            subCatId: selectedSubServiceCategory.id,
+            picture: _servicePhoto)
         .then((response) async {
       if (!mounted) {
         return;
       }
       if (response.isSuccess) {
         Alerts.showMessage(context, "Service updated successfully.",
-            title: "Success!", onCloseCallback: ()=> Navigator.pushNamedAndRemoveUntil(
-                context, '/ServiceScreen', (route) => false)
-        );
+            title: "Success!",
+            onCloseCallback: () => Navigator.pushNamedAndRemoveUntil(
+                context, '/ServiceScreen', (route) => false));
       } else {
-
         Alerts.showMessageForResponse(context, response);
         setState(() {
           _isLoading = false;

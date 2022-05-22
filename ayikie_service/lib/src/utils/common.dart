@@ -26,7 +26,7 @@ class Common{
         statusString = "Accepted";
         break;
       case 2:
-        statusString = "Ongoing";
+        statusString = "Delivered";
         break;
       case 3:
         statusString = "Completed";

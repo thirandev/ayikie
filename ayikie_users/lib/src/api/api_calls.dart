@@ -578,6 +578,19 @@ class ApiCalls {
     }
   }
 
+  static Future<ApiResponse> getProductOrderDetails({required int orderId}) async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/customer/order/products/item/$orderId',
+          _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
   static Future<ApiResponse> deleteProductOrder(int orderId) async {
     try {
       return ApiCaller.requestAuth(

@@ -1,11 +1,7 @@
-import 'dart:io';
-
 import 'package:ayikie_service/src/api/api_calls.dart';
 import 'package:ayikie_service/src/app_colors.dart';
 import 'package:ayikie_service/src/models/order.dart';
 import 'package:ayikie_service/src/models/productOrder.dart';
-import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
-import 'package:ayikie_service/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_service/src/ui/screens/my_order/product_order_details.dart';
 import 'package:ayikie_service/src/ui/screens/my_order/service_order_details.dart';
 import 'package:ayikie_service/src/ui/widget/progress_view.dart';
@@ -277,12 +273,14 @@ class ProductOrderTileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) {
-            return ProductOrderDetails(product: productOrder,);
-          }),
-        );
+      if(productOrder.status!=4){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return ProductOrderDetails(product: productOrder,);
+            }),
+          );
+        }
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),

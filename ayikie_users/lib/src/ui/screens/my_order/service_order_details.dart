@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/models/order.dart';
+import 'package:ayikie_users/src/models/reviewOrder.dart';
+import 'package:ayikie_users/src/models/user.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
 import 'package:ayikie_users/src/ui/widget/custom_form_field.dart';
@@ -10,6 +12,7 @@ import 'package:ayikie_users/src/ui/widget/progress_view.dart';
 import 'package:ayikie_users/src/utils/alerts.dart';
 import 'package:ayikie_users/src/utils/common.dart';
 import 'package:ayikie_users/src/utils/validations.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -30,15 +33,21 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
   StepperType stepperType = StepperType.vertical;
   TextEditingController _messageController = TextEditingController();
 
-  bool _isLoading = false;
   int rate = 1;
   late File _reviewPhoto;
+
+  bool _isLoading = true;
   bool isUploaded = false;
+  bool _isReviews = false;
+
+  late User customer;
+  late ReviewOrder reviewOrder;
 
   @override
   void initState() {
     super.initState();
-    _currentStep = widget.serviceOrder.status;
+    _currentStep = 3;
+    _getOrderCustomer();
   }
 
   tapped(int step) {
@@ -55,6 +64,30 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
 
   onTapCancelOrder() {
     _currentStep < 3 ? setState(() => _currentStep += 1) : null;
+  }
+
+  void _getOrderCustomer() async {
+    await ApiCalls.getServiceOrder(widget.serviceOrder.orderId)
+        .then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        print(response.jsonBody);
+        var data = response.jsonBody;
+        List review = data["order_reviews"];
+        if (review.isNotEmpty) {
+          _isReviews = true;
+          reviewOrder = ReviewOrder.fromJson(data["order_reviews"][0]);
+        }
+      } else {
+        Alerts.showMessage(context, "Something went wrong. Please try again.",
+            title: "Oops!");
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   @override
@@ -381,7 +414,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                       minRating: 1,
                                       direction: Axis.horizontal,
                                       itemSize: 25,
-                                      allowHalfRating: true,
+                                      allowHalfRating: false,
                                       itemCount: 5,
                                       itemPadding:
                                           EdgeInsets.symmetric(horizontal: 4.0),
@@ -455,75 +488,103 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                                     ],
                                   ),
                                   SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    'Order Photos',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w900),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Image.asset(
-                                        'asserts/images/black_guitar.jpg',
-                                        width: double.infinity,
-                                        height: 200,
-                                        fit: BoxFit.cover,
-                                      )),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    'Order Review',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w900),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at ',
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    'Order Rating',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w900),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: RatingBar.builder(
-                                      wrapAlignment: WrapAlignment.start,
-                                      initialRating: 3,
-                                      minRating: 1,
-                                      direction: Axis.horizontal,
-                                      itemSize: 25,
-                                      allowHalfRating: true,
-                                      itemCount: 5,
-                                      itemPadding:
-                                          EdgeInsets.symmetric(horizontal: 4.0),
-                                      itemBuilder: (context, _) => Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
-                                      ),
-                                      onRatingUpdate: (rating) {
-                                        setState(() {
-                                          rate = rating.round();
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(
                                     height: 20,
+                                  ),
+                                  widget.serviceOrder.status == 3 && _isReviews
+                                      ? Column(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Order Photo',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w900),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Container(
+                                        width: 300,
+                                        height: 200,
+                                        child: CachedNetworkImage(
+                                          imageBuilder: (context,
+                                              imageProvider) =>
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                      image: imageProvider,
+                                                      fit: BoxFit.fitWidth,
+                                                      alignment:
+                                                      AlignmentDirectional
+                                                          .center),
+                                                ),
+                                              ),
+                                          imageUrl:reviewOrder.image.getBannerUrl(),
+                                          errorWidget:
+                                              (context, url, error) =>
+                                              Image.asset(
+                                                'asserts/images/ayikie_logo.png',
+                                                fit: BoxFit.cover,
+                                              ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        'Order Review',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w900),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(reviewOrder.comment),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        'Order Rating',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w900),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Container(
+                                        alignment: Alignment.centerLeft,
+                                        child: RatingBar.builder(
+                                          ignoreGestures: true,
+                                          wrapAlignment:
+                                          WrapAlignment.start,
+                                          initialRating: reviewOrder.rate.toDouble(),
+                                          minRating: 1,
+                                          direction: Axis.horizontal,
+                                          itemSize: 25,
+                                          allowHalfRating: true,
+                                          itemCount: 5,
+                                          itemPadding:
+                                          EdgeInsets.symmetric(
+                                              horizontal: 4.0),
+                                          itemBuilder: (context, _) =>
+                                              Icon(
+                                                Icons.star,
+                                                color: Colors.amber,
+                                              ),
+                                          onRatingUpdate: (rating) {
+                                            print(rating);
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      )
+                                    ],
                                   )
+                                      : Container(),
                                 ],
                               ),
                               isActive: _currentStep >= 0,
@@ -552,7 +613,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
         cancelOrder();
         break;
       case 2:
-        reviewOrder();
+        reviewProductOrder();
     }
   }
 
@@ -643,7 +704,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
     });
   }
 
-  void reviewOrder() async{
+  void reviewProductOrder() async{
 
     String message = _messageController.text.trim();
 

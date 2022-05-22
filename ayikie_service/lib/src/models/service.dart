@@ -10,6 +10,7 @@ class Service extends Item {
   int subCategoryId;
   String introduction;
   String location;
+  String state;
   double price;
   List<Comment>? comment;
 
@@ -22,6 +23,7 @@ class Service extends Item {
       required this.categoryId,
       required this.subCategoryId,
       required this.location,
+      required this.state,
       required this.price,
       this.comment,
       Images? image})
@@ -38,6 +40,7 @@ class Service extends Item {
       categoryId: json['category_id'],
       subCategoryId: json['sub_category_id'],
       location: json['location'] == null ? "" : json['location'],
+      state: json['state'] == null ? "" : json['state'],
       price: double.parse(json['price']),
       image: Images.fromJson(json['images']),
       comment: (json['comments'] == null ? [] : json['comments'] as List)

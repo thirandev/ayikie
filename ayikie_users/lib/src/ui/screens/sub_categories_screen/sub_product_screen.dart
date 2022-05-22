@@ -150,31 +150,21 @@ class _SubProductScreenState extends State<SubProductScreen> {
           ? Center(
               child: ProgressView(),
             )
-          : SafeArea(
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: Container(
-                  padding: EdgeInsets.only(left: 16, right: 16, top: 20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height - 100,
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            controller: _controller,
-                            scrollDirection: Axis.vertical,
-                            itemCount: subProducts.length,
-                            itemBuilder: (BuildContext context, int index) =>
-                                SubCategoryWidget(
-                                  subProduct: subProducts[index],
-                                )),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+          : SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: Container(
+              padding: EdgeInsets.only(left: 16, right: 16, top: 20),
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  controller: _controller,
+                  scrollDirection: Axis.vertical,
+                  itemCount: subProducts.length,
+                  itemBuilder: (BuildContext context, int index) =>
+                      SubCategoryWidget(
+                        subProduct: subProducts[index],
+                      )),
             ),
+          ),
     );
   }
 }

@@ -151,21 +151,13 @@ class _AllServicescreenState extends State<AllServicescreen> {
               height: MediaQuery.of(context).size.height,
               child: Container(
                 padding: EdgeInsets.only(left: 16, right: 16, top: 20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height - 100,
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          controller: _controller,
-                          itemCount: services.length,
-                          itemBuilder: (BuildContext context, int index) =>
-                              SubCategoryWidget(service: services[index])),
-                    ),
-                  ],
-                ),
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    controller: _controller,
+                    itemCount: services.length,
+                    itemBuilder: (BuildContext context, int index) =>
+                        SubCategoryWidget(service: services[index])),
               ),
             ),
     );

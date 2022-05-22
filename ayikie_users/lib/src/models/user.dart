@@ -53,7 +53,7 @@ class User {
       verifyid: json['verify_id'],
       verifyEmail: json['verify_email'],
       role: json['role'],
-      imgUrl: Images.fromJson(json['images']),
+      imgUrl: json['images'] != null ? Images.fromJson(json['images']):Images(id: 1, imageName: "https://ayikie.cyberelysium.app/img/logo/logo.png"),
     );
   }
 }
