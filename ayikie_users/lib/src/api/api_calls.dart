@@ -426,6 +426,7 @@ class ApiCalls {
     required double price,
     required String location,
     required String message,
+    
   }) async {
     try {
       var payload = new Map<String, dynamic>();
@@ -434,6 +435,7 @@ class ApiCalls {
       payload['duration'] = duration;
       payload['location'] = location;
       payload['note'] = message;
+      payload['payment_method'] = 1;
 
       return ApiCaller.jsonRequestAuth(baseUrl + '/api/customer/order/service',
           _getEmptyHeaders(), jsonEncode(payload));
@@ -880,4 +882,41 @@ class ApiCalls {
       return response;
     }
   }
+
+   static Future<ApiResponse> getPrivacyPolicies() async {
+    try {
+      return ApiCaller.getRequest(
+          baseUrl + '/api/privacy', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getToc() async {
+    try {
+      return ApiCaller.getRequest(
+          baseUrl + '/api/toc/user', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getCookies() async {
+    try {
+      return ApiCaller.getRequest(
+          baseUrl + '/api/cookie', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
 }

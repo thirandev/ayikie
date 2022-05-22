@@ -35,6 +35,7 @@ class CustomFormField extends StatelessWidget {
   final List<TextInputFormatter>? textInputFormatter;
   final Function? onChange;
   final TextCapitalization? textCapitalization;
+  final Function(CountryCode)? countryCode;
 
   const CustomFormField({
     Key? key,
@@ -68,6 +69,7 @@ class CustomFormField extends StatelessWidget {
     this.onChange,
     this.textCapitalization,
     this.prefixText,
+    this.countryCode,
   }) : super(key: key);
 
   @override
@@ -152,11 +154,12 @@ class CustomFormField extends StatelessWidget {
                         ),
                         child: CountryCodePicker(
                           
-                          onChanged: (CountryCode countryCode) {
-                            // this.phoneNumber = countryCode.toString();
-                            print("New Country selected: " +
-                                countryCode.toString());
-                          },
+                          onChanged: countryCode,
+                          //  (CountryCode countryCode) {
+                          //   countryCode = countryCode;
+                          //   print("New Country selected: " +
+                          //       countryCode.toString());
+                          // },
                           // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
                           initialSelection: 'GH',
                          // favorite: ['+39', 'FR'],

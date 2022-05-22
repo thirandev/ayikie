@@ -1,31 +1,142 @@
-import 'dart:io';
-
-import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:math';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mime/mime.dart';
+import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 
-class ChatScreen extends StatefulWidget {
-  const ChatScreen({
-    Key? key,
-    required this.room,
-  }) : super(key: key);
-  final types.Room room;
+class ChatPage extends StatefulWidget {
+  const ChatPage({Key? key}) : super(key: key);
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  State<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
-  bool _isAttachmentUploading = false;
+class _ChatPageState extends State<ChatPage> {
+  String randomString() {
+    final random = Random.secure();
+    final values = List<int>.generate(16, (i) => random.nextInt(255));
+    return base64UrlEncode(values);
+  }
+
+  List<types.Message> _messages = [];
+  final _user = const types.User(id: '06c33e8b-e835-4736-80f4-63f44b66666d');
+
+  int _page = 0;
+  // ...
+  @override
+  void initState() {
+    super.initState();
+    _handleEndReached();
+  }
+
+  Future<void> _handleEndReached() async {
+    final uri = Uri.parse(
+      'https://api.instantwebtools.net/v1/passenger?page=$_page&size=20',
+    );
+    final response = await http.get(uri);
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final data = json['data'] as List<dynamic>;
+    final messages = data
+        .map(
+          (e) => types.TextMessage(
+            author: _user,
+            id: e['_id'] as String,
+            text: e['name'] as String,
+          ),
+        )
+        .toList();
+    setState(() {
+      _messages = [..._messages, ...messages];
+      _page = _page + 1;
+    });
+  }
+
+  void _addMessage(types.Message message) {
+    setState(() {
+      _messages.insert(0, message);
+    });
+  }
+
+  void _handleSendPressed(types.PartialText message) {
+    final textMessage = types.TextMessage(
+      author: _user,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+      id: randomString(),
+      text: message.text,
+    );
+
+    _addMessage(textMessage);
+  }
+
+  void _handleImageSelection() async {
+    final result = await ImagePicker().pickImage(
+      imageQuality: 70,
+      maxWidth: 1440,
+      source: ImageSource.gallery,
+    );
+
+    if (result != null) {
+      final bytes = await result.readAsBytes();
+      final image = await decodeImageFromList(bytes);
+
+      final message = types.ImageMessage(
+        author: _user,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        height: image.height.toDouble(),
+        id: randomString(),
+        name: result.name,
+        size: bytes.length,
+        uri: result.path,
+        width: image.width.toDouble(),
+      );
+
+      _addMessage(message);
+    }
+  }
+
+  void _handleFileSelection() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.any,
+    );
+
+    if (result != null && result.files.single.path != null) {
+      final message = types.FileMessage(
+        author: _user,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        id: randomString(),
+        name: result.files.single.name,
+        size: result.files.single.size,
+        uri: result.files.single.path!,
+      );
+
+      _addMessage(message);
+    }
+  }
+
+  void _handleMessageTap(BuildContext context, types.Message message) async {
+    if (message is types.FileMessage) {
+      await OpenFile.open(message.uri);
+    }
+  }
+
+  void _handlePreviewDataFetched(
+    types.TextMessage message,
+    types.PreviewData previewData,
+  ) {
+    final index = _messages.indexWhere((element) => element.id == message.id);
+    final updatedMessage = _messages[index].copyWith(previewData: previewData);
+
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      setState(() {
+        _messages[index] = updatedMessage;
+      });
+    });
+  }
 
   void _handleAtachmentPressed() {
     showModalBottomSheet<void>(
@@ -72,148 +183,26 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void _handleFileSelection() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
-    );
-
-    if (result != null && result.files.single.path != null) {
-      _setAttachmentUploading(true);
-      final name = result.files.single.name;
-      final filePath = result.files.single.path!;
-      final file = File(filePath);
-
-      try {
-        final reference = FirebaseStorage.instance.ref(name);
-        await reference.putFile(file);
-        final uri = await reference.getDownloadURL();
-
-        final message = types.PartialFile(
-          mimeType: lookupMimeType(filePath),
-          name: name,
-          size: result.files.single.size,
-          uri: uri,
-        );
-
-        FirebaseChatCore.instance.sendMessage(message, widget.room.id);
-        _setAttachmentUploading(false);
-      } finally {
-        _setAttachmentUploading(false);
-      }
-    }
-  }
-
-  void _handleImageSelection() async {
-    final result = await ImagePicker().pickImage(
-      imageQuality: 70,
-      maxWidth: 1440,
-      source: ImageSource.gallery,
-    );
-
-    if (result != null) {
-      _setAttachmentUploading(true);
-      final file = File(result.path);
-      final size = file.lengthSync();
-      final bytes = await result.readAsBytes();
-      final image = await decodeImageFromList(bytes);
-      final name = result.name;
-
-      try {
-        final reference = FirebaseStorage.instance.ref(name);
-        await reference.putFile(file);
-        final uri = await reference.getDownloadURL();
-
-        final message = types.PartialImage(
-          height: image.height.toDouble(),
-          name: name,
-          size: size,
-          uri: uri,
-          width: image.width.toDouble(),
-        );
-
-        FirebaseChatCore.instance.sendMessage(
-          message,
-          widget.room.id,
-        );
-        _setAttachmentUploading(false);
-      } finally {
-        _setAttachmentUploading(false);
-      }
-    }
-  }
-
-  void _handleMessageTap(types.Message message) async {
-    if (message is types.FileMessage) {
-      var localPath = message.uri;
-
-      if (message.uri.startsWith('http')) {
-        final client = http.Client();
-        final request = await client.get(Uri.parse(message.uri));
-        final bytes = request.bodyBytes;
-        final documentsDir = (await getApplicationDocumentsDirectory()).path;
-        localPath = '$documentsDir/${message.name}';
-
-        if (!File(localPath).existsSync()) {
-          final file = File(localPath);
-          await file.writeAsBytes(bytes);
-        }
-      }
-
-      await OpenFile.open(localPath);
-    }
-  }
-
-  void _handlePreviewDataFetched(
-    types.TextMessage message,
-    types.PreviewData previewData,
-  ) {
-    final updatedMessage = message.copyWith(previewData: previewData);
-
-    FirebaseChatCore.instance.updateMessage(updatedMessage, widget.room.id);
-  }
-
-  void _handleSendPressed(types.PartialText message) {
-    FirebaseChatCore.instance.sendMessage(
-      message,
-      widget.room.id,
-    );
-  }
-
-  void _setAttachmentUploading(bool uploading) {
-    setState(() {
-      _isAttachmentUploading = uploading;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        title: const Text('Chat'),
-      ),
-      body: StreamBuilder<types.Room>(
-        initialData: widget.room,
-        stream: FirebaseChatCore.instance.room(widget.room.id),
-        builder: (context, snapshot) {
-          return StreamBuilder<List<types.Message>>(
-            initialData: const [],
-            stream: FirebaseChatCore.instance.messages(snapshot.data!),
-            builder: (context, snapshot) {
-              return Chat(
-                isAttachmentUploading: _isAttachmentUploading,
-                messages: snapshot.data ?? [],
-                onAttachmentPressed: _handleAtachmentPressed,
-                onMessageTap: _handleMessageTap,
-                onPreviewDataFetched: _handlePreviewDataFetched,
-                onSendPressed: _handleSendPressed,
-                user: types.User(
-                  id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
-                ),
-              );
-            },
-          );
-        },
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(),
+        body: Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+          
+          child: Chat(
+            messages: _messages,
+            onAttachmentPressed: _handleAtachmentPressed,
+            onPreviewDataFetched: _handlePreviewDataFetched,
+            onSendPressed: _handleSendPressed,
+            onEndReached: _handleEndReached,
+            showUserAvatars: true,
+            showUserNames: true,
+            user: _user,
+            dateHeaderThreshold: 1,
+          ),
+        ),
       ),
     );
   }

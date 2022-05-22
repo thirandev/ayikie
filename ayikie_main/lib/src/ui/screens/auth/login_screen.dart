@@ -24,6 +24,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   int _value = 1;
+  String? currentCountryCode;
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _phoneNoController = TextEditingController();
   bool hidePassword = true;
@@ -320,6 +321,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: _phoneNoController,
                     hintText: 'enter your phone no',
                     inputType: TextInputType.number,
+                   // countryCode: _countryCodeChange,
                     prefixEnable: true,
                   ),
                   Padding(
@@ -511,8 +513,21 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  void _countryCodeChange(CountryCode countryCode){
+    String phoneNumber =  countryCode.toString();
+    setState(() {
+      currentCountryCode = phoneNumber;
+    });
+    
+    print('***************');
+    print(phoneNumber);
+  }
+
   void onLogInPress() {
+   // String phone = currentCountryCode! + _phoneNoController.text.trim();
     String phone = _phoneNoController.text.trim();
+    print(phone);
+
     String password = _passwordController.text.trim();
     String deviceName = Platform.isAndroid ? "android" : "ios";
 

@@ -134,25 +134,30 @@ class _SearchScreenState extends State<SearchScreen> {
             child: Column(
               children: [
                 Container(
+                  height: 50,
+                  width: double.infinity,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: AppColors.primaryButtonColor)),
                   child: ListTile(
-                      title: new TextField(
-                        controller: controller,
-                        decoration: new InputDecoration(
-                          hintText: 'Search',
-                          border: InputBorder.none,
-                        ),
-                        keyboardType: TextInputType.text,
-                        onChanged: (key) {
-                          _search(key);
-                        },
+                    title: new TextField(
+                      controller: controller,
+                      decoration: new InputDecoration(
+                        hintText: 'Search',
+                        border: InputBorder.none,
                       ),
-                      trailing: Icon(
-                        Icons.search,
-                        color: AppColors.primaryButtonColor,
-                      )),
+                      keyboardType: TextInputType.text,
+                      onChanged: (key) {
+                        _search(key);
+                      },
+                    ),
+                    trailing: Icon(
+                      Icons.search,
+                      color: AppColors.primaryButtonColor,
+                    ),
+                    contentPadding:
+                        EdgeInsets.only(left: 10, right: 10, bottom: 20),
+                  ),
                 ),
                 SizedBox(height: 10),
                 _isLoading

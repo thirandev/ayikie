@@ -1,32 +1,31 @@
-import 'package:ayikie_service/src/api/api_calls.dart';
-import 'package:ayikie_service/src/app_colors.dart';
-import 'package:ayikie_service/src/ui/screens/drawer_screen/drawer_screen.dart';
-import 'package:ayikie_service/src/ui/screens/notification_screen/notification_screen.dart';
-import 'package:ayikie_service/src/ui/widget/progress_view.dart';
-
+import 'package:ayikie_users/src/api/api_calls.dart';
+import 'package:ayikie_users/src/app_colors.dart';
+import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
+import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
+import 'package:ayikie_users/src/ui/widget/progress_view.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
-class PrivacyPoliciesScreen extends StatefulWidget {
-  const PrivacyPoliciesScreen({Key? key}) : super(key: key);
+class TermsAndConditionScreen extends StatefulWidget {
+  const TermsAndConditionScreen({Key? key}) : super(key: key);
 
   @override
-  _PrivacyPoliciesScreenState createState() => _PrivacyPoliciesScreenState();
+  _TermsAndConditionScreenState createState() => _TermsAndConditionScreenState();
 }
 
-class _PrivacyPoliciesScreenState extends State<PrivacyPoliciesScreen> {
+class _TermsAndConditionScreenState extends State<TermsAndConditionScreen> {
   String? htmlData;
   bool _isLoading = true;
 
   @override
   void initState() {
-    _getPrivacyPolicies();
+    _getToc();
     super.initState();
   }
 
-  void _getPrivacyPolicies() async {
-    await ApiCalls.getPrivacyPolicies().then((response) {
+  void _getToc() async {
+    await ApiCalls.getToc().then((response) {
       if (!mounted) {
         return;
       }
@@ -50,8 +49,9 @@ class _PrivacyPoliciesScreenState extends State<PrivacyPoliciesScreen> {
         backgroundColor: AppColors.white,
         elevation: 0,
         title: Text(
-          'Privacy Policies',
-          style: TextStyle(color: Colors.black),
+          'Terms and Conditions',
+          
+          style: TextStyle(color: Colors.black,fontSize: 18),
         ),
         leading: Container(
           width: 24,
@@ -119,7 +119,7 @@ class _PrivacyPoliciesScreenState extends State<PrivacyPoliciesScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Privacy Policy Document',
+                  'Terms and Conditions Document',
                   textAlign: TextAlign.start,
                   style: TextStyle(
                       color: Colors.black,

@@ -28,8 +28,6 @@ class _ServicesHomeScreenState extends State<ServicesHomeScreen> {
   bool _isLoading = true;
   bool _isNoProduct = true;
 
-
-
   @override
   void initState() {
     super.initState();

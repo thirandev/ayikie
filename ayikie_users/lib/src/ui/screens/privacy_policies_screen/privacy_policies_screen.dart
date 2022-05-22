@@ -1,17 +1,45 @@
+import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
 import 'package:ayikie_users/src/ui/screens/drawer_screen/drawer_screen.dart';
 import 'package:ayikie_users/src/ui/screens/notification_screen/notification_screen.dart';
+import 'package:ayikie_users/src/ui/widget/progress_view.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class PrivacyPoliciesScreen extends StatefulWidget {
   const PrivacyPoliciesScreen({Key? key}) : super(key: key);
 
   @override
-  _NotificationScreenState createState() => _NotificationScreenState();
+  _PrivacyPoliciesScreenState createState() => _PrivacyPoliciesScreenState();
 }
 
-class _NotificationScreenState extends State<PrivacyPoliciesScreen> {
+class _PrivacyPoliciesScreenState extends State<PrivacyPoliciesScreen> {
+  String? htmlData;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    _getPrivacyPolicies();
+    super.initState();
+  }
+
+  void _getPrivacyPolicies() async {
+    await ApiCalls.getPrivacyPolicies().then((response) {
+      if (!mounted) {
+        return;
+      }
+      if (response.isSuccess) {
+        print(response.jsonBody);
+        var data = response.jsonBody;
+        htmlData = data;
+      } else {}
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,35 +109,38 @@ class _NotificationScreenState extends State<PrivacyPoliciesScreen> {
         ],
       ),
       endDrawer: DrawerScreen(),
-      body:  SafeArea(
-            child: SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.only(left: 16, right: 16, top: 10),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Privacy Policy Document',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 20),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Contrary to popular bel ief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Contrary to popular bel ief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Contrary to popular bel ief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45',
-                      textAlign: TextAlign.justify,
-                    ),
-                  ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.only(left: 16, right: 16, top: 10),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Privacy Policy Document',
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 20),
                 ),
-              ),
+                SizedBox(
+                  height: 10,
+                ),
+                _isLoading
+                    ? Center(
+                      //heightFactor: MediaQuery.of(context).size.height/4,
+                        child: ProgressView(),
+                      )
+                    : Html(
+                        data: htmlData,
+                      ),
+              ],
             ),
           ),
-      
+        ),
+      ),
     );
   }
 }

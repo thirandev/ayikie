@@ -8,25 +8,25 @@ import 'package:ayikie_service/src/ui/widget/progress_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
-class PrivacyPoliciesScreen extends StatefulWidget {
-  const PrivacyPoliciesScreen({Key? key}) : super(key: key);
+class CookiesPoliciesScreen extends StatefulWidget {
+  const CookiesPoliciesScreen({Key? key}) : super(key: key);
 
   @override
-  _PrivacyPoliciesScreenState createState() => _PrivacyPoliciesScreenState();
+  _CookiesPoliciesScreenState createState() => _CookiesPoliciesScreenState();
 }
 
-class _PrivacyPoliciesScreenState extends State<PrivacyPoliciesScreen> {
+class _CookiesPoliciesScreenState extends State<CookiesPoliciesScreen> {
   String? htmlData;
   bool _isLoading = true;
 
   @override
   void initState() {
-    _getPrivacyPolicies();
+    _getCookies();
     super.initState();
   }
 
-  void _getPrivacyPolicies() async {
-    await ApiCalls.getPrivacyPolicies().then((response) {
+  void _getCookies() async {
+    await ApiCalls.getCookies().then((response) {
       if (!mounted) {
         return;
       }
@@ -50,7 +50,7 @@ class _PrivacyPoliciesScreenState extends State<PrivacyPoliciesScreen> {
         backgroundColor: AppColors.white,
         elevation: 0,
         title: Text(
-          'Privacy Policies',
+          'Cookies Policies',
           style: TextStyle(color: Colors.black),
         ),
         leading: Container(
@@ -119,7 +119,7 @@ class _PrivacyPoliciesScreenState extends State<PrivacyPoliciesScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Privacy Policy Document',
+                  'Cookies Policy Document',
                   textAlign: TextAlign.start,
                   style: TextStyle(
                       color: Colors.black,

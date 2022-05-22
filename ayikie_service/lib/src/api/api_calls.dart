@@ -870,4 +870,42 @@ class ApiCalls {
     }
   }
 
+
+
+   static Future<ApiResponse> getPrivacyPolicies() async {
+    try {
+      return ApiCaller.getRequest(
+          baseUrl + '/api/privacy', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getToc() async {
+    try {
+      return ApiCaller.getRequest(
+          baseUrl + '/api/toc/professional', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getCookies() async {
+    try {
+      return ApiCaller.getRequest(
+          baseUrl + '/api/cookie', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
 }

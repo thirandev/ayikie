@@ -55,7 +55,7 @@ class _ProductOrderDetailsState extends State<ProductOrderDetails> {
   }
 
   void getFullDetails() async {
-    await ApiCalls.getFullOrderDetails(orderId: widget.product.orderId)
+    await ApiCalls.getFullOrderDetails(orderId: widget.product.productId)
         .then((response) {
       if (!mounted) {
         return;

@@ -8,6 +8,7 @@ import 'package:ayikie_main/src/ui/widgets/primary_button.dart';
 import 'package:ayikie_main/src/utils/alerts.dart';
 import 'package:ayikie_main/src/utils/settings.dart';
 import 'package:ayikie_main/src/utils/validations.dart';
+import 'package:country_code_picker/country_code.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -32,6 +33,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool hideConfirmPassword = true;
   bool hidePassword = true;
   bool _isUser = true;
+  String? currentCountryCode;
 
   @override
   void initState() {
@@ -407,7 +409,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   controller: _phoneNoController,
                   hintText: 'enter your phone no',
                   inputType: TextInputType.number,
-
+                  countryCode: _countryCodeChange,
                   prefixEnable: true,
                 ),
                 Padding(
@@ -602,11 +604,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ));
   }
 
+  void _countryCodeChange(CountryCode countryCode) {
+    String phoneNumber = countryCode.toString();
+    setState(() {
+      currentCountryCode = phoneNumber;
+    });
+
+    print('***************');
+    print(phoneNumber);
+  }
+
   void onRegisterPress() {
     String firstName = _firstNameController.text.trim();
     String lastName = _lastNameController.text.trim();
     String email = _emailAddressController.text.trim();
-    String phone = _phoneNoController.text.trim();
+    String phone = currentCountryCode! + _phoneNoController.text.trim();
     String password = _passwordController.text.trim();
     String confirmPassword = _confirmPasswordController.text.trim();
     String deviceName = Platform.isAndroid ? "android" : "ios";
@@ -617,12 +629,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       return;
     }
 
-     if (!Validations.validateString(lastName)) {
+    if (!Validations.validateString(lastName)) {
       Alerts.showMessage(context, "Enter your last name");
       return;
     }
 
-     if (!Validations.validateEmail(email)) {
+    if (!Validations.validateEmail(email)) {
       Alerts.showMessage(context, "Enter your email here");
       return;
     }
@@ -655,8 +667,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         return;
       }
       if (response.isSuccess) {
-       // await Settings.setAccessToken(response.jsonBody);
-       var token = response.jsonBody['token'];
+        // await Settings.setAccessToken(response.jsonBody);
+        var token = response.jsonBody['token'];
         await Settings.setAccessToken(token);
         User user = User.fromJson(response.jsonBody['user']);
         await Settings.setUserRole(user.role);
