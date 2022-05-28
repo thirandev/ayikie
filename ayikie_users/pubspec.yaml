@@ -43,10 +43,7 @@ dependencies:
   open_file: ^3.2.0
   flutter_link_previewer: ^2.4.0
   geocoding: ^2.0.4
-  firebase_storage: ^10.2.5
-  firebase_core: ^1.11.0
-  mime: ^1.0.1
-  firebase_auth: ^3.3.5
+
 
 dev_dependencies:
   flutter_test:
