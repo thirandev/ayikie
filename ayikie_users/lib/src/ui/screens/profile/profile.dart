@@ -84,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     GestureDetector(
-                      onTap:_updateProfilePicture,
+                      onTap: _updateProfilePicture,
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -94,19 +94,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         width: 100,
                         height: 100,
                         child: CachedNetworkImage(
-                          imageBuilder: (context, imageProvider) =>
-                              Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: AppColors.primaryButtonColor),
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.cover,
-                                      alignment:
-                                      AlignmentDirectional.topCenter),
-                                ),
-                              ),
-                          imageUrl:_user.imgUrl.getBannerUrl(),
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: AppColors.primaryButtonColor),
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                  alignment: AlignmentDirectional.topCenter),
+                            ),
+                          ),
+                          imageUrl: _user.imgUrl.getBannerUrl(),
                           errorWidget: (context, url, error) => Icon(
                             Icons.account_circle_sharp,
                             size: 100,
@@ -162,7 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     CustomFormField(
                       isEnabled: _isEditable,
                       controller: _addressController,
-                      hintText: 'Enter your full name',
+                      hintText: 'Enter your address',
                       inputType: TextInputType.text,
                     ),
                     Container(
@@ -176,11 +175,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     CustomFormField(
-                      isEnabled: _isEditable,
+                      isEnabled: false,
                       controller: _phoneNumberController,
                       hintText: 'Enter your phone number',
                       inputType: TextInputType.phone,
-                      prefixEnable: true,
                     ),
                     SizedBox(
                       height: 30,
@@ -244,7 +242,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         _user = user;
       });
-
     } else {
       Alerts.showMessageForResponse(context, responseUpload);
     }
@@ -252,7 +249,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _isLoading = false;
     });
   }
-
 
   void onBtnClick() {
     if (!_isEditable) {
@@ -282,8 +278,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
         if (response.isSuccess) {
           Alerts.showMessage(
-              context, "Profile updated sucessfully.",
-              title: "Success!",);
+            context,
+            "Profile updated sucessfully.",
+            title: "Success!",
+          );
         } else {
           Alerts.showMessageForResponse(context, response);
           setState(() {

@@ -47,7 +47,8 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _shortDescriptionController = TextEditingController();
   TextEditingController _fullDescriptionController = TextEditingController();
-  TextEditingController _priceController = TextEditingController();
+  TextEditingController _fixedPriceController = TextEditingController();
+  TextEditingController _hourlyPriceController = TextEditingController();
   TextEditingController _stockController = TextEditingController();
 
   @override
@@ -197,7 +198,8 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
   @override
   void dispose() {
     super.dispose();
-    _priceController.dispose();
+    _fixedPriceController.dispose();
+    _hourlyPriceController.dispose();
     _shortDescriptionController.dispose();
     _fullDescriptionController.dispose();
     _titleController.dispose();
@@ -349,6 +351,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
               CustomFormField(
                 controller: _titleController,
                 hintText: 'Enter title here',
+                maxLength: 20,
                 inputType: TextInputType.text,
               ),
               SizedBox(
@@ -365,6 +368,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                 controller: _shortDescriptionController,
                 hintText: 'Enter short description here',
                 inputType: TextInputType.text,
+                maxLength: 50,
               ),
               SizedBox(
                 height: 10,
@@ -690,7 +694,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                     height: 10,
                   ),
                   CustomFormField(
-                    controller: _priceController,
+                    controller: _fixedPriceController,
                     hintText: 'Enter price here',
                     inputType: TextInputType.number,
                     suffixEnable: false,
@@ -702,7 +706,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Starting Price',
+                    'Fixed Price for Service',
                     style: TextStyle(
                         fontSize: 14, fontWeight: FontWeight.w700),
                   ),
@@ -710,8 +714,26 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                     height: 10,
                   ),
                   CustomFormField(
-                    controller: _priceController,
-                    hintText: 'Enter starting price here',
+                    controller: _fixedPriceController,
+                    hintText: 'Enter fixed price here',
+                    inputType: TextInputType.number,
+                    suffixEnable: false,
+                    suffixIcon: Icon(Icons.keyboard_arrow_down_outlined),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    'Hourly Price for Service',
+                    style: TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  CustomFormField(
+                    controller: _hourlyPriceController,
+                    hintText: 'Enter hourly price here',
                     inputType: TextInputType.number,
                     suffixEnable: false,
                     suffixIcon: Icon(Icons.keyboard_arrow_down_outlined),
@@ -804,7 +826,8 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
     String title = _titleController.text.trim();
     String info = _shortDescriptionController.text.trim();
     String des = _fullDescriptionController.text.trim();
-    String price = _priceController.text.trim();
+    String fixedPrice = _fixedPriceController.text.trim();
+    String hourlyPrice = _hourlyPriceController.text.trim();
 
     if (!Validations.validateString(title)) {
       Alerts.showMessage(context, "Enter your title");
@@ -818,8 +841,12 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
       Alerts.showMessage(context, "Enter your description");
       return;
     }
-    if (!Validations.validateString(price)) {
-      Alerts.showMessage(context, "Enter your price");
+    if (!Validations.validateString(fixedPrice)) {
+      Alerts.showMessage(context, "Enter your fixed price");
+      return;
+    }
+    if (!Validations.validateString(hourlyPrice)) {
+      Alerts.showMessage(context, "Enter your hourly price");
       return;
     }
     if (!_checkBoxValue) {
@@ -836,7 +863,8 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
         description: des,
         location: selectedCity.name,
         state: selectedState.name,
-        price: price,
+        price: hourlyPrice,
+        fixedPrice: fixedPrice,
         catId: selectedServiceCategory.id,
         subCatId: selectedSubServiceCategory.id,
         picture: _servicePhoto)
@@ -863,7 +891,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
     String title = _titleController.text.trim();
     String info = _shortDescriptionController.text.trim();
     String des = _fullDescriptionController.text.trim();
-    String price = _priceController.text.trim();
+    String price = _fixedPriceController.text.trim();
     String stock = _stockController.text.trim();
 
     if (!Validations.validateString(title)) {

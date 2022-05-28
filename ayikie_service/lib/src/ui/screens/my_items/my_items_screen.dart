@@ -78,6 +78,7 @@ class _MyItemsScreenState extends State<MyItemsScreen> {
         for (var item in data) {
           Service service = Service.fromJson(item);
           popularServices.add(service);
+          
         }
       } else {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
@@ -106,6 +107,7 @@ class _MyItemsScreenState extends State<MyItemsScreen> {
         for (var item in data) {
           Product popular = Product.fromJson(item);
           popularProducts.add(popular);
+          
         }
       } else {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
@@ -355,6 +357,7 @@ class PopularServiceWidget extends StatelessWidget {
           context,
           MaterialPageRoute(builder: (context) {
             return ServiceScreen(serviceId: popularService.id,);
+          
           }),
         );
       },

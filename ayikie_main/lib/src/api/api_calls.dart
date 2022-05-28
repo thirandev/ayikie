@@ -61,7 +61,8 @@ class ApiCalls {
         required String phone,
         required String password,
         required int userRole,
-        required String deviceName
+        required String deviceName,
+        required String firebase_id,
       }) async{
     try{
       var payload = new Map<String, dynamic>();
@@ -73,6 +74,7 @@ class ApiCalls {
       payload['password_confirmation'] = password;
       payload['role'] = userRole;
       payload['device_name'] = deviceName;
+      payload['firebase_id'] = firebase_id;
       return ApiCaller.jsonRequest(
           baseUrl + '/api/register', _getEmptyHeaders(), jsonEncode(payload));
     }catch(e){
@@ -98,7 +100,7 @@ class ApiCalls {
   static Future<ApiResponse> refreshToken() async {
     try {
       return ApiCaller.getRequestAuth(
-          baseUrl + '/api/user/refresh',getCommonHeaders());
+          baseUrl + '/api/user/refresh',getCommonHeaders(),);
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -116,7 +118,7 @@ class ApiCalls {
       var payload = new Map<String, dynamic>();
       payload['otp'] = otp;
       return ApiCaller.jsonRequest(
-          baseUrl + '/api/verify/otp', _getEmptyHeaders(), jsonEncode(payload));
+          baseUrl + '/api/verify/otp', _getEmptyHeaders(),jsonEncode(payload));
     }catch(e){
       ApiResponse response = ApiResponse();
       response.isSuccess = false;

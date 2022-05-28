@@ -107,7 +107,19 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                         EdgeInsets.only(left: 16, right: 16, top: 20),
                         child: SizedBox(
                           height: 300,
-                          child: ListView.builder(
+                          child:serviceOrders.isEmpty? Center(
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset('asserts/images/empty.png',
+                              scale: 5,),
+                              SizedBox(height: 10,),
+                              Text('No Orders Here',style: TextStyle(fontWeight: FontWeight.w700,fontSize:20))
+                                ],
+                              ),
+                            ),
+                          ): ListView.builder(
                               shrinkWrap: true,
                               scrollDirection: Axis.vertical,
                               itemCount: serviceOrders.length,
@@ -126,7 +138,19 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                         EdgeInsets.only(left: 16, right: 16, top: 20),
                         child: SizedBox(
                           height: 300,
-                          child: ListView.builder(
+                          child: productOrders.isEmpty? Center(
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset('asserts/images/empty.png',
+                              scale: 5,),
+                              SizedBox(height: 10,),
+                              Text('No Orders Here',style: TextStyle(fontWeight: FontWeight.w700,fontSize:20))
+                                ],
+                              ),
+                            ),
+                          ): ListView.builder(
                               shrinkWrap: true,
                               scrollDirection: Axis.vertical,
                               itemCount: productOrders.length,

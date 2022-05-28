@@ -223,263 +223,316 @@ class _ServicesHomeScreenState extends State<ServicesHomeScreen> {
                           SizedBox(
                             height: 20,
                           ),
-                          _isNoProduct
-                              ? SizedBox(
-                                  height: MediaQuery.of(context).size.height,
-                                  child: ListView.builder(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.vertical,
-                                      itemCount: services.length > 10
-                                          ? 10
-                                          : services.length,
-                                      itemBuilder: (BuildContext context,
-                                              int index) =>
-                                          GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(builder: (context) {
-                                                  return ServiceScreen(serviceId: services[index].id);
-                                                }),
-                                              );
-                                            },
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 8.0, bottom: 8.0),
-                                              child: Container(
-                                                height: 120,
-                                                decoration: BoxDecoration(
-                                                    color: AppColors
-                                                        .textFieldBackground,
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(8))),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Container(
-                                                      height: 120,
-                                                      width:
-                                                          (MediaQuery.of(context)
-                                                                      .size
-                                                                      .width -
-                                                                  40) /
-                                                              3,
-                                                      child: ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                          bottomLeft:
-                                                              Radius.circular(8),
-                                                          topLeft:
-                                                              Radius.circular(8),
-                                                        ),
-                                                        child: CachedNetworkImage(
-                                                          imageBuilder: (context,
-                                                                  imageProvider) =>
-                                                              Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              shape: BoxShape
-                                                                  .rectangle,
-                                                              image: DecorationImage(
-                                                                  image:
-                                                                      imageProvider,
-                                                                  fit: BoxFit
-                                                                      .scaleDown,
-                                                                  alignment:
-                                                                      AlignmentDirectional
-                                                                          .center),
-                                                            ),
-                                                          ),
-                                                          imageUrl:
-                                                              services[index]
-                                                                  .image!
-                                                                  .getBannerUrl(),
-                                                          errorWidget: (context,
-                                                                  url, error) =>
-                                                              Image.asset(
-                                                            'asserts/images/ayikie_logo.png',
-                                                            fit: BoxFit.fitHeight,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: Container(
-                                                        width: (MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width -
-                                                                56) *
-                                                            1.8 /
-                                                            3,
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceEvenly,
-                                                          children: [
-                                                            Text(
-                                                              services[index]
-                                                                  .name,
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w900),
-                                                            ),
-                                                            Text(services[index]
-                                                                .introduction),
-                                                            Text(
-                                                              '\$${services[index].price}',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w900),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          )),
+                          products.isEmpty && services.isEmpty
+                              ? Center(
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          'asserts/images/empty.png',
+                                          scale: 5,
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text('No Items Here',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 20))
+                                      ],
+                                    ),
+                                  ),
                                 )
-                              : SizedBox(
-                                  height: 300,
-                                  child: ListView.builder(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.vertical,
-                                      itemCount: products.length > 10
-                                          ? 10
-                                          : products.length,
-                                      itemBuilder: (BuildContext context,
-                                              int index) =>
-                                          GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(builder: (context) {
-                                                  return ProductScreen(productId: products[index].id);
-                                                }),
-                                              );
-                                            },
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 8.0, bottom: 8.0),
-                                              child: Container(
-                                                height: 120,
-                                                decoration: BoxDecoration(
-                                                    color: AppColors
-                                                        .textFieldBackground,
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(8))),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Container(
-                                                      height: 120,
-                                                      width:
-                                                          (MediaQuery.of(context)
+                              : _isNoProduct
+                                  ? SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height,
+                                      child: ListView.builder(
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.vertical,
+                                          itemCount: services.length > 10
+                                              ? 10
+                                              : services.length,
+                                          itemBuilder: (BuildContext context,
+                                                  int index) =>
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) {
+                                                      return ServiceScreen(
+                                                          serviceId:
+                                                              services[index]
+                                                                  .id);
+                                                    }),
+                                                  );
+                                                },
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 8.0,
+                                                          bottom: 8.0),
+                                                  child: Container(
+                                                    height: 120,
+                                                    decoration: BoxDecoration(
+                                                        color: AppColors
+                                                            .textFieldBackground,
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    8))),
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          height: 120,
+                                                          width: (MediaQuery.of(
+                                                                          context)
                                                                       .size
                                                                       .width -
                                                                   40) /
                                                               3,
-                                                      child: ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                          bottomLeft:
-                                                              Radius.circular(8),
-                                                          topLeft:
-                                                              Radius.circular(8),
-                                                        ),
-                                                        child: CachedNetworkImage(
-                                                          imageBuilder: (context,
-                                                                  imageProvider) =>
-                                                              Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              shape: BoxShape
-                                                                  .rectangle,
-                                                              image: DecorationImage(
-                                                                  image:
-                                                                      imageProvider,
-                                                                  fit: BoxFit
-                                                                      .scaleDown,
-                                                                  alignment:
-                                                                      AlignmentDirectional
-                                                                          .center),
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              bottomLeft: Radius
+                                                                  .circular(8),
+                                                              topLeft: Radius
+                                                                  .circular(8),
                                                             ),
-                                                          ),
-                                                          imageUrl:
-                                                              products[index]
+                                                            child:
+                                                                CachedNetworkImage(
+                                                              imageBuilder:
+                                                                  (context,
+                                                                          imageProvider) =>
+                                                                      Container(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .rectangle,
+                                                                  image: DecorationImage(
+                                                                      image:
+                                                                          imageProvider,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      alignment:
+                                                                          AlignmentDirectional
+                                                                              .center),
+                                                                ),
+                                                              ),
+                                                              imageUrl: services[
+                                                                      index]
                                                                   .image!
                                                                   .getBannerUrl(),
-                                                          errorWidget: (context,
-                                                                  url, error) =>
-                                                              Image.asset(
-                                                            'asserts/images/ayikie_logo.png',
-                                                            fit: BoxFit.fitHeight,
+                                                              errorWidget: (context,
+                                                                      url,
+                                                                      error) =>
+                                                                  Image.asset(
+                                                                'asserts/images/ayikie_logo.png',
+                                                                fit: BoxFit
+                                                                    .fitHeight,
+                                                              ),
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Container(
+                                                            width: (MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width -
+                                                                    56) *
+                                                                1.8 /
+                                                                3,
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceEvenly,
+                                                              children: [
+                                                                Text(
+                                                                  services[
+                                                                          index]
+                                                                      .name,
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w900),
+                                                                ),
+                                                                Text(services[
+                                                                        index]
+                                                                    .introduction),
+                                                                Text(
+                                                                  '\$${services[index].price}',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w900),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
                                                     ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: Container(
-                                                        width: (MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width -
-                                                                56) *
-                                                            1.8 /
-                                                            3,
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceEvenly,
-                                                          children: [
-                                                            Text(
-                                                              products[index]
-                                                                  .name,
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w900),
-                                                            ),
-                                                            Text(products[index]
-                                                                .introduction),
-                                                            Text(
-                                                              '\$${products[index].price}',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w900),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
+                                                  ),
                                                 ),
-                                              ),
-                                            ),
-                                          )),
-                                ),
+                                              )),
+                                    )
+                                  : SizedBox(
+                                      height: 300,
+                                      child: ListView.builder(
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.vertical,
+                                          itemCount: products.length > 10
+                                              ? 10
+                                              : products.length,
+                                          itemBuilder: (BuildContext context,
+                                                  int index) =>
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) {
+                                                      return ProductScreen(
+                                                          productId:
+                                                              products[index]
+                                                                  .id);
+                                                    }),
+                                                  );
+                                                },
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 8.0,
+                                                          bottom: 8.0),
+                                                  child: Container(
+                                                    height: 120,
+                                                    decoration: BoxDecoration(
+                                                        color: AppColors
+                                                            .textFieldBackground,
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    8))),
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          height: 120,
+                                                          width: (MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width -
+                                                                  40) /
+                                                              3,
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              bottomLeft: Radius
+                                                                  .circular(8),
+                                                              topLeft: Radius
+                                                                  .circular(8),
+                                                            ),
+                                                            child:
+                                                                CachedNetworkImage(
+                                                              imageBuilder:
+                                                                  (context,
+                                                                          imageProvider) =>
+                                                                      Container(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .rectangle,
+                                                                  image: DecorationImage(
+                                                                      image:
+                                                                          imageProvider,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      alignment:
+                                                                          AlignmentDirectional
+                                                                              .center),
+                                                                ),
+                                                              ),
+                                                              imageUrl: products[
+                                                                      index]
+                                                                  .image!
+                                                                  .getBannerUrl(),
+                                                              errorWidget: (context,
+                                                                      url,
+                                                                      error) =>
+                                                                  Image.asset(
+                                                                'asserts/images/ayikie_logo.png',
+                                                                fit: BoxFit
+                                                                    .fitHeight,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Container(
+                                                            width: (MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width -
+                                                                    56) *
+                                                                1.8 /
+                                                                3,
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceEvenly,
+                                                              children: [
+                                                                Text(
+                                                                  products[
+                                                                          index]
+                                                                      .name,
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w900),
+                                                                ),
+                                                                Text(products[
+                                                                        index]
+                                                                    .introduction),
+                                                                Text(
+                                                                  '\$${products[index].price}',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w900),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              )),
+                                    ),
                           SizedBox(
                             height: 20,
                           )

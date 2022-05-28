@@ -12,6 +12,8 @@ import 'package:ayikie_main/src/utils/validations.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 //import 'package:intl_phone_field/intl_phone_field.dart';
 
@@ -28,6 +30,15 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _phoneNoController = TextEditingController();
   bool hidePassword = true;
+  bool _isGoogleLoged = false;
+  GoogleSignInAccount? googleSignInAccount;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  Map? facebookUserData;
+  String? socialUserName;
+  String? socialUserPhotourl;
+  String? socialUserId;
+  String? socialUserEmail;
+  String? socialUserServerAuthCode;
 
   @override
   Widget build(BuildContext context) {
@@ -321,7 +332,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: _phoneNoController,
                     hintText: 'enter your phone no',
                     inputType: TextInputType.number,
-                   // countryCode: _countryCodeChange,
+                    countryCode: _countryCodeChange,
                     prefixEnable: true,
                   ),
                   Padding(
@@ -405,7 +416,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          facebookSignIn();
+                        },
                         child: Container(
                             height: 40,
                             width: 40,
@@ -424,8 +437,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       MaterialButton(
                         onPressed: () {
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, '/ServiceScreen', (route) => false);
+                          googleSignIn();
                         },
                         textColor: Colors.white,
                         child: Container(
@@ -513,19 +525,19 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _countryCodeChange(CountryCode countryCode){
-    String phoneNumber =  countryCode.toString();
+  void _countryCodeChange(CountryCode countryCode) {
+    String phoneNumber = countryCode.toString();
     setState(() {
       currentCountryCode = phoneNumber;
     });
-    
+
     print('***************');
     print(phoneNumber);
   }
 
   void onLogInPress() {
-   // String phone = currentCountryCode! + _phoneNoController.text.trim();
-    String phone = _phoneNoController.text.trim();
+    String phone = currentCountryCode! + _phoneNoController.text.trim();
+    // String phone = _phoneNoController.text.trim();
     print(phone);
 
     String password = _passwordController.text.trim();
@@ -561,5 +573,33 @@ class _LoginScreenState extends State<LoginScreen> {
         Alerts.showMessageForResponse(context, response);
       }
     });
+  }
+
+  void googleSignIn() {
+    _googleSignIn.signIn().then((value) {
+      setState(() {
+        socialUserName = googleSignInAccount!.displayName;
+        socialUserPhotourl = googleSignInAccount!.photoUrl;
+        socialUserEmail = googleSignInAccount!.email;
+        socialUserId = googleSignInAccount!.id;
+        socialUserServerAuthCode = googleSignInAccount!.serverAuthCode;
+      });
+    });
+  }
+
+  void facebookSignIn() async {
+    final LoginResult result = await FacebookAuth.instance.login(
+      permissions: ['public_profile', 'email'],
+    );
+    if (result.status == LoginStatus.success) {
+      final resultData = await FacebookAuth.i.getUserData();
+      
+    
+
+      final AccessToken accessToken = result.accessToken!;
+    } else {
+      print(result.status);
+      print(result.message);
+    }
   }
 }

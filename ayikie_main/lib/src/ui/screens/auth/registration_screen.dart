@@ -613,6 +613,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     print('***************');
     print(phoneNumber);
   }
+  void sendOtpRequest() async {
+    await ApiCalls.otpRequest();
+  }
 
   void onRegisterPress() {
     String firstName = _firstNameController.text.trim();
@@ -661,7 +664,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             phone: phone,
             password: password,
             userRole: role,
-            deviceName: deviceName)
+            deviceName: deviceName,
+            firebase_id: '45645645vhgfhfghf'
+            )
         .then((response) async {
       if (!mounted) {
         return;
@@ -672,6 +677,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         await Settings.setAccessToken(token);
         User user = User.fromJson(response.jsonBody['user']);
         await Settings.setUserRole(user.role);
+        sendOtpRequest();
         Navigator.pushNamed(context, '/SendOtpScreen');
       } else {
         Alerts.showMessageForResponse(context, response);

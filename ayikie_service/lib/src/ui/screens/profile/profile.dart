@@ -162,7 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     CustomFormField(
                       isEnabled: _isEditable,
                       controller: _addressController,
-                      hintText: 'Enter your full name',
+                      hintText: 'Enter your address',
                       inputType: TextInputType.text,
                     ),
                     Container(
@@ -176,11 +176,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     CustomFormField(
-                      isEnabled: _isEditable,
+                      isEnabled: true,
                       controller: _phoneNumberController,
                       hintText: 'Enter your phone number',
                       inputType: TextInputType.phone,
-                      prefixEnable: true,
+                      
                     ),
                     SizedBox(
                       height: 30,

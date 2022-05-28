@@ -180,7 +180,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                     shape: BoxShape.rectangle,
                                     image: DecorationImage(
                                         image: imageProvider,
-                                        fit: BoxFit.scaleDown,
+                                        fit: BoxFit.cover,
                                         alignment: AlignmentDirectional.center),
                                   ),
                                 ),

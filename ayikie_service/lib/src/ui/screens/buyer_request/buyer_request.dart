@@ -21,7 +21,6 @@ class BuyerRequestScreen extends StatefulWidget {
 }
 
 class _BuyerRequestScreenState extends State<BuyerRequestScreen> {
-
   bool _isLoading = true;
   List<BuyerRequest> buyerRequests = [];
   int currentIndex = 1;
@@ -165,20 +164,44 @@ class _BuyerRequestScreenState extends State<BuyerRequestScreen> {
         ],
       ),
       endDrawer: DrawerScreen(),
-      body: _isLoading
+      body:  _isLoading
+              ? Center(
+                  child: ProgressView(),
+                )
+              :buyerRequests.isEmpty
           ? Center(
-        child: ProgressView(),
-      )
-          :ListView.builder(
-              controller: _controller,
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              itemCount: buyerRequests.length,
-              itemBuilder: (BuildContext context, int index) =>
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                  child: CommentWidget(buyerRequest: buyerRequests[index],modalShow:(){_modalBottomSheetMenu(index);} ,))
-      ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'asserts/images/empty.png',
+                      scale: 5,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text('No Buyer Requests Here',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700, fontSize: 20))
+                  ],
+                ),
+              ),
+            )
+          : ListView.builder(
+                  controller: _controller,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  itemCount: buyerRequests.length,
+                  itemBuilder: (BuildContext context, int index) => Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: CommentWidget(
+                        buyerRequest: buyerRequests[index],
+                        modalShow: () {
+                          _modalBottomSheetMenu(index);
+                        },
+                      ))),
     );
   }
 
@@ -187,7 +210,8 @@ class _BuyerRequestScreenState extends State<BuyerRequestScreen> {
         isScrollControlled: true,
         context: context,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only( // <-- SEE HERE
+          borderRadius: BorderRadius.only(
+            // <-- SEE HERE
             topLeft: Radius.circular(25.0),
             topRight: Radius.circular(25.0),
           ),
@@ -199,15 +223,13 @@ class _BuyerRequestScreenState extends State<BuyerRequestScreen> {
               child: Column(
                 children: [
                   Container(
-                    alignment: Alignment.centerLeft,
-                      margin: EdgeInsets.only(top: 20,left: 10,bottom: 10),
-                      child: Text("Select preferred Gig",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500
-                      ),
-                      )
-                  ),
+                      alignment: Alignment.centerLeft,
+                      margin: EdgeInsets.only(top: 20, left: 10, bottom: 10),
+                      child: Text(
+                        "Select preferred Gig",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                      )),
                   ListView.builder(
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
@@ -215,26 +237,27 @@ class _BuyerRequestScreenState extends State<BuyerRequestScreen> {
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (BuildContext context, int index) =>
                           Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10,),
-                              child: MyGigsWidget(popularServices: services[index],buyerRequest: buyerRequests[buyerRequestId],))
-                  ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
+                              child: MyGigsWidget(
+                                popularServices: services[index],
+                                buyerRequest: buyerRequests[buyerRequestId],
+                              ))),
                 ],
               ),
             ),
           );
         });
   }
-
 }
 
 class CommentWidget extends StatefulWidget {
   final BuyerRequest buyerRequest;
   final VoidCallback modalShow;
-  const CommentWidget({
-    Key? key,
-    required this.buyerRequest,
-    required this.modalShow
-  }) : super(key: key);
+  const CommentWidget(
+      {Key? key, required this.buyerRequest, required this.modalShow})
+      : super(key: key);
 
   @override
   State<CommentWidget> createState() => _CommentWidgetState();
@@ -262,16 +285,15 @@ class _CommentWidgetState extends State<CommentWidget> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(100),
                   child: CachedNetworkImage(
-                    imageBuilder: (context, imageProvider) =>
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
-                                alignment: AlignmentDirectional.center),
-                          ),
-                        ),
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                            alignment: AlignmentDirectional.center),
+                      ),
+                    ),
                     imageUrl: widget.buyerRequest.user.imgUrl.imageName,
                     errorWidget: (context, url, error) => Image.asset(
                       'asserts/images/ayikie_logo.png',
@@ -290,9 +312,7 @@ class _CommentWidgetState extends State<CommentWidget> {
               Spacer(),
               Text(
                 Common.dateFormator(ios8601: widget.buyerRequest.createdAt),
-                style: TextStyle(
-                  fontSize: 12
-                ),
+                style: TextStyle(fontSize: 12),
               )
             ],
           ),
@@ -394,32 +414,31 @@ class _CommentWidgetState extends State<CommentWidget> {
   }
 }
 
-
 class MyGigsWidget extends StatelessWidget {
- final Service popularServices;
- final BuyerRequest buyerRequest;
+  final Service popularServices;
+  final BuyerRequest buyerRequest;
 
   MyGigsWidget(
-      {Key? key, 
-      required this.popularServices,
-        required this.buyerRequest
-       })
+      {Key? key, required this.popularServices, required this.buyerRequest})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) {
-            return SendCustomerOffer(popularServices: popularServices,buyerRequest: buyerRequest,);
+            return SendCustomerOffer(
+              popularServices: popularServices,
+              buyerRequest: buyerRequest,
+            );
           }),
         );
       },
       child: Container(
         height: 120,
-        margin: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
         decoration: BoxDecoration(
             color: AppColors.textFieldBackground,
             borderRadius: BorderRadius.all(Radius.circular(8))),
@@ -461,13 +480,13 @@ class MyGigsWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                     popularServices.name,
+                      popularServices.name,
                       style: TextStyle(fontWeight: FontWeight.w900),
                     ),
                     Text(
                       //popularServices[index].introduction
                       'this is intro',
-                      ),
+                    ),
                     Text(
                       '\$${popularServices.price}',
                       style: TextStyle(fontWeight: FontWeight.w900),

@@ -5,6 +5,7 @@ import 'package:ayikie_main/src/ui/widgets/custom_form_field.dart';
 import 'package:ayikie_main/src/ui/widgets/primary_button.dart';
 import 'package:ayikie_main/src/utils/alerts.dart';
 import 'package:ayikie_main/src/utils/validations.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -21,6 +22,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   bool _isPhoneNoWidget = true;
   bool _isOtpWidget = false;
   bool _isPasswordWidget = false;
+  String? currentCountryCode;
   TextEditingController _newPasswordController = TextEditingController();
   TextEditingController _confirmPasswordController = TextEditingController();
   TextEditingController _otpController = TextEditingController();
@@ -36,6 +38,26 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppColors.white,
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: AppColors.black),
+          backgroundColor: AppColors.white,
+          elevation: 0,
+          title: Text(
+            'Forget my password',
+            style: TextStyle(color: Colors.black),
+          ),
+          leading: Container(
+            width: 24,
+            height: 24,
+            child: new IconButton(
+              icon: new Icon(
+                Icons.arrow_back_ios,
+                color: AppColors.black,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+        ),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.only(left: 20, right: 20, top: 50),
@@ -118,9 +140,17 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                           ),
                           CustomFormField(
                             controller: _phoneNoController,
-                            hintText: 'phone no',
+                            hintText: 'enter your phone no',
                             inputType: TextInputType.number,
+                            countryCode: _countryCodeChange,
+                            prefixEnable: true,
                           ),
+                          // CustomFormField(
+                          //   controller: _phoneNoController,
+                          //   hintText: 'phone no',
+                          //   inputType: TextInputType.number,
+                          //   countryCode: _countryCodeChange,
+                          // ),
                         ],
                       )
                     : _isOtpWidget
@@ -129,7 +159,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 20),
                                 child: Container(
-                                  alignment: Alignment.centerLeft,
+                                  alignment: Alignment.center,
                                   child: Text(
                                     'Enter your OTP',
                                     style: TextStyle(
@@ -144,9 +174,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                                   Container(
                                     child: PinCodeTextField(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                          MainAxisAlignment.center,
                                       appContext: context,
-                                      length: 6,
+                                      length: 4,
                                       cursorHeight: 15,
                                       cursorWidth: 1.5,
                                       enablePinAutofill: true,
@@ -290,8 +320,18 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         ));
   }
 
+  void _countryCodeChange(CountryCode countryCode) {
+    String phoneNumber = countryCode.toString();
+    setState(() {
+      currentCountryCode = phoneNumber;
+    });
+
+    print('***************');
+    print(phoneNumber);
+  }
+
   void _phoneNoVerification() {
-    String phone = _phoneNoController.text.trim();
+    String phone = currentCountryCode! + _phoneNoController.text.trim();
 
     if (!Validations.validateMobileNumber(phone)) {
       Alerts.showMessage(context, "Invalid mobile number");

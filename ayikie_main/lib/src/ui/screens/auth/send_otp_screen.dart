@@ -3,6 +3,7 @@ import 'package:ayikie_main/src/app_colors.dart';
 import 'package:ayikie_main/src/models/user.dart';
 import 'package:ayikie_main/src/ui/widgets/primary_button.dart';
 import 'package:ayikie_main/src/utils/alerts.dart';
+import 'package:ayikie_main/src/utils/settings.dart';
 import 'package:ayikie_main/src/utils/validations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -40,6 +41,26 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppColors.white,
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: AppColors.black),
+          backgroundColor: AppColors.white,
+          elevation: 0,
+          title: Text(
+            'Check your phone',
+            style: TextStyle(color: Colors.black),
+          ),
+          leading: Container(
+            width: 24,
+            height: 24,
+            child: new IconButton(
+              icon: new Icon(
+                Icons.arrow_back_ios,
+                color: AppColors.black,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+           ),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.only(left: 20, right: 20, top: 40),
@@ -77,7 +98,7 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: Container(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text(
                           'Enter your OTP',
                           style: TextStyle(
@@ -91,8 +112,8 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
                         Container(
                           child: PinCodeTextField(
                             appContext: context,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            length: 6,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            length: 4,
                             cursorHeight: 15,
                             cursorWidth: 1.5,
                             enablePinAutofill: true,
@@ -190,7 +211,8 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
       }
       if (response.isSuccess) {
         print("Here"+response.jsonBody);
-        //await Settings.setAccessToken(response.jsonBody);
+        var token = response.jsonBody['token'];
+        await Settings.setAccessToken(token);
         //Navigator.pushNamed(context, '/SendOtpScreen');
         User user = User.fromJson(response.jsonBody['user']);
          user.role == 1

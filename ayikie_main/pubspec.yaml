@@ -26,7 +26,9 @@ dependencies:
   intl_phone_field: ^3.1.0
   flutter_local_notifications: ^9.5.2
   google_sign_in: ^5.0.3
-
+  twitter_login: ^4.2.3
+  flutter_facebook_auth: ^4.3.4
+  
 
 dev_dependencies:
   flutter_test:

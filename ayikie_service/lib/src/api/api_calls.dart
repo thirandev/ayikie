@@ -178,6 +178,7 @@ class ApiCalls {
       required String location,
       required String state,
       required String price,
+      required String fixedPrice,
       required int catId,
       required int subCatId,
       required File picture}) async {
@@ -189,6 +190,7 @@ class ApiCalls {
       fields['location'] = location;
       fields['state'] = state;
       fields['price'] = price;
+      fields['fixed_price'] = fixedPrice;
       fields['category_id'] = catId.toString();
       fields['sub_category_id'] = subCatId.toString();
 
@@ -358,7 +360,7 @@ class ApiCalls {
   static Future<ApiResponse> getService({required int serviceId}) async {
     try {
       return ApiCaller.getRequest(
-          baseUrl + '/api/services/$serviceId/show', _getEmptyHeaders());
+          baseUrl + '/api/seller/services/$serviceId', _getEmptyHeaders());
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;

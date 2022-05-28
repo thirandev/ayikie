@@ -126,7 +126,27 @@ class _MyReviewsScreenState extends State<MyReviewsScreen> {
             ? Center(
           child: ProgressView(),
         )
-            :
+            : comments.isEmpty
+          ? Center(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'asserts/images/empty.png',
+                      scale: 5,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text('No Reviews Here',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700, fontSize: 20))
+                  ],
+                ),
+              ),
+            )
+          :
         ListView.builder(
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
