@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:ayikie_main/src/api/api_calls.dart';
 import 'package:ayikie_main/src/models/user.dart';
+import 'package:ayikie_main/src/services/notifiaction_service.dart';
 import 'package:ayikie_main/src/utils/settings.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +19,18 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     versionVerification();
+    pushNotification();
+  }
+
+  void pushNotification() async{
+    Timer.periodic(Duration(seconds: 5), (timer) async {
+      await NotificationService().showNotification(
+        id: 0,
+        title: "Bildirishnoma",
+        body: "Eslatma o'chirib tashlandi",
+      );
+    });
+
   }
 
   void versionVerification() async {
