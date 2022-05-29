@@ -80,10 +80,13 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> getSearchResults({required String keyword}) async {
+  static Future<ApiResponse> getSearchResults({required String keyword, String? location}) async {
     try {
       var query = new Map<String, String>();
       query['search'] = keyword;
+      if(location!.isNotEmpty){
+        query['location'] = location;
+      }
       return ApiCaller.getRequestAuth(
           baseUrl + '/api/search', _getEmptyHeaders(),
           query: query);
@@ -426,6 +429,7 @@ class ApiCalls {
     required double price,
     required String location,
     required String message,
+    
   }) async {
     try {
       var payload = new Map<String, dynamic>();
@@ -448,8 +452,10 @@ class ApiCalls {
 
   static Future<ApiResponse> getAllServiceOrders() async {
     try {
+
       return ApiCaller.getRequestAuth(
-          baseUrl + '/api/customer/order/service', _getEmptyHeaders());
+          baseUrl + '/api/customer/order/service', _getEmptyHeaders(),
+      );
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -555,7 +561,8 @@ class ApiCalls {
   static Future<ApiResponse> getAllProductOrders() async {
     try {
       return ApiCaller.getRequestAuth(
-          baseUrl + '/api/customer/order/products', _getEmptyHeaders());
+          baseUrl + '/api/customer/order/products', _getEmptyHeaders(),
+      );
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -894,4 +901,66 @@ class ApiCalls {
       return response;
     }
   }
+
+   static Future<ApiResponse> getPrivacyPolicies() async {
+    try {
+      return ApiCaller.getRequest(
+          baseUrl + '/api/privacy', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getToc() async {
+    try {
+      return ApiCaller.getRequest(
+          baseUrl + '/api/toc/user', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getCookies() async {
+    try {
+      return ApiCaller.getRequest(
+          baseUrl + '/api/cookie', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+  static Future<ApiResponse> getNotification({required int page}) async {
+    try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/notifications', _getEmptyHeaders(),query: query);
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> readAllNotification() async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/notifications/all/read', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
 }

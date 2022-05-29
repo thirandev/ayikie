@@ -178,6 +178,7 @@ class ApiCalls {
       required String location,
       required String state,
       required String price,
+      required String fixedPrice,
       required int catId,
       required int subCatId,
       required File picture}) async {
@@ -189,6 +190,7 @@ class ApiCalls {
       fields['location'] = location;
       fields['state'] = state;
       fields['price'] = price;
+      fields['fixed_price'] = fixedPrice;
       fields['category_id'] = catId.toString();
       fields['sub_category_id'] = subCatId.toString();
 
@@ -258,7 +260,7 @@ class ApiCalls {
       required File? picture}) async {
     try {
       var fields = new Map<String, String>();
-      print("Price"+price);
+      print("Price" + price);
       fields['name'] = title;
       fields['introduction'] = introduction;
       fields['description'] = description;
@@ -300,7 +302,7 @@ class ApiCalls {
       required File? picture}) async {
     try {
       var fields = new Map<String, String>();
-      print("Inside"+price);
+      print("Inside" + price);
       fields['name'] = title;
       fields['introduction'] = introduction;
       fields['description'] = description;
@@ -358,7 +360,7 @@ class ApiCalls {
   static Future<ApiResponse> getService({required int serviceId}) async {
     try {
       return ApiCaller.getRequest(
-          baseUrl + '/api/services/$serviceId/show', _getEmptyHeaders());
+          baseUrl + '/api/seller/services/$serviceId', _getEmptyHeaders());
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -683,8 +685,10 @@ class ApiCalls {
 
   static Future<ApiResponse> getAllServiceOrders() async {
     try {
+
       return ApiCaller.getRequestAuth(
-          baseUrl + '/api/seller/order/service', _getEmptyHeaders());
+          baseUrl + '/api/seller/order/service', _getEmptyHeaders(),
+      );
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -795,7 +799,8 @@ class ApiCalls {
   static Future<ApiResponse> getAllProductOrders() async {
     try {
       return ApiCaller.getRequestAuth(
-          baseUrl + '/api/seller/order/products', _getEmptyHeaders());
+          baseUrl + '/api/seller/order/products', _getEmptyHeaders(),
+      );
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -876,6 +881,29 @@ class ApiCalls {
     }
   }
 
+  static Future<ApiResponse> getPrivacyPolicies() async {
+    try {
+      return ApiCaller.getRequest(baseUrl + '/api/privacy', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getToc() async {
+    try {
+      return ApiCaller.getRequest(
+          baseUrl + '/api/toc/professional', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
   static Future<ApiResponse> getStates() async {
     try {
       return ApiCaller.getRequest(baseUrl + '/api/states', _getEmptyHeaders());
@@ -898,4 +926,42 @@ class ApiCalls {
       return response;
     }
   }
+
+  static Future<ApiResponse> getCookies() async {
+    try {
+      return ApiCaller.getRequest(baseUrl + '/api/cookie', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> getNotification({required int page}) async {
+    try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/notifications', _getEmptyHeaders(),query: query);
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> readAllNotification() async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/notifications/all/read', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
 }
