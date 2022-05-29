@@ -236,8 +236,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           currentStep: _currentStep,
                           onStepTapped: (step) => tapped(step),
                           controlsBuilder: (BuildContext context,
-                              {VoidCallback? onStepContinue,
-                              VoidCallback? onStepCancel}) {
+                              ControlsDetails controls) {
                             return Container(
                                 height: 45,
                                 width: double.infinity,

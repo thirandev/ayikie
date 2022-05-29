@@ -191,8 +191,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                           currentStep: _currentStep,
                           // onStepTapped: (step) => tapped(step),
                           controlsBuilder: (BuildContext context,
-                              {VoidCallback? onStepContinue,
-                              VoidCallback? onStepCancel}) {
+                              ControlsDetails controls) {
                             return _currentStep != 2
                                 ? Container(
                                     height: 45,

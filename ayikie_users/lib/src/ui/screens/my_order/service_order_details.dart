@@ -46,7 +46,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
   @override
   void initState() {
     super.initState();
-    _currentStep = 3;
+    _currentStep = widget.serviceOrder.status;
     _getOrderCustomer();
   }
 
@@ -187,8 +187,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
                           currentStep: _currentStep,
                           // onStepTapped: (step) => tapped(step),
                           controlsBuilder: (BuildContext context,
-                              {VoidCallback? onStepContinue,
-                              VoidCallback? onStepCancel}) {
+                              ControlsDetails controls) {
                             return _currentStep != 3
                                 ? Container(
                                     height: 45,
