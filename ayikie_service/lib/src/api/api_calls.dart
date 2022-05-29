@@ -683,10 +683,14 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> getAllServiceOrders() async {
+  static Future<ApiResponse> getAllServiceOrders({required int page}) async {
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
       return ApiCaller.getRequestAuth(
-          baseUrl + '/api/seller/order/service', _getEmptyHeaders());
+          baseUrl + '/api/seller/order/service', _getEmptyHeaders(),
+          query: query
+      );
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -794,10 +798,14 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> getAllProductOrders() async {
+  static Future<ApiResponse> getAllProductOrders({required int page}) async {
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
       return ApiCaller.getRequestAuth(
-          baseUrl + '/api/seller/order/products', _getEmptyHeaders());
+          baseUrl + '/api/seller/order/products', _getEmptyHeaders(),
+          query: query
+      );
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -934,4 +942,31 @@ class ApiCalls {
       return response;
     }
   }
+
+  static Future<ApiResponse> getNotification({required int page}) async {
+    try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/notifications', _getEmptyHeaders(),query: query);
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
+  static Future<ApiResponse> readAllNotification() async {
+    try {
+      return ApiCaller.getRequestAuth(
+          baseUrl + '/api/notifications/all/read', _getEmptyHeaders());
+    } catch (e) {
+      ApiResponse response = ApiResponse();
+      response.isSuccess = false;
+      response.statusMessage = e.toString();
+      return response;
+    }
+  }
+
 }

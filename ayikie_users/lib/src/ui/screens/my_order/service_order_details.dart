@@ -840,6 +840,6 @@ class OrderDetails extends StatelessWidget {
       scheme: 'tel',
       path: phoneNumber,
     );
-    await launchUrl(launchUri);
+    // await launchUrl(launchUri);
   }
 }
