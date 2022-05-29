@@ -701,6 +701,8 @@ class ApiCalls {
 
   static Future<ApiResponse> getServiceOrder(int orderId) async {
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
       return ApiCaller.getRequestAuth(
           baseUrl + '/api/seller/order/service/$orderId', _getEmptyHeaders());
     } catch (e) {
@@ -817,6 +819,8 @@ class ApiCalls {
   static Future<ApiResponse> getProductOrderDetails(
       {required int orderId}) async {
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
       return ApiCaller.getRequestAuth(
           baseUrl + '/api/seller/order/products/$orderId', _getEmptyHeaders());
     } catch (e) {
