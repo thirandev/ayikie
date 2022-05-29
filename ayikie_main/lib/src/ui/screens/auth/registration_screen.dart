@@ -660,7 +660,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         await Settings.setAccessToken(token);
         User user = User.fromJson(response.jsonBody['user']);
         await Settings.setUserRole(user.role);
-        Navigator.pushNamed(context, '/SendOtpScreen');
+       await Settings.setUserId(user.userId);
+       Navigator.pushNamed(context, '/SendOtpScreen');
       } else {
         Alerts.showMessageForResponse(context, response);
       }

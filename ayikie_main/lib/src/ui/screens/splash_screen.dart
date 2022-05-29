@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:ayikie_main/src/api/api_calls.dart';
@@ -6,6 +8,7 @@ import 'package:ayikie_main/src/models/user.dart';
 import 'package:ayikie_main/src/services/notifiaction_service.dart';
 import 'package:ayikie_main/src/utils/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -15,29 +18,92 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+
+  final PusherChannelsFlutter pusher = PusherChannelsFlutter.getInstance();
+  final String API_KEY = "18a34939d3f9e59cb9ea";
+  final String API_CLUSTER = "ap2";
+
   @override
   void initState() {
     super.initState();
     versionVerification();
-    pushNotification();
+    onConnectPressed();
   }
 
-  void pushNotification() async{
-    Timer.periodic(Duration(seconds: 5), (timer) async {
-      await NotificationService().showNotification(
-        id: 0,
-        title: "Bildirishnoma",
-        body: "Eslatma o'chirib tashlandi",
+  void onConnectPressed() async {
+    try {
+      await pusher.init(
+        apiKey: API_KEY,
+        cluster: API_CLUSTER,
+        onConnectionStateChange: onConnectionStateChange,
+        onError: onError,
+        onSubscriptionSucceeded: onSubscriptionSucceeded,
+        onEvent: onEvent,
+        onSubscriptionError: onSubscriptionError,
+        onDecryptionFailure: onDecryptionFailure,
+        onMemberAdded: onMemberAdded,
+        onMemberRemoved: onMemberRemoved,
       );
-    });
+      await pusher.subscribe(channelName: 'channel-ayikie');
+      await pusher.connect();
+    } catch (e) {
+      print("ERROR: $e");
+    }
+  }
 
+  void onError(String message, int? code, dynamic e) {
+    print("onError: $message code: $code exception: $e");
+  }
+
+  void onConnectionStateChange(dynamic currentState, dynamic previousState) {
+    print("Connection: $currentState");
+  }
+
+  void onMemberRemoved(String channelName, PusherMember member) {
+    print("onMemberRemoved: $channelName member: $member");
+  }
+
+  void onMemberAdded(String channelName, PusherMember member) {
+    print("onMemberAdded: $channelName member: $member");
+  }
+
+  void onDecryptionFailure(String event, String reason) {
+    print("onDecryptionFailure: $event reason: $reason");
+  }
+
+  void onSubscriptionError(String message, dynamic e) {
+    print("onSubscriptionError: $message Exception: $e");
+  }
+
+  void onSubscriptionSucceeded(String channelName, dynamic data) {
+    print("onSubscriptionSucceeded: $channelName data: $data");
+  }
+
+  Future<void> onEvent(PusherEvent event) async {
+    print("onEvent: $event");
+    var jsonData = json.decode(event.data) as Map<String, dynamic>;
+    pushNotification(id:jsonData["user_id"],title: jsonData["title"], msg:  jsonData["msg"]);
+  }
+
+  void pushNotification({required int id,required String title, required String msg}) async{
+    onConnectPressed();
+    print(id);
+    var userId = await Settings.getUserId();
+    print(userId);
+    if(userId == id){
+      print("in");
+      await NotificationService().showNotification(
+          id: id,
+          title: title,
+          body: msg
+      );
+    }
   }
 
   void versionVerification() async {
     final response = await ApiCalls.getVersion();
     String versionIdAndroid = "12";
     String versionIdIos = "11";
-
     if (response.isSuccess) {
       bool isVersionCompatible = true;
       if (Platform.isAndroid) {
@@ -83,6 +149,7 @@ class _SplashScreenState extends State<SplashScreen> {
       await Settings.setAccessToken(response.jsonBody['token']);
       await Settings.setIsGuest(false);
       User user = User.fromJson(response.jsonBody['user']);
+      await Settings.setUserId(user.userId);
       await Settings.setUserRole(user.role);
       user.role == 1
           ? Navigator.pushNamedAndRemoveUntil(

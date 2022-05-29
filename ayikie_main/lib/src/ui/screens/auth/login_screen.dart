@@ -536,6 +536,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await Settings.setAccessToken(token);
         await Settings.setIsGuest(false);
         User user = User.fromJson(response.jsonBody['user']);
+        await Settings.setUserId(user.userId);
         await Settings.setUserRole(user.role);
         user.role == 1
             ? Navigator.pushNamedAndRemoveUntil(

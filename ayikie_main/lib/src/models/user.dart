@@ -1,4 +1,5 @@
 class User {
+  int userId;
   String name;
   String address;
   String email;
@@ -7,6 +8,7 @@ class User {
   String imgUrl;
 
   User({
+    required this.userId,
     required this.name,
     required this.address,
     required this.email,
@@ -17,6 +19,7 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
+      userId: json['id'],
       name: json['name'] == null ? "" : json['name'],
       address: json['address'] == null ? "" : json['address'],
       email: json['email'] == null ? "" : json['email'],

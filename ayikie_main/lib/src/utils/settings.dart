@@ -49,4 +49,15 @@ class Settings {
     int? role = sharedPrefs.getInt("role");
     return role;
   }
+
+  static setUserId(int userId) async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    sharedPrefs.setInt("userId", userId);
+  }
+
+  static Future<int?> getUserId() async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    int? userId = sharedPrefs.getInt("userId");
+    return userId;
+  }
 }

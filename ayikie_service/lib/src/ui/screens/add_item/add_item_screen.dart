@@ -839,7 +839,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
         price: price,
         catId: selectedServiceCategory.id,
         subCatId: selectedSubServiceCategory.id,
-        picture: _servicePhoto)
+        picture: _servicePhoto, fixedPrice: '')
     .then((response) async {
     if (!mounted) {
     return;
