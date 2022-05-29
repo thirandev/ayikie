@@ -1,5 +1,6 @@
 import 'package:ayikie_users/src/api/api_calls.dart';
 import 'package:ayikie_users/src/app_colors.dart';
+import 'package:ayikie_users/src/models/meta.dart';
 import 'package:ayikie_users/src/models/order.dart';
 import 'package:ayikie_users/src/models/productOrder.dart';
 import 'package:ayikie_users/src/ui/screens/my_order/product_order_details.dart';
@@ -21,19 +22,56 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
   bool _isLoading = true;
   List<Order> serviceOrders = [];
   List<ProductOrder> productOrders = [];
+  int currentIndex = 1;
+  int currentIndexProduct = 1;
+
+  late ScrollController _controllerService;
+  late ScrollController _controllerProduct;
+  bool isLastPage = false;
+  bool isLastPageProduct = false;
+  bool isFirstLoad = true;
 
   @override
   void initState() {
     super.initState();
     _getServices();
+    _controllerService = new ScrollController()..addListener(loadMoreService);
+    _controllerProduct = new ScrollController()..addListener(loadMoreProduct);
   }
 
-  void _getServices() async {
-    await ApiCalls.getAllServiceOrders().then((response) {
+  void loadMoreService() {
+    if (_controllerService.position.extentAfter < 250 &&
+        !isLastPage &&
+        !_isLoading) {
+      setState(() {
+        currentIndex++;
+        _isLoading = true;
+      });
+      _getServices(loadData: true);
+    }
+  }
+
+  void loadMoreProduct() {
+    if (_controllerProduct.position.extentAfter < 250 &&
+        !isLastPageProduct &&
+        !_isLoading) {
+      setState(() {
+        currentIndexProduct++;
+        _isLoading = true;
+      });
+      _getProducts();
+    }
+  }
+
+  void _getServices({bool? loadData}) async {
+    await ApiCalls.getAllServiceOrders(page: currentIndex).then((response) {
       if (!mounted) {
         return;
       }
       if (response.isSuccess) {
+        var meta = response.metaBody;
+        Meta _meta = Meta.fromJson(meta);
+        isLastPage = _meta.lastPage == currentIndex;
         var data = response.jsonBody;
         for (var item in data) {
           Order order = Order.fromJson(item);
@@ -43,16 +81,25 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
         Alerts.showMessage(context, "Something went wrong. Please try again.",
             title: "Oops!");
       }
+      if (loadData != null && loadData) {
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
       _getProducts();
     });
   }
 
   void _getProducts() async {
-    await ApiCalls.getAllProductOrders().then((response) {
+    await ApiCalls.getAllProductOrders(page: currentIndexProduct).then((response) {
       if (!mounted) {
         return;
       }
       if (response.isSuccess) {
+        var meta = response.metaBody;
+        Meta metaProduct = Meta.fromJson(meta);
+        isLastPageProduct = metaProduct.lastPage == currentIndexProduct;
         var data = response.jsonBody;
         for (var item in data) {
           ProductOrder order = ProductOrder.fromJson(item);
@@ -64,8 +111,16 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
       }
       setState(() {
         _isLoading = false;
+        isFirstLoad = false;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controllerProduct.dispose();
+    _controllerService.dispose();
   }
 
   @override
@@ -109,6 +164,7 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                                 child: ListView.builder(
                                     shrinkWrap: true,
                                     scrollDirection: Axis.vertical,
+                                    controller: _controllerService,
                                     itemCount: serviceOrders.length,
                                     itemBuilder: (BuildContext context,
                                             int index) =>
@@ -128,6 +184,7 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                                 child: ListView.builder(
                                     shrinkWrap: true,
                                     scrollDirection: Axis.vertical,
+                                    controller: _controllerProduct,
                                     itemCount: productOrders.length,
                                     itemBuilder: (BuildContext context,
                                         int index) =>

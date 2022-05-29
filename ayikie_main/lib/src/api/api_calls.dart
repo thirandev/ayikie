@@ -117,7 +117,7 @@ class ApiCalls {
     try{
       var payload = new Map<String, dynamic>();
       payload['otp'] = otp;
-      return ApiCaller.jsonRequest(
+      return ApiCaller.jsonRequestAuth(
           baseUrl + '/api/verify/otp', _getEmptyHeaders(),jsonEncode(payload));
     }catch(e){
       ApiResponse response = ApiResponse();

@@ -46,7 +46,7 @@ class _ServiceOrderDetailsState extends State<ServiceOrderDetails> {
   @override
   void initState() {
     super.initState();
-    _currentStep = 3;
+    _currentStep = widget.serviceOrder.status;
     _getOrderCustomer();
   }
 
@@ -841,6 +841,6 @@ class OrderDetails extends StatelessWidget {
       scheme: 'tel',
       path: phoneNumber,
     );
-    await launchUrl(launchUri);
+    // await launchUrl(launchUri);
   }
 }

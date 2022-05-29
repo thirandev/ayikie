@@ -33,7 +33,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   bool _location = true;
   String city = '';
   String country = '';
-  String? current_address;
+  String current_address = "";
   Position? _position;
   GeoCode geoCode = GeoCode();
   List<Images> banners = [];
@@ -55,9 +55,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
 
     setState(() {
       _location = false;
-      current_address = placemarks.last.locality.toString() +
-          ' , ' +
-          placemarks.last.administrativeArea.toString();
+      current_address = placemarks.last.locality.toString();
     });
   }
 
@@ -194,7 +192,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) {
-                                return SearchScreen();
+                                return SearchScreen(location: current_address);
                               }),
                             );
                           },
@@ -253,7 +251,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                   Text(
                                     _location
                                         ? 'Tap to get Your Location'
-                                        : current_address!,
+                                        : current_address,
                                     style: TextStyle(color: Colors.white),
                                   )
                                 ],

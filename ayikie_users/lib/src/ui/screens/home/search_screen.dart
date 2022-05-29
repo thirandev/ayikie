@@ -13,7 +13,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({Key? key}) : super(key: key);
+  final String location;
+  const SearchScreen({Key? key,required this.location}) : super(key: key);
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
@@ -35,7 +36,7 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() {
       _isLoading = true;
     });
-    await ApiCalls.getSearchResults(keyword: keyword).then((response) {
+    await ApiCalls.getSearchResults(keyword: keyword,location:widget.location).then((response) {
       if (!mounted) {
         return;
       }

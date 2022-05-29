@@ -80,10 +80,13 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> getSearchResults({required String keyword}) async {
+  static Future<ApiResponse> getSearchResults({required String keyword, String? location}) async {
     try {
       var query = new Map<String, String>();
       query['search'] = keyword;
+      if(location!.isNotEmpty){
+        query['location'] = location;
+      }
       return ApiCaller.getRequestAuth(
           baseUrl + '/api/search', _getEmptyHeaders(),
           query: query);
@@ -447,10 +450,14 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> getAllServiceOrders() async {
+  static Future<ApiResponse> getAllServiceOrders({required int page}) async {
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
       return ApiCaller.getRequestAuth(
-          baseUrl + '/api/customer/order/service', _getEmptyHeaders());
+          baseUrl + '/api/customer/order/service', _getEmptyHeaders(),
+          query: query
+      );
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
@@ -553,10 +560,14 @@ class ApiCalls {
     }
   }
 
-  static Future<ApiResponse> getAllProductOrders() async {
+  static Future<ApiResponse> getAllProductOrders({required int page}) async {
     try {
+      var query = new Map<String, String>();
+      query['page'] = page.toString();
       return ApiCaller.getRequestAuth(
-          baseUrl + '/api/customer/order/products', _getEmptyHeaders());
+          baseUrl + '/api/customer/order/products', _getEmptyHeaders(),
+          query: query
+      );
     } catch (e) {
       ApiResponse response = ApiResponse();
       response.isSuccess = false;
