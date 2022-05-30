@@ -6,6 +6,28 @@ class Settings {
     await sharedPrefs.clear();
   }
 
+  static Future<bool?> getIsFirstSession() async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    bool? token = sharedPrefs.getBool("session");
+    return token;
+  }
+
+  static setIsFirstSession(bool session) async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    sharedPrefs.setBool("session", session);
+  }
+
+  static setIsGuest(bool isGuest) async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    sharedPrefs.setBool("guest", isGuest);
+  }
+
+  static Future<bool?> getIsGuest() async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    bool? token = sharedPrefs.getBool("guest");
+    return token;
+  }
+
   static setAccessToken(String token) async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     sharedPrefs.setString("access_token", token);
@@ -17,15 +39,14 @@ class Settings {
     return token;
   }
 
-  static setRefreshToken(String token) async {
+  static setUserRole(int role) async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
-    sharedPrefs.setString("refresh_token", token);
+    sharedPrefs.setInt("role", role);
   }
 
-  static Future<String?> getRefreshToken() async {
+  static Future<int?> getUserRole() async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
-    String? token = sharedPrefs.getString("refresh_token");
-    return token;
+    int? role = sharedPrefs.getInt("role");
+    return role;
   }
-
 }

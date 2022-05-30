@@ -31,7 +31,7 @@ class ApiCaller {
             fragment: uriTemp.fragment,
             queryParameters: query);
         final request = http.Request(requestType, endpointUri);
-        request.headers["Accept"] = "*/*";
+        request.headers["Accept"] = "application/json";
         if (commonHeaders != null && commonHeaders.isNotEmpty) {
           request.headers.addAll(commonHeaders);
         }
