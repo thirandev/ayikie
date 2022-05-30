@@ -175,9 +175,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     CustomFormField(
-                      isEnabled: false,
+                      isEnabled: true,
                       controller: _phoneNumberController,
                       hintText: 'Enter your phone number',
+                      
                       inputType: TextInputType.phone,
                     ),
                     SizedBox(

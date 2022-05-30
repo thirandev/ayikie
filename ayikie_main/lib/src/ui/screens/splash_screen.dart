@@ -69,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (response.isSuccess) {
       await Settings.setAccessToken(response.jsonBody['token']);
       await Settings.setIsGuest(false);
-      User user = User.fromJson(response.jsonBody['user']);
+      Users user = Users.fromJson(response.jsonBody['user']);
       await Settings.setUserRole(user.role);
       user.role == 1
           ? Navigator.pushNamedAndRemoveUntil(

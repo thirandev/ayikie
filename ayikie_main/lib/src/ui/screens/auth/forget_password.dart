@@ -22,7 +22,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   bool _isPhoneNoWidget = true;
   bool _isOtpWidget = false;
   bool _isPasswordWidget = false;
-  String? currentCountryCode;
+  String currentCountryCode = '+233';
   TextEditingController _newPasswordController = TextEditingController();
   TextEditingController _confirmPasswordController = TextEditingController();
   TextEditingController _otpController = TextEditingController();
@@ -331,7 +331,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   }
 
   void _phoneNoVerification() {
-    String phone = currentCountryCode! + _phoneNoController.text.trim();
+    String phone = currentCountryCode + _phoneNoController.text.trim();
 
     if (!Validations.validateMobileNumber(phone)) {
       Alerts.showMessage(context, "Invalid mobile number");
@@ -355,13 +355,13 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   }
 
   void _otpVerification() {
-    ApiCalls.forgotPassOtpVerify(
-            phone: _phoneNoController.text.trim(), code: _otp)
+    String phone = currentCountryCode + _phoneNoController.text.trim();
+    ApiCalls.forgotPassOtpVerify(phone: phone, code: _otp)
         .then((response) async {
       if (!mounted) {
         return;
       }
-      if (response.isSuccess) {
+      if (response.jsonBody['status'].toString() == 'success') {
         setState(() {
           _isPasswordWidget = true;
           _isOtpWidget = false;
@@ -389,7 +389,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     ApiCalls.forgotPassword(
             password: password,
             passwordConfirmation: confirmPassword,
-            phone: _phoneNoController.text.trim(),
+             phone : currentCountryCode + _phoneNoController.text.trim(),
             code: _otp)
         .then((response) async {
       if (!mounted) {

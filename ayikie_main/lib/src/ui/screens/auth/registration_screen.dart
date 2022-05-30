@@ -10,7 +10,10 @@ import 'package:ayikie_main/src/utils/settings.dart';
 import 'package:ayikie_main/src/utils/validations.dart';
 import 'package:country_code_picker/country_code.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 class RegistrationScreen extends StatefulWidget {
   final int userRole;
@@ -613,6 +616,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     print('***************');
     print(phoneNumber);
   }
+
   void sendOtpRequest() async {
     await ApiCalls.otpRequest();
   }
@@ -665,8 +669,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             password: password,
             userRole: role,
             deviceName: deviceName,
-            firebase_id: '45645645vhgfhfghf'
-            )
+            firebase_id: '45645645vhgfhfghf')
         .then((response) async {
       if (!mounted) {
         return;
@@ -675,13 +678,54 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         // await Settings.setAccessToken(response.jsonBody);
         var token = response.jsonBody['token'];
         await Settings.setAccessToken(token);
-        User user = User.fromJson(response.jsonBody['user']);
+        Users user = Users.fromJson(response.jsonBody['user']);
         await Settings.setUserRole(user.role);
-        sendOtpRequest();
+        
         Navigator.pushNamed(context, '/SendOtpScreen');
       } else {
         Alerts.showMessageForResponse(context, response);
       }
     });
+  }
+
+  void _register() async {
+    FocusScope.of(context).unfocus();
+
+    try {
+      final credential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailAddressController.text,
+        password: _passwordController.text,
+      );
+      await FirebaseChatCore.instance.createUserInFirestore(
+        types.User(
+          firstName: _firstNameController.text,
+          id: credential.user!.uid,
+          //imageUrl: ,
+          lastName: _lastNameController.text,
+        ),
+      );
+      Navigator.of(context)
+        ..pop()
+        ..pop();
+    } catch (e) {
+      await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+          content: Text(
+            e.toString(),
+          ),
+          title: const Text('Error'),
+        ),
+      );
+    }
   }
 }

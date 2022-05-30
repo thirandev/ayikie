@@ -335,7 +335,7 @@ class CategoryService extends StatelessWidget {
               child: CachedNetworkImage(
                 imageBuilder: (context, imageProvider) => Container(
                   decoration: BoxDecoration(
-                     borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
                         image: imageProvider,
                         fit: BoxFit.cover,
@@ -349,15 +349,17 @@ class CategoryService extends StatelessWidget {
                 ),
               ),
             ),
-            Spacer(),
+            SizedBox(
+              height: 10,
+            ),
             Text(
               serviceCategories[index].name,
-              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 16,
+              ),
             ),
-            SizedBox(
-              height: 20,
-            ),
-            
           ],
         ),
       ),

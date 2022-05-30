@@ -1,4 +1,4 @@
-class User {
+class Users {
   String name;
   String address;
   String email;
@@ -6,7 +6,7 @@ class User {
   int role;
   String imgUrl;
 
-  User({
+  Users({
     required this.name,
     required this.address,
     required this.email,
@@ -15,8 +15,8 @@ class User {
     required this.imgUrl
   });
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  factory Users.fromJson(Map<String, dynamic> json) {
+    return Users(
       name: json['name'] == null ? "" : json['name'],
       address: json['address'] == null ? "" : json['address'],
       email: json['email'] == null ? "" : json['email'],

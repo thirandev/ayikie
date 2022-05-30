@@ -60,7 +60,7 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
-           ),
+        ),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.only(left: 20, right: 20, top: 40),
@@ -193,37 +193,30 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
             ),
           ),
         ));
-
-
   }
 
-  void verifyOtp(){
-
+  void verifyOtp() {
     if (!Validations.validateOtp(_otp)) {
       Alerts.showMessage(context, "Please enter a valid OTP");
       return;
     }
 
-    ApiCalls.otpVerification(otp: _otp)
-        .then((response) async {
+    ApiCalls.otpVerification(otp: _otp).then((response) async {
       if (!mounted) {
         return;
       }
-      if (response.isSuccess) {
-        print("Here"+response.jsonBody);
-        var token = response.jsonBody['token'];
-        await Settings.setAccessToken(token);
-        //Navigator.pushNamed(context, '/SendOtpScreen');
-        User user = User.fromJson(response.jsonBody['user']);
-         user.role == 1
+      if (response.jsonBody['success'].toString()=='true') {
+        
+       
+        var userRole = await Settings.getUserRole();
+        userRole == 1
             ? Navigator.pushNamedAndRemoveUntil(
                 context, '/UserScreen', (route) => false)
             : Navigator.pushNamedAndRemoveUntil(
                 context, '/ServiceScreen', (route) => false);
       } else {
-        Alerts.showMessageForResponse(context, response);
+        Alerts.showMessage(context, 'Incorrect OTP Number');
       }
     });
   }
-
 }

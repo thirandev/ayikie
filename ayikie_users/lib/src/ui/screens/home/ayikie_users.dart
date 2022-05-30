@@ -203,8 +203,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                               color: AppColors.textFieldBackground,
                             ),
                             child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Padding(
                                     padding: EdgeInsets.only(left: 20),
@@ -212,8 +211,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                       'Search here',
                                       style: TextStyle(
                                           fontSize: 14,
-                                          color:
-                                              AppColors.primaryButtonColor),
+                                          color: AppColors.primaryButtonColor),
                                     )),
                                 IconButton(
                                     onPressed: () {},
@@ -392,9 +390,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                           imageUrl: categories[index]
                                               .image!
                                               .getBannerUrl(),
-                                          errorWidget:
-                                              (context, url, error) =>
-                                                  Image.asset(
+                                          errorWidget: (context, url, error) =>
+                                              Image.asset(
                                             'asserts/images/ayikie_logo.png',
                                             fit: BoxFit.fitHeight,
                                           ),
@@ -479,8 +476,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                       width: 150,
                                       decoration: BoxDecoration(
                                         color: AppColors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.only(
@@ -504,9 +500,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                               .image!
                                               .getBannerUrl(),
                                           fit: BoxFit.cover,
-                                          errorWidget:
-                                              (context, url, error) =>
-                                                  Image.asset(
+                                          errorWidget: (context, url, error) =>
+                                              Image.asset(
                                             'asserts/images/ayikie_logo.png',
                                             fit: BoxFit.fitHeight,
                                           ),
@@ -522,6 +517,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                           bottomRight: Radius.circular(8)),
                                     ),
                                     width: 150,
+                                    height: 100,
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Column(
@@ -553,10 +549,11 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             ),
                           ),
                         ),
+                        SizedBox(height: 10,),
                         Row(
                           children: [
                             Text(
-                              'Popular',
+                              'Featured',
                               style: TextStyle(
                                   fontSize: 26, fontWeight: FontWeight.w900),
                             ),
@@ -590,8 +587,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                               itemCount: popularServices.length > 10
                                   ? 10
                                   : popularServices.length,
-                              itemBuilder: (BuildContext context,
-                                      int index) =>
+                              itemBuilder: (BuildContext context, int index) =>
                                   GestureDetector(
                                     onTap: () {
                                       Navigator.push(
@@ -625,8 +621,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                                       40) /
                                                   3,
                                               child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.only(
+                                                borderRadius: BorderRadius.only(
                                                   bottomLeft:
                                                       Radius.circular(8),
                                                   topLeft: Radius.circular(8),
@@ -636,11 +631,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                                           imageProvider) =>
                                                       Container(
                                                     decoration: BoxDecoration(
-                                                      shape:
-                                                          BoxShape.rectangle,
+                                                      shape: BoxShape.rectangle,
                                                       image: DecorationImage(
-                                                          image:
-                                                              imageProvider,
+                                                          image: imageProvider,
                                                           fit: BoxFit.cover,
                                                           alignment:
                                                               AlignmentDirectional
@@ -672,8 +665,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                                     3,
                                                 child: Column(
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
+                                                      CrossAxisAlignment.start,
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
                                                           .spaceEvenly,
@@ -683,18 +675,15 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                                           .name,
                                                       style: TextStyle(
                                                           fontWeight:
-                                                              FontWeight
-                                                                  .w900),
+                                                              FontWeight.w900),
                                                     ),
-                                                    Text(
-                                                        popularServices[index]
-                                                            .introduction),
+                                                    Text(popularServices[index]
+                                                        .introduction),
                                                     Text(
                                                       '\$${popularServices[index].price}',
                                                       style: TextStyle(
                                                           fontWeight:
-                                                              FontWeight
-                                                                  .w900),
+                                                              FontWeight.w900),
                                                     ),
                                                   ],
                                                 ),
