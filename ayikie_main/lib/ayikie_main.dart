@@ -1,6 +1,13 @@
-import 'package:ayikie_users/ayikie_users.dart';
+import 'package:ayikie_main/src/ui/screens/auth/registration_screen.dart';
+import 'package:ayikie_main/src/ui/screens/onboarding_screen/onboarding_screen.dart';
+import 'src/ui/screens/splash_screen.dart';
+import 'package:ayikie_users/src/ui/screens/main/main.dart';
 import 'package:flutter/material.dart';
-import 'package:ayikie_service/ayikie_service.dart';
+import 'src/ui/screens/auth/forget_password.dart';
+import 'src/ui/screens/auth/login_screen.dart';
+import 'src/ui/screens/auth/send_otp_screen.dart';
+import 'package:ayikie_service/src/ui/screens/main/main.dart';
+
 
 class MyApp extends StatefulWidget {
   @override
@@ -19,87 +26,16 @@ class _MyAppState extends State<MyApp> {
       ),
       home: SplashScreen(),
       debugShowCheckedModeBanner: false,
+       routes: <String, WidgetBuilder>{
+        "/OnbordingScreen": (BuildContext c) => OnbordingScreen(),
+        "/LoginScreen": (BuildContext c) => LoginScreen(),
+        "/RegistrationScreen": (BuildContext c) => RegistrationScreen(userRole: 1),
+        "/ForgetPasswordScreen": (BuildContext c) => ForgetPasswordScreen(),
+        "/SendOtpScreen": (BuildContext c) => SendOtpScreen(),
+        "/UserScreen": (BuildContext c) => MainScreen(menuScreenContext: context),
+        "/ServiceScreen": (BuildContext c) => ServiceMainScreen(menuScreenContext: context),
+      },
+      
     );
   }
 }
-
-class SplashScreen extends StatefulWidget {
-  @override
-  _SplashScreenState createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
-          color: Colors.white,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 200,
-                  height: 50.0,
-                  child: RaisedButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    onPressed: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return UserScreen();
-                        }),
-                      );
-                    },
-                    padding: EdgeInsets.all(12),
-                    color: Colors.cyan,
-                    child: Text(
-                      'User',
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10,),
-                SizedBox(
-                  width: 200,
-                  height: 50.0,
-                  child: RaisedButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    onPressed: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return ServiceScreen();
-                        }),
-                      );
-                    },
-                    padding: EdgeInsets.all(12),
-                    color: Colors.cyan,
-                    child: Text(
-                      'Service',
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-

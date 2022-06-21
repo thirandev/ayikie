@@ -17,7 +17,18 @@ dependencies:
   connectivity: ^3.0.6
   shared_preferences: ^2.0.6
   rxdart: ^0.27.1
-
+  flutter_svg:  ^0.22.0
+  pin_code_fields: ^7.3.0
+  smooth_page_indicator: ^1.0.0+2
+  timeline_list: ^0.0.6
+  intl_phone_number_input: ^0.7.0+2
+  country_code_picker: ^2.0.2
+  intl_phone_field: ^3.1.0
+  flutter_local_notifications: ^9.5.2
+  google_sign_in: ^5.0.3
+  twitter_login: ^4.2.3
+  flutter_facebook_auth: ^4.3.4
+  
 
 dev_dependencies:
   flutter_test:

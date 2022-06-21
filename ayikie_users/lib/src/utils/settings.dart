@@ -6,6 +6,17 @@ class Settings {
     await sharedPrefs.clear();
   }
 
+  static setIsGuest(bool isGuest) async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    sharedPrefs.setBool("guest", isGuest);
+  }
+
+  static Future<bool?> getIsGuest() async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    bool? token = sharedPrefs.getBool("guest");
+    return token;
+  }
+
   static setAccessToken(String token) async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     sharedPrefs.setString("access_token", token);
@@ -17,15 +28,14 @@ class Settings {
     return token;
   }
 
-  static setRefreshToken(String token) async {
+  static setLocation(String location) async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
-    sharedPrefs.setString("refresh_token", token);
+    sharedPrefs.setString("location", location);
   }
 
-  static Future<String?> getRefreshToken() async {
+  static Future<String?> getLocation() async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
-    String? token = sharedPrefs.getString("refresh_token");
-    return token;
+    String? location = sharedPrefs.getString("location");
+    return location;
   }
-
 }

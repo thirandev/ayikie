@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "753122930756",
+    "project_id": "ayikie",
+    "storage_bucket": "ayikie.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:753122930756:android:1dc23deefda0e8dd2e0c11",
+        "android_client_info": {
+          "package_name": "com.ayikie.ayikie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "753122930756-7178gqdnvnga0ou0l112n7qd22o6hcvj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJG3dwc6YVJNOzn5Ibn9KQumBBB1yQzw0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "753122930756-7178gqdnvnga0ou0l112n7qd22o6hcvj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

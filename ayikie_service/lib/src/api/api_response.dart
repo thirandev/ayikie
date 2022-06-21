@@ -10,6 +10,7 @@ class ApiResponse {
   bool isSuccess = false;
   String? statusMessage;
   dynamic jsonBody;
+  dynamic metaBody;
   dynamic extra;
 
   ApiResponse({this.response, bool validateToken = true}) {
@@ -60,6 +61,7 @@ class ApiResponse {
           jsonBody = _getJsonBody();
           if (jsonBody != null) {
             _setApiStatus(ApiStatus.SUCCESS);
+            metaBody = _getMetaBody();
           } else {
             _setApiStatus(ApiStatus.PARSE_ERROR);
             _setErrorMessage("Null json response");
@@ -85,12 +87,20 @@ class ApiResponse {
         } else if (response!.body.trim() == "{}") {
           return dynamic;
         } else {
-          var jsonData = json.decode(response!.body);
-          if (jsonData.runtimeType.toString() == "List<dynamic>" ||
-              jsonData.runtimeType.toString() == "_GrowableList<dynamic>") {
-            return jsonData;
-          } else {
-            return jsonData.cast<String, dynamic>();
+         try {
+            var jsonData = json.decode(response!.body) as Map<String, dynamic>;
+            if (jsonData.runtimeType.toString() == "List<dynamic>" ||
+                jsonData.runtimeType.toString() == "_GrowableList<dynamic>"
+            ) {
+              return jsonData;
+            } else {
+              if(jsonData.runtimeType.toString() == "_InternalLinkedHashMap<String, dynamic>"){
+                return jsonData["data"];
+              }
+              return jsonData.cast<String, dynamic>();
+            }
+          }on FormatException catch (e) {
+            return response!.body;
           }
         }
       } else {
@@ -98,14 +108,48 @@ class ApiResponse {
         _setErrorMessage("Null response body");
       }
     } catch (e) {
-      // print(e);
+      _setApiStatus(ApiStatus.EXCEPTION);
+      _setErrorMessage("JSON Parse Error: " + e.toString());
+    }
+  }
+
+  dynamic _getMetaBody() {
+    try {
+      if (response!.body != null) {
+        if (response!.body.trim() == "") {
+          return dynamic;
+        } else if (response!.body.trim() == "[]") {
+          return [];
+        } else if (response!.body.trim() == "{}") {
+          return dynamic;
+        } else {
+          try {
+            var jsonData = json.decode(response!.body) as Map<String, dynamic>;
+            if (jsonData.runtimeType.toString() == "List<dynamic>" ||
+                jsonData.runtimeType.toString() == "_GrowableList<dynamic>"
+            ) {
+              return jsonData;
+            } else {
+              if(jsonData.runtimeType.toString() == "_InternalLinkedHashMap<String, dynamic>"){
+                return jsonData["meta"];
+              }
+              return jsonData.cast<String, dynamic>();
+            }
+          }on FormatException catch (e) {
+            return response!.body;
+          }
+        }
+      } else {
+        _setApiStatus(ApiStatus.PARSE_ERROR);
+        _setErrorMessage("Null response body");
+      }
+    } catch (e) {
       _setApiStatus(ApiStatus.EXCEPTION);
       _setErrorMessage("JSON Parse Error: " + e.toString());
     }
   }
 
   void _setErrorMessage(String message) {
-    // print(message);
     statusMessage = message;
   }
 
